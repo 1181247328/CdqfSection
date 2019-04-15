@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:orientation="vertical"
+        android:paddingBottom="10dp">
+
+        <com.gcssloop.widget.RCRelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@color/white"
+            app:clip_background="true"
+            app:round_corner="5dp">
+
+            <ListView
+                android:id="@+id/lv_personal_dilog_context"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:divider="@color/back_my"
+                android:dividerHeight="1dp"
+                android:scrollbars="none" />
+
+        </com.gcssloop.widget.RCRelativeLayout>
+
+        <com.gcssloop.widget.RCRelativeLayout
+            android:id="@+id/rcrl_personal_dilog_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/component_click"
+            app:clip_background="true"
+            app:round_corner="5dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:gravity="center"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="取消"
+                android:textColor="@color/route_determine"
+                android:textSize="16sp" />
+
+        </com.gcssloop.widget.RCRelativeLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

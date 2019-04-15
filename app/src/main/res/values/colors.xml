@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+
+    <!--通用色-->
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="general_one">#DDDDDD</color>
+    <color name="back_my">#F5F5F5</color>
+
+
+    <!--所有点击通用效果-->
+    <color name="selected_all">#DDDDDD</color>
+    <color name="in">#7fffffff</color>
+
+    <!--RouteDilogFragment-->
+    <color name="route_determine">#0099FF</color>
+
+</resources>

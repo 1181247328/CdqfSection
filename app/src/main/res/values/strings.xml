@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">WashCart</string>
+    <string name="share" translatable="false">分享</string>
+</resources>
