@@ -10,12 +10,23 @@
     <color name="general_one">#DDDDDD</color>
     <color name="back_my">#F5F5F5</color>
 
-
     <!--所有点击通用效果-->
     <color name="selected_all">#DDDDDD</color>
     <color name="in">#7fffffff</color>
 
     <!--RouteDilogFragment-->
     <color name="route_determine">#0099FF</color>
+
+    <!--main-->
+    <color name="tab_main_text_default">#101010</color>
+    <color name="tab_main_text_icon">#fdd000</color>
+
+    <!--登录-->
+    <color name="login_text">#d1d1d1</color>
+    <color name="login_select">#e8cd56</color>
+
+    <!--lossmanager-->
+    <color name="lossmanager_stock">#ababab</color>
+    <color name="lossmanager_add">#c33232</color>
 
 </resources>

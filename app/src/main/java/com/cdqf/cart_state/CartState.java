@@ -104,6 +104,9 @@ public class CartState {
     //省市区
     private List<Province> provinceList = new CopyOnWriteArrayList<Province>();
 
+    //判断登录
+    private boolean isLogin = false;
+
 
     /**
      * 提示信息
@@ -761,5 +764,13 @@ public class CartState {
 
     public void setProvinceList(List<Province> provinceList) {
         this.provinceList = provinceList;
+    }
+
+    public boolean isLogin() {
+        return isLogin;
+    }
+
+    public void setLogin(boolean login) {
+        isLogin = login;
     }
 }
