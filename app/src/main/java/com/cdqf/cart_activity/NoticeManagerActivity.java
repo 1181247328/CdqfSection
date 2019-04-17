@@ -1,0 +1,176 @@
+package com.cdqf.cart_activity;
+
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import com.cdqf.cart.R;
+import com.cdqf.cart_adapter.NoticeAdapter;
+import com.cdqf.cart_state.BaseActivity;
+import com.cdqf.cart_state.CartState;
+import com.cdqf.cart_state.StatusBarCompat;
+import com.nostra13.universalimageloader.core.ImageLoader;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+/**
+ * 通知(店长)
+ */
+public class NoticeManagerActivity extends BaseActivity {
+
+    private String TAG = NoticeManagerActivity.class.getSimpleName();
+
+    private Context context = null;
+
+    private ImageLoader imageLoader = ImageLoader.getInstance();
+
+    private CartState cartState = CartState.getCartState();
+
+    @BindView(R.id.srl_notice_pull)
+    public SwipeRefreshLayout srlNoticePull = null;
+
+    //返回
+    @BindView(R.id.rl_notice_return)
+    public RelativeLayout rlNoticeReturn = null;
+
+    @BindView(R.id.tv_noticemanager_release)
+    public TextView tvNoticemanagerRelease = null;
+
+    @BindView(R.id.lv_notice_list)
+    public ListView lvNoticeList = null;
+
+    private NoticeAdapter noticeAdapter = null;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        //API19以下用于沉侵式菜单栏
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        }
+
+        //加载布局
+        setContentView(R.layout.activity_noticemanager);
+
+        //API>=20以上用于沉侵式菜单栏
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+            //沉侵
+            StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.black));
+        }
+
+        initAgo();
+
+        initView();
+
+        initAdapter();
+
+        initListener();
+
+        initBack();
+    }
+
+    private void initAgo() {
+        context = this;
+        ButterKnife.bind(this);
+    }
+
+    private void initView() {
+        noticeAdapter = new NoticeAdapter(context);
+        lvNoticeList.setAdapter(noticeAdapter);
+    }
+
+    private void initAdapter() {
+
+    }
+
+    private void initListener() {
+
+        srlNoticePull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                srlNoticePull.setRefreshing(false);
+            }
+        });
+    }
+
+    private void initBack() {
+
+    }
+
+    private void initIntent(Class<?> activity) {
+        Intent intent = new Intent(context, activity);
+        startActivity(intent);
+        finish();
+    }
+
+    @OnClick({R.id.rl_notice_return, R.id.tv_noticemanager_release})
+    public void onClick(View v) {
+        switch (v.getId()) {
+            //返回
+            case R.id.rl_notice_return:
+                finish();
+                break;
+            //发布
+            case R.id.tv_noticemanager_release:
+                initIntent(ReleaseActivity.class);
+                break;
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.e(TAG, "---启动---");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.e(TAG, "---恢复---");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.e(TAG, "---暂停---");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.e(TAG, "---停止---");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.e(TAG, "---重启---");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.e(TAG, "---销毁---");
+    }
+}
+

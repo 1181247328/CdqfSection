@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.cdqf.cart.R;
 import com.cdqf.cart_activity.LossManagerActivity;
-import com.cdqf.cart_activity.NoticeActivity;
+import com.cdqf.cart_activity.NoticeManagerActivity;
 import com.cdqf.cart_adapter.HomeManagerAdapter;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_view.MyGridView;
@@ -101,7 +101,7 @@ public class HomeManagerFragment extends Fragment {
                         break;
                     //通知
                     case 2:
-                        initIntent(NoticeActivity.class);
+                        initIntent(NoticeManagerActivity.class);
                         break;
                 }
             }
