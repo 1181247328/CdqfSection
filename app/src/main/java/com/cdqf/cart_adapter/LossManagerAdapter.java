@@ -1,15 +1,16 @@
 package com.cdqf.cart_adapter;
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cdqf.cart.R;
+import com.gcssloop.widget.RCRelativeLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,43 +53,63 @@ public class LossManagerAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        if (position == 3) {
-            viewHolder.tvLossItemAdd.setVisibility(View.VISIBLE);
-            viewHolder.tvLossItemNumber.setText("0 (缺货)");
-            viewHolder.tvLossItemNumber.setTextColor(ContextCompat.getColor(context, R.color.lossmanager_stock));
-            viewHolder.tvLossItemAdd.setOnClickListener(new OnAddListener(position));
-        } else {
-            viewHolder.tvLossItemAdd.setVisibility(View.GONE);
-            viewHolder.tvLossItemNumber.setText("100");
-            viewHolder.tvLossItemNumber.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_default));
-        }
+        //输入数量
+        viewHolder.rcrlLossmanagerItemInput.setOnClickListener(new OnInputListener(position));
+        //点击领取
+        viewHolder.rcrlLossmanagerItemLoss.setOnClickListener(new OnLossListener(position));
         return convertView;
     }
 
     class ViewHolder {
 
-        //物品
-        @BindView(R.id.tv_loss_item_items)
-        public TextView tvLossItemItems = null;
+        //物品图片
+        @BindView(R.id.iv_lossmanager_item_image)
+        public ImageView ivLossmanagerItemImage = null;
 
-        //数量
-        @BindView(R.id.tv_loss_item_number)
-        public TextView tvLossItemNumber = null;
+        //商品名称
+        @BindView(R.id.tv_lossmanager_item_name)
+        public TextView tvLossmanagerItemName = null;
 
-        //添加库存
-        @BindView(R.id.tv_loss_item_add)
-        public TextView tvLossItemAdd = null;
+        //总量
+        @BindView(R.id.tv_lossmanager_item_number)
+        public TextView tvLossmanagerItemNumber = null;
+
+        //输入数量
+        @BindView(R.id.rcrl_lossmanager_item_input)
+        public RCRelativeLayout rcrlLossmanagerItemInput = null;
+
+        //领取
+        @BindView(R.id.rcrl_lossmanager_item_loss)
+        public RCRelativeLayout rcrlLossmanagerItemLoss = null;
+
 
         public ViewHolder(View v) {
             ButterKnife.bind(this, v);
         }
     }
 
-    class OnAddListener implements View.OnClickListener {
+    class OnInputListener implements View.OnClickListener {
 
         private int position = 0;
 
-        public OnAddListener(int position) {
+        public OnInputListener(int position) {
+            this.position = position;
+        }
+
+        @Override
+        public void onClick(View v) {
+            Log.e(TAG, "---输入数量---" + position);
+        }
+    }
+
+    /**
+     * 点击领取
+     */
+    class OnLossListener implements View.OnClickListener {
+
+        private int position = 0;
+
+        public OnLossListener(int position) {
             this.position = position;
         }
 

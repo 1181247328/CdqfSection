@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.cdqf.cart.R;
 import com.cdqf.cart_activity.LossActivity;
 import com.cdqf.cart_activity.NoticeActivity;
+import com.cdqf.cart_activity.ServiceActivity;
 import com.cdqf.cart_adapter.HomeAdapter;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_view.MyGridView;
@@ -98,6 +99,7 @@ public class HomeFragment extends Fragment {
                         break;
                     //服务
                     case 1:
+                        initIntent(ServiceActivity.class);
                         break;
                     //通知
                     case 2:

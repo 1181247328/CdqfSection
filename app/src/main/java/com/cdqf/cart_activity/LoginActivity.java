@@ -47,6 +47,12 @@ public class LoginActivity extends BaseActivity {
     @BindView(R.id.rcrl_login_sumbit)
     public RCRelativeLayout rcrlLoginSumbit = null;
 
+    //帐户
+    private String account = null;
+
+    //密码
+    private String passwrod = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,6 +115,31 @@ public class LoginActivity extends BaseActivity {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.rcrl_login_sumbit:
+//                account = etLoginAccount.getText().toString();
+//                if (account.length() <= 0) {
+//                    cartState.initToast(context, "请输入帐户", true, 0);
+//                    return;
+//                }
+//                passwrod = xetLoginPasswrod.getText().toString();
+//                if (passwrod.length() <= 0) {
+//                    cartState.initToast(context, "请输入密码", true, 0);
+//                    return;
+//                }
+//                Map<String, Object> params = new HashMap<String, Object>();
+//                params.put("", account);
+//                params.put("", passwrod);
+//                OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
+//                okHttpRequestWrap.post(CartAddaress.LOGIN, true, "登录中", params, new OnHttpRequest() {
+//                    @Override
+//                    public void onOkHttpResponse(String response, int id) {
+//                        Log.e(TAG, "---onOkHttpResponse登录---" + response);
+//                    }
+//
+//                    @Override
+//                    public void onOkHttpError(String error) {
+//                        Log.e(TAG, "---onOkHttpError---" + error);
+//                    }
+//                });
                 initIntent(MainManagerActivity.class);
                 break;
         }

@@ -8,4 +8,12 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="style_one">
+        <item name="android:textColor">@color/tab_main_text_default</item>
+    </style>
+
+    <style name="style_two">
+        <item name="android:textColor">@color/shop</item>
+    </style>
+
 </resources>

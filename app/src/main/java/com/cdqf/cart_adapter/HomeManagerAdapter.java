@@ -1,6 +1,9 @@
 package com.cdqf.cart_adapter;
 
 import android.content.Context;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.TextAppearanceSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +31,7 @@ public class HomeManagerAdapter extends BaseAdapter {
 
     private String[] name = {
             "损耗品",
-            "服务",
+            "店总",
             "通知",
             "用户"
     };
@@ -63,7 +66,15 @@ public class HomeManagerAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         viewHolder.ivHomeItemLoss.setImageResource(image[position]);
-        viewHolder.tvHomeItemName.setText(name[position]);
+        if (position == 1) {
+            String shop = name[position] + "  (10)";
+            SpannableString styledText = new SpannableString(shop);
+            styledText.setSpan(new TextAppearanceSpan(context, R.style.style_one), 0, 2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            styledText.setSpan(new TextAppearanceSpan(context, R.style.style_two), 2, shop.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            viewHolder.tvHomeItemName.setText(name[position]);
+        } else {
+            viewHolder.tvHomeItemName.setText(name[position]);
+        }
         return convertView;
     }
 

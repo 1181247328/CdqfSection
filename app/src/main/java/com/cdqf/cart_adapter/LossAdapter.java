@@ -8,9 +8,11 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.cdqf.cart.R;
+import com.cdqf.cart_find.LossReceiveFind;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.greenrobot.event.EventBus;
 
 /**
  * 损耗品适配器
@@ -18,6 +20,8 @@ import butterknife.ButterKnife;
 public class LossAdapter extends BaseAdapter {
 
     private String TAG = LossAdapter.class.getSimpleName();
+
+    private EventBus eventBus = EventBus.getDefault();
 
     private Context context = null;
 
@@ -68,6 +72,10 @@ public class LossAdapter extends BaseAdapter {
         @BindView(R.id.tv_loss_item_state)
         public TextView tvLossItemState = null;
 
+        //状态
+        @BindView(R.id.tv_loss_item_state_one)
+        public TextView tvLossItemStateOne = null;
+
         public ViewHolder(View v) {
             ButterKnife.bind(this, v);
         }
@@ -75,15 +83,15 @@ public class LossAdapter extends BaseAdapter {
 
     class OnStateListener implements View.OnClickListener {
 
-        private int postion = 0;
+        private int position = 0;
 
-        public OnStateListener(int postion) {
-            this.postion = postion;
+        public OnStateListener(int position) {
+            this.position = position;
         }
 
         @Override
         public void onClick(View v) {
-
+            eventBus.post(new LossReceiveFind(position));
         }
     }
 }

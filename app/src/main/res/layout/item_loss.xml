@@ -18,8 +18,8 @@
             android:layout_weight="1"
             android:background="@color/white"
             android:gravity="center_horizontal"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
             android:text="毛巾"
             android:textColor="@color/tab_main_text_default"
             android:textSize="14sp" />
@@ -31,24 +31,50 @@
             android:layout_weight="1"
             android:background="@color/white"
             android:gravity="center_horizontal"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
             android:text="100"
             android:textColor="@color/tab_main_text_default"
             android:textSize="14sp" />
 
-        <TextView
-            android:id="@+id/tv_loss_item_state"
+        <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/loss_click"
-            android:gravity="center_horizontal"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:text="领取"
-            android:textColor="@color/tab_main_text_default"
-            android:textSize="14sp" />
+            android:background="@color/white">
+
+            <TextView
+                android:id="@+id/tv_loss_item_state"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:background="@drawable/line_reward"
+                android:gravity="center_horizontal"
+                android:paddingLeft="20dp"
+                android:paddingTop="8dp"
+                android:paddingRight="20dp"
+                android:paddingBottom="8dp"
+                android:text="领取"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tv_loss_item_state_one"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:background="@color/white"
+                android:gravity="center_horizontal"
+                android:paddingLeft="20dp"
+                android:paddingTop="8dp"
+                android:paddingRight="20dp"
+                android:paddingBottom="8dp"
+                android:text="领取"
+                android:textColor="@color/tab_main_text_default"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+        </RelativeLayout>
 
 
     </LinearLayout>

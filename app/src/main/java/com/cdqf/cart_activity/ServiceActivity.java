@@ -14,12 +14,9 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import com.cdqf.cart.R;
-import com.cdqf.cart_adapter.LossAdapter;
-import com.cdqf.cart_dilog.LossDilogFragment;
-import com.cdqf.cart_find.LossReceiveFind;
-import com.cdqf.cart_find.LossReceiveSubmitFind;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;
+import com.cdqf.cart_adapter.ServiceAdapter;
 import com.cdqf.cart_state.BaseActivity;
 import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
@@ -32,13 +29,12 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import de.greenrobot.event.EventBus;
 
 /**
- * 损耗品
+ * 服务(员工)
  */
-public class LossActivity extends BaseActivity {
-    private String TAG = LossActivity.class.getSimpleName();
+public class ServiceActivity extends BaseActivity {
+    private String TAG = ServiceActivity.class.getSimpleName();
 
     private Context context = null;
 
@@ -46,19 +42,17 @@ public class LossActivity extends BaseActivity {
 
     private CartState cartState = CartState.getCartState();
 
-    private EventBus eventBus = EventBus.getDefault();
-
-    @BindView(R.id.srl_loss_pull)
-    public SwipeRefreshLayout srlLossPull = null;
+    @BindView(R.id.srl_service_pull)
+    public SwipeRefreshLayout srlServicePull = null;
 
     //帐户
-    @BindView(R.id.rl_loss_return)
-    public RelativeLayout rlLossReturn = null;
+    @BindView(R.id.rl_service_return)
+    public RelativeLayout rlServiceReturn = null;
 
-    @BindView(R.id.lv_loss_list)
-    public ListView lvLossList = null;
+    @BindView(R.id.lv_service_list)
+    public ListView lvServiceList = null;
 
-    private LossAdapter lossAdapter = null;
+    private ServiceAdapter serviceAdapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +66,7 @@ public class LossActivity extends BaseActivity {
         }
 
         //加载布局
-        setContentView(R.layout.activity_loss);
+        setContentView(R.layout.activity_service);
 
         //API>=20以上用于沉侵式菜单栏
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
@@ -94,14 +88,11 @@ public class LossActivity extends BaseActivity {
     private void initAgo() {
         context = this;
         ButterKnife.bind(this);
-        if (!eventBus.isRegistered(this)) {
-            eventBus.register(this);
-        }
     }
 
     private void initView() {
-        lossAdapter = new LossAdapter(context);
-        lvLossList.setAdapter(lossAdapter);
+        serviceAdapter = new ServiceAdapter(context);
+        lvServiceList.setAdapter(serviceAdapter);
     }
 
     private void initAdapter() {
@@ -109,17 +100,16 @@ public class LossActivity extends BaseActivity {
     }
 
     private void initListener() {
-
-        srlLossPull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        srlServicePull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                srlLossPull.setRefreshing(false);
+                srlServicePull.setRefreshing(false);
             }
         });
     }
 
     private void initBack() {
-        initPull();
+//        initPull();
     }
 
     private void initPull() {
@@ -129,7 +119,8 @@ public class LossActivity extends BaseActivity {
         okHttpRequestWrap.post(CartAddaress.LOSS, true, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
-                Log.e(TAG, "---onOkHttpResponse损耗品---" + response);
+                Log.e(TAG, "---onOkHttpResponse服务---" + response);
+
             }
 
             @Override
@@ -144,11 +135,11 @@ public class LossActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    @OnClick({R.id.rl_loss_return})
+    @OnClick({R.id.rl_service_return})
     public void onClick(View v) {
         switch (v.getId()) {
             //登录
-            case R.id.rl_loss_return:
+            case R.id.rl_service_return:
                 finish();
                 break;
         }
@@ -193,25 +184,5 @@ public class LossActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.e(TAG, "---销毁---");
-        eventBus.unregister(this);
-    }
-
-    /**
-     * 领取
-     *
-     * @param l
-     */
-    public void onEventMainThread(LossReceiveFind l) {
-        LossDilogFragment lossDilogFragment = new LossDilogFragment();
-        lossDilogFragment.show(getSupportFragmentManager(), "领取");
-    }
-
-    /**
-     * 确定领取
-     *
-     * @param s
-     */
-    public void onEventMainThread(LossReceiveSubmitFind s) {
-
     }
 }
