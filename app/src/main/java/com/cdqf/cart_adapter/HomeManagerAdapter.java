@@ -67,11 +67,11 @@ public class HomeManagerAdapter extends BaseAdapter {
         }
         viewHolder.ivHomeItemLoss.setImageResource(image[position]);
         if (position == 1) {
-            String shop = name[position] + "  (10)";
+            String shop = "店总" + "(10)";
             SpannableString styledText = new SpannableString(shop);
             styledText.setSpan(new TextAppearanceSpan(context, R.style.style_one), 0, 2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             styledText.setSpan(new TextAppearanceSpan(context, R.style.style_two), 2, shop.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            viewHolder.tvHomeItemName.setText(name[position]);
+            viewHolder.tvHomeItemName.setText(styledText, TextView.BufferType.SPANNABLE);
         } else {
             viewHolder.tvHomeItemName.setText(name[position]);
         }

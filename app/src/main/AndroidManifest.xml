@@ -237,5 +237,11 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 
+        <!--用户-->
+        <activity
+            android:name="com.cdqf.cart_activity.UserActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
     </application>
 </manifest>
