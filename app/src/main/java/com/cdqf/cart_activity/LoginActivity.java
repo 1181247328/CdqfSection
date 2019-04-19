@@ -87,6 +87,7 @@ public class LoginActivity extends BaseActivity {
     private void initAgo() {
         context = this;
         ButterKnife.bind(this);
+        cartState.permission(this);
     }
 
     private void initView() {
@@ -115,6 +116,9 @@ public class LoginActivity extends BaseActivity {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.rcrl_login_sumbit:
+
+                initIntent(MainActivity.class);
+
 //                account = etLoginAccount.getText().toString();
 //                if (account.length() <= 0) {
 //                    cartState.initToast(context, "请输入帐户", true, 0);
@@ -140,7 +144,6 @@ public class LoginActivity extends BaseActivity {
 //                        Log.e(TAG, "---onOkHttpError---" + error);
 //                    }
 //                });
-                initIntent(MainManagerActivity.class);
                 break;
         }
     }

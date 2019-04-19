@@ -278,6 +278,8 @@ public class CartState {
                     || activity.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED
                     || activity.checkSelfPermission(Manifest.permission.CALL_PHONE)
+                    != PackageManager.PERMISSION_GRANTED
+                    || activity.checkSelfPermission(Manifest.permission.CAMERA)
                     != PackageManager.PERMISSION_GRANTED) {
                 activity.requestPermissions(new String[]{
                                 Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -285,7 +287,8 @@ public class CartState {
                                 Manifest.permission.ACCESS_FINE_LOCATION,
                                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                                 Manifest.permission.READ_PHONE_STATE,
-                                Manifest.permission.CALL_PHONE,},
+                                Manifest.permission.CALL_PHONE,
+                                Manifest.permission.CAMERA,},
                         0
                 );
             }

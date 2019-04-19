@@ -4,6 +4,7 @@ import com.cdqf.exception.CauchExceptionHandler;
 import com.cdqf.exception.LogToFile;
 import com.mob.MobApplication;
 import com.zhy.http.okhttp.OkHttpUtils;
+import com.zxy.tiny.Tiny;
 
 import java.util.concurrent.TimeUnit;
 
@@ -19,6 +20,7 @@ public class App extends MobApplication {
     public void onCreate() {
         super.onCreate();
         sInstance = this;
+        Tiny.getInstance().init(this);
         CauchExceptionHandler.getInstance().setDefaultUnCachExceptionHandler();
         LogToFile.init(getApplicationContext());
         OkHttpClient okHttpClient = new OkHttpClient.Builder()

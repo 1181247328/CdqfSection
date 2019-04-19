@@ -82,6 +82,7 @@
                         android:layout_marginRight="5dp"
                         android:layout_weight="1"
                         android:background="@color/loss_receive"
+                        android:visibility="gone"
                         app:clip_background="true"
                         app:round_corner="3dp">
 
@@ -102,22 +103,23 @@
 
                     <com.gcssloop.widget.RCRelativeLayout
                         android:id="@+id/rcrl_service_item_washed"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="3dp"
-                        android:layout_weight="1"
-                        android:background="@color/loss_receive"
+                        android:background="@drawable/line_reward"
                         app:clip_background="true"
                         app:round_corner="3dp">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@android:color/transparent"
                             android:gravity="center"
+                            android:paddingLeft="30dp"
                             android:paddingTop="5dp"
+                            android:paddingRight="30dp"
                             android:paddingBottom="5dp"
-                            android:text="他洗"
+                            android:text="认领"
                             android:textColor="@color/white"
                             android:textSize="18sp" />
 
