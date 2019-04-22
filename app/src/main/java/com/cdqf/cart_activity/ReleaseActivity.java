@@ -13,15 +13,28 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
+import com.cdqf.cart_dilog.WhyDilogFragment;
+import com.cdqf.cart_find.ReleaseFind;
+import com.cdqf.cart_find.ReleasePullFind;
+import com.cdqf.cart_okhttp.OKHttpRequestWrap;
+import com.cdqf.cart_okhttp.OnHttpRequest;
 import com.cdqf.cart_state.BaseActivity;
+import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_state.StatusBarCompat;
+import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 
 /**
  * 发布(店长)
@@ -34,7 +47,11 @@ public class ReleaseActivity extends BaseActivity {
 
     private ImageLoader imageLoader = ImageLoader.getInstance();
 
+    private EventBus eventBus = EventBus.getDefault();
+
     private CartState cartState = CartState.getCartState();
+
+    private Gson gson = new Gson();
 
     //返回
     @BindView(R.id.rl_release_return)
@@ -43,8 +60,12 @@ public class ReleaseActivity extends BaseActivity {
     @BindView(R.id.tv_release_release)
     public TextView tvReleaseRelease = null;
 
+    //内容
     @BindView(R.id.et_release_input)
     public EditText etReleaseInput = null;
+
+    //通知
+    private String content = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +101,9 @@ public class ReleaseActivity extends BaseActivity {
     private void initAgo() {
         context = this;
         ButterKnife.bind(this);
+        if (!eventBus.isRegistered(this)) {
+            eventBus.register(this);
+        }
     }
 
     private void initView() {
@@ -95,6 +119,18 @@ public class ReleaseActivity extends BaseActivity {
     }
 
     private void initBack() {
+
+    }
+
+    //服务订单
+    private String shopService(String content, String staffid, String type) {
+        String result = null;
+        CartAddaress.SHOP_NOTICE_ADD = CartAddaress.SHOP_NOTICE_ADD.replace("CONTENT", cartState.urlEnodeUTF8(content));
+        CartAddaress.SHOP_NOTICE_ADD = CartAddaress.SHOP_NOTICE_ADD.replace("STAFFID", cartState.urlEnodeUTF8(staffid));
+        CartAddaress.SHOP_NOTICE_ADD = CartAddaress.SHOP_NOTICE_ADD.replace("TYPE", cartState.urlEnodeUTF8(type));
+        result = CartAddaress.SHOP_NOTICE_ADD;
+        Log.e(TAG, "---店长发布通知---" + result);
+        return result;
     }
 
     private void initIntent(Class<?> activity) {
@@ -107,17 +143,38 @@ public class ReleaseActivity extends BaseActivity {
         switch (v.getId()) {
             //返回
             case R.id.rl_release_return:
-                finish();
+                content = etReleaseInput.getText().toString().trim();
+                if (content.length() <= 0) {
+                    finish();
+                    return;
+                }
+                WhyDilogFragment whyDilogOneFragment = new WhyDilogFragment();
+                whyDilogOneFragment.setInit(3, "提示", "您正在发布通知中,是否放弃现有的编辑.", "否", "是");
+                whyDilogOneFragment.show(getSupportFragmentManager(), "放弃通知");
                 break;
             //发布
             case R.id.tv_release_release:
+                content = etReleaseInput.getText().toString().trim();
+                if (content.length() <= 0) {
+                    cartState.initToast(context, "通知内容不能为空", true, 0);
+                    return;
+                }
+                WhyDilogFragment whyDilogFragment = new WhyDilogFragment();
+                whyDilogFragment.setInit(2, "提示", "您正在发布通知,是否发布.", "否", "是");
+                whyDilogFragment.show(getSupportFragmentManager(), "发布通知");
                 break;
         }
     }
 
     @Override
     public void onBackPressed() {
-        finish();
+        if (content.length() <= 0) {
+            finish();
+            return;
+        }
+        WhyDilogFragment whyDilogOneFragment = new WhyDilogFragment();
+        whyDilogOneFragment.setInit(3, "提示", "您正在发布通知中,是否放弃现有的编辑.", "否", "是");
+        whyDilogOneFragment.show(getSupportFragmentManager(), "放弃通知");
     }
 
     @Override
@@ -154,5 +211,43 @@ public class ReleaseActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.e(TAG, "---销毁---");
+        eventBus.unregister(this);
+    }
+
+    /**
+     * 通知
+     *
+     * @param r
+     */
+    public void onEventMainThread(ReleaseFind r) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
+        String shopService = shopService(content, cartState.getUser().getId(), "1");
+        okHttpRequestWrap.post(shopService, true, "发布中", params, new OnHttpRequest() {
+            @Override
+            public void onOkHttpResponse(String response, int id) {
+                Log.e(TAG, "---onOkHttpResponse发布通知---" + response);
+                JSONObject resultJSON = JSON.parseObject(response);
+                int error_code = resultJSON.getInteger("ret");
+                String msg = resultJSON.getString("msg");
+                switch (error_code) {
+                    //获取成功
+                    case 200:
+                        String data = resultJSON.getString("data");
+                        cartState.initToast(context, data, true, 0);
+                        eventBus.post(new ReleasePullFind());
+                        finish();
+                        break;
+                    default:
+                        cartState.initToast(context, msg, true, 0);
+                        break;
+                }
+            }
+
+            @Override
+            public void onOkHttpError(String error) {
+                Log.e(TAG, "---onOkHttpError---" + error);
+            }
+        });
     }
 }

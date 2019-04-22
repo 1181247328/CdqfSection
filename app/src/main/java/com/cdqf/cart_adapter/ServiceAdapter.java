@@ -8,10 +8,13 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.cdqf.cart.R;
+import com.cdqf.cart_find.ServiceOneFind;
+import com.cdqf.cart_state.CartState;
 import com.gcssloop.widget.RCRelativeLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.greenrobot.event.EventBus;
 
 /**
  * 服务
@@ -22,13 +25,17 @@ public class ServiceAdapter extends BaseAdapter {
 
     private Context context = null;
 
+    private EventBus eventBus = EventBus.getDefault();
+
+    private CartState cartState = CartState.getCartState();
+
     public ServiceAdapter(Context context) {
         this.context = context;
     }
 
     @Override
     public int getCount() {
-        return 7;
+        return cartState.getShopList().size();
     }
 
     @Override
@@ -51,6 +58,16 @@ public class ServiceAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+        //订单号
+        viewHolder.tvServiceItemId.setText("订单:" + cartState.getShopList().get(position).getOrdernum());
+        //车牌号
+        viewHolder.tvServiceItemPlate.setText(cartState.getShopList().get(position).getCarnum());
+        //车型
+        viewHolder.tvServiceItemType.setText(cartState.getShopList().get(position).getType());
+        //时间
+        viewHolder.tvServiceItemTimer.setText("时间:" + cartState.getShopList().get(position).getAddtime());
+        //服务
+        viewHolder.rcrlServiceItemWashed.setOnClickListener(new OnServiceListener(position));
         return convertView;
     }
 
@@ -81,6 +98,23 @@ public class ServiceAdapter extends BaseAdapter {
 
         public ViewHolder(View v) {
             ButterKnife.bind(this, v);
+        }
+    }
+
+    /**
+     * 服务
+     */
+    class OnServiceListener implements View.OnClickListener {
+
+        private int position;
+
+        public OnServiceListener(int position) {
+            this.position = position;
+        }
+
+        @Override
+        public void onClick(View v) {
+            eventBus.post(new ServiceOneFind(position));
         }
     }
 }

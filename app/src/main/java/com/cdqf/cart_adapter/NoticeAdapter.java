@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.cdqf.cart.R;
+import com.cdqf.cart_state.CartState;
 import com.gcssloop.widget.RCRelativeLayout;
 
 import butterknife.BindView;
@@ -22,13 +23,15 @@ public class NoticeAdapter extends BaseAdapter {
 
     private Context context = null;
 
+    private CartState cartState = CartState.getCartState();
+
     public NoticeAdapter(Context context) {
         this.context = context;
     }
 
     @Override
     public int getCount() {
-        return 3;
+        return cartState.getNoticeList().size();
     }
 
     @Override
@@ -51,6 +54,12 @@ public class NoticeAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+        //内容
+        viewHolder.tvNoticeItemContext.setText(cartState.getNoticeList().get(position).getContent());
+        //时间
+        viewHolder.tvNoticeItemTimer.setText(cartState.getNoticeList().get(position).getAddtime());
+        //名称
+        viewHolder.tvNoticeItemName.setText("店长：" + cartState.getNoticeList().get(position).getShopowenrname());
         return convertView;
     }
 

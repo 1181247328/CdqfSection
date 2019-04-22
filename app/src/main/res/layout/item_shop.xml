@@ -73,31 +73,52 @@
                     android:background="@android:color/transparent"
                     android:gravity="center_vertical|right"
                     android:orientation="horizontal"
-                    android:paddingLeft="10dp">
-
+                    android:paddingLeft="15dp">
 
                     <com.gcssloop.widget.RCRelativeLayout
-                        android:id="@+id/rcrl_shop_item_washed"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/rcrl_shop_item_claim"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="3dp"
-                        android:layout_marginRight="10dp"
-                        android:background="@drawable/line_reward"
+                        android:layout_marginRight="3dp"
+                        android:layout_weight="1"
+                        android:background="@color/loss_receive"
                         app:clip_background="true"
                         app:round_corner="3dp">
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@android:color/transparent"
                             android:gravity="center"
-                            android:paddingLeft="10dp"
-                            android:paddingTop="5dp"
-                            android:paddingRight="10dp"
-                            android:paddingBottom="5dp"
-                            android:text="点击完成"
+                            android:paddingTop="7dp"
+                            android:paddingBottom="7dp"
+                            android:text="服务"
                             android:textColor="@color/white"
-                            android:textSize="18sp" />
+                            android:textSize="16sp" />
+
+                    </com.gcssloop.widget.RCRelativeLayout>
+
+
+                    <com.gcssloop.widget.RCRelativeLayout
+                        android:id="@+id/rcrl_shop_item_washed"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:layout_weight="1"
+                        android:background="@color/loss_receive"
+                        app:clip_background="true"
+                        app:round_corner="3dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:gravity="center"
+                            android:paddingTop="7dp"
+                            android:paddingBottom="7dp"
+                            android:text="完成"
+                            android:textColor="@color/white"
+                            android:textSize="16sp" />
 
                     </com.gcssloop.widget.RCRelativeLayout>
 

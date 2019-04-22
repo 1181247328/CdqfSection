@@ -119,7 +119,7 @@
                             android:paddingTop="5dp"
                             android:paddingRight="30dp"
                             android:paddingBottom="5dp"
-                            android:text="认领"
+                            android:text="服务"
                             android:textColor="@color/white"
                             android:textSize="18sp" />
 

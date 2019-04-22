@@ -10,25 +10,36 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
+import com.cdqf.cart_adapter.ServiceAdapter;
+import com.cdqf.cart_class.Shop;
+import com.cdqf.cart_dilog.WhyDilogFragment;
+import com.cdqf.cart_dilogadapter.ServiceTwoFind;
+import com.cdqf.cart_find.ServiceOneFind;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;
-import com.cdqf.cart_adapter.ServiceAdapter;
 import com.cdqf.cart_state.BaseActivity;
 import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_state.StatusBarCompat;
+import com.cdqf.cart_view.ListViewForScrollView;
+import com.cdqf.cart_view.VerticalSwipeRefreshLayout;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 
 /**
  * 服务(员工)
@@ -40,17 +51,21 @@ public class ServiceActivity extends BaseActivity {
 
     private ImageLoader imageLoader = ImageLoader.getInstance();
 
+    private EventBus eventBus = EventBus.getDefault();
+
     private CartState cartState = CartState.getCartState();
 
+    private Gson gson = new Gson();
+
     @BindView(R.id.srl_service_pull)
-    public SwipeRefreshLayout srlServicePull = null;
+    public VerticalSwipeRefreshLayout srlServicePull = null;
 
     //帐户
     @BindView(R.id.rl_service_return)
     public RelativeLayout rlServiceReturn = null;
 
     @BindView(R.id.lv_service_list)
-    public ListView lvServiceList = null;
+    public ListViewForScrollView lvServiceList = null;
 
     private ServiceAdapter serviceAdapter = null;
 
@@ -88,6 +103,9 @@ public class ServiceActivity extends BaseActivity {
     private void initAgo() {
         context = this;
         ButterKnife.bind(this);
+        if (!eventBus.isRegistered(this)) {
+            eventBus.register(this);
+        }
     }
 
     private void initView() {
@@ -103,24 +121,45 @@ public class ServiceActivity extends BaseActivity {
         srlServicePull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                srlServicePull.setRefreshing(false);
+                initPull(false);
             }
         });
     }
 
     private void initBack() {
-//        initPull();
+        initPull(true);
     }
 
-    private void initPull() {
+    private void initPull(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("", "");
+        String shop = shop(cartState.getUser().getShopid());
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        okHttpRequestWrap.post(CartAddaress.LOSS, true, "请稍候", params, new OnHttpRequest() {
+        okHttpRequestWrap.post(CartAddaress.STAFF_SHOP, isToast, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse服务---" + response);
-
+                if (srlServicePull != null) {
+                    srlServicePull.setRefreshing(false);
+                }
+                JSONObject resultJSON = JSON.parseObject(response);
+                int error_code = resultJSON.getInteger("ret");
+                String msg = resultJSON.getString("msg");
+                switch (error_code) {
+                    //获取成功
+                    case 200:
+                        String data = resultJSON.getString("data");
+                        cartState.getShopList().clear();
+                        List<Shop> routeList = gson.fromJson(data, new TypeToken<List<Shop>>() {
+                        }.getType());
+                        cartState.setShopList(routeList);
+                        if (serviceAdapter != null) {
+                            serviceAdapter.notifyDataSetChanged();
+                        }
+                        break;
+                    default:
+                        cartState.initToast(context, msg, true, 0);
+                        break;
+                }
             }
 
             @Override
@@ -128,6 +167,24 @@ public class ServiceActivity extends BaseActivity {
                 Log.e(TAG, "---onOkHttpError---" + error);
             }
         });
+    }
+
+    private String shop(String shopid) {
+        String result = null;
+        CartAddaress.STAFF_SHOP = CartAddaress.STAFF_SHOP.replace("SHOPID", cartState.urlEnodeUTF8(shopid));
+        result = CartAddaress.STAFF_SHOP;
+        Log.e(TAG, "---店总---" + result);
+        return result;
+    }
+
+    //服务订单
+    private String shopService(String ordernumb, String staffid) {
+        String result = null;
+        CartAddaress.SHOP_SERVICE = CartAddaress.SHOP_SERVICE.replace("ORDERNUMB", cartState.urlEnodeUTF8(ordernumb));
+        CartAddaress.SHOP_SERVICE = CartAddaress.SHOP_SERVICE.replace("STAFFID", cartState.urlEnodeUTF8(staffid));
+        result = CartAddaress.SHOP_SERVICE;
+        Log.e(TAG, "---服务---" + result);
+        return result;
     }
 
     private void initIntent(Class<?> activity) {
@@ -184,5 +241,51 @@ public class ServiceActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.e(TAG, "---销毁---");
+        eventBus.unregister(this);
+    }
+
+    /**
+     * 服务第一次，用于提示
+     *
+     * @param s
+     */
+    public void onEventMainThread(ServiceOneFind s) {
+        WhyDilogFragment whyDilogFragment = new WhyDilogFragment();
+        whyDilogFragment.setInit(4, "提示", "是否领取车牌号为" + cartState.getShopList().get(s.position).getCarnum() + "的订单.", "否", "是", s.position);
+        whyDilogFragment.show(getSupportFragmentManager(), "领取订单");
+    }
+
+    /**
+     * 服务第二次
+     *
+     * @param s
+     */
+    public void onEventMainThread(ServiceTwoFind s) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
+        String shopService = shopService(cartState.getShopList().get(s.position).getOrdernum(), cartState.getUser().getId());
+        okHttpRequestWrap.post(shopService, true, "领取中", params, new OnHttpRequest() {
+            @Override
+            public void onOkHttpResponse(String response, int id) {
+                Log.e(TAG, "---onOkHttpResponse完成---" + response);
+                JSONObject resultJSON = JSON.parseObject(response);
+                int ret = resultJSON.getInteger("ret");
+                String msg = resultJSON.getString("msg");
+                switch (ret) {
+                    case 200:
+                        String data = resultJSON.getString("data");
+                        initPull(true);
+                        break;
+                    default:
+                        cartState.initToast(context, msg, true, 0);
+                        break;
+                }
+            }
+
+            @Override
+            public void onOkHttpError(String error) {
+                Log.e(TAG, "---onOkHttpError---" + error);
+            }
+        });
     }
 }

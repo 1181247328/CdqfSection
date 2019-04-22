@@ -80,15 +80,6 @@ public class HomeFragment extends Fragment {
     }
 
     private void initListener() {
-
-    }
-
-    private void initAdapter() {
-        homeAdapter = new HomeAdapter(getContext());
-        mgvHomeList.setAdapter(homeAdapter);
-    }
-
-    private void initBack() {
         mgvHomeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -108,6 +99,16 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private void initAdapter() {
+        homeAdapter = new HomeAdapter(getContext());
+        mgvHomeList.setAdapter(homeAdapter);
+    }
+
+    private void initBack() {
+        tvHomeName.setText(cartState.getUser().getName() + ":");
+        tvHomeContext.setText("今天是您加入脱狗车宝第" + cartState.getUser().getDay() + "天!");
     }
 
     private void initIntent(Class<?> activity) {

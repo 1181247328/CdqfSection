@@ -18,16 +18,10 @@ import com.cdqf.cart_adapter.LossAdapter;
 import com.cdqf.cart_dilog.LossDilogFragment;
 import com.cdqf.cart_find.LossReceiveFind;
 import com.cdqf.cart_find.LossReceiveSubmitFind;
-import com.cdqf.cart_okhttp.OKHttpRequestWrap;
-import com.cdqf.cart_okhttp.OnHttpRequest;
 import com.cdqf.cart_state.BaseActivity;
-import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_state.StatusBarCompat;
 import com.nostra13.universalimageloader.core.ImageLoader;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -123,20 +117,20 @@ public class LossActivity extends BaseActivity {
     }
 
     private void initPull() {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("", "");
-        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        okHttpRequestWrap.post(CartAddaress.LOSS, true, "请稍候", params, new OnHttpRequest() {
-            @Override
-            public void onOkHttpResponse(String response, int id) {
-                Log.e(TAG, "---onOkHttpResponse损耗品---" + response);
-            }
-
-            @Override
-            public void onOkHttpError(String error) {
-                Log.e(TAG, "---onOkHttpError---" + error);
-            }
-        });
+//        Map<String, Object> params = new HashMap<String, Object>();
+//        params.put("", "");
+//        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
+//        okHttpRequestWrap.post(CartAddaress.LOSS, true, "请稍候", params, new OnHttpRequest() {
+//            @Override
+//            public void onOkHttpResponse(String response, int id) {
+//                Log.e(TAG, "---onOkHttpResponse损耗品---" + response);
+//            }
+//
+//            @Override
+//            public void onOkHttpError(String error) {
+//                Log.e(TAG, "---onOkHttpError---" + error);
+//            }
+//        });
     }
 
     private void initIntent(Class<?> activity) {

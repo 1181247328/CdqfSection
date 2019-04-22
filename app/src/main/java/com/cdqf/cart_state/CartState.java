@@ -28,6 +28,9 @@ import android.widget.Toast;
 import com.apkfuns.xprogressdialog.XProgressDialog;
 import com.cdqf.cart.R;
 import com.cdqf.cart_ble.Ble;
+import com.cdqf.cart_class.Notice;
+import com.cdqf.cart_class.Shop;
+import com.cdqf.cart_class.User;
 import com.cdqf.cart_service.Province;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -49,6 +52,8 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -106,6 +111,15 @@ public class CartState {
 
     //判断登录
     private boolean isLogin = false;
+
+    //用户
+    private User user = new User();
+
+    //店总服务数量
+    private List<Shop> shopList = new CopyOnWriteArrayList<>();
+
+    //店长通知
+    private List<Notice> noticeList = new CopyOnWriteArrayList<>();
 
 
     /**
@@ -696,6 +710,16 @@ public class CartState {
         return bmp;
     }
 
+    public String urlEnodeUTF8(String str) {
+        String result = str;
+        try {
+            result = URLEncoder.encode(str, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
 
     public Bitmap getHeadBitmap() {
         return headBitmap;
@@ -775,5 +799,29 @@ public class CartState {
 
     public void setLogin(boolean login) {
         isLogin = login;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public List<Shop> getShopList() {
+        return shopList;
+    }
+
+    public void setShopList(List<Shop> shopList) {
+        this.shopList = shopList;
+    }
+
+    public List<Notice> getNoticeList() {
+        return noticeList;
+    }
+
+    public void setNoticeList(List<Notice> noticeList) {
+        this.noticeList = noticeList;
     }
 }

@@ -10,20 +10,35 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
 import com.cdqf.cart_adapter.NoticeAdapter;
+import com.cdqf.cart_class.Notice;
+import com.cdqf.cart_find.ReleasePullFind;
+import com.cdqf.cart_okhttp.OKHttpRequestWrap;
+import com.cdqf.cart_okhttp.OnHttpRequest;
 import com.cdqf.cart_state.BaseActivity;
+import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_state.StatusBarCompat;
+import com.cdqf.cart_view.ListViewForScrollView;
+import com.cdqf.cart_view.VerticalSwipeRefreshLayout;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 
 /**
  * 通知(店长)
@@ -36,10 +51,14 @@ public class NoticeManagerActivity extends BaseActivity {
 
     private ImageLoader imageLoader = ImageLoader.getInstance();
 
+    private EventBus eventBus = EventBus.getDefault();
+
     private CartState cartState = CartState.getCartState();
 
+    private Gson gson = new Gson();
+
     @BindView(R.id.srl_notice_pull)
-    public SwipeRefreshLayout srlNoticePull = null;
+    public VerticalSwipeRefreshLayout srlNoticePull = null;
 
     //返回
     @BindView(R.id.rl_notice_return)
@@ -49,7 +68,7 @@ public class NoticeManagerActivity extends BaseActivity {
     public TextView tvNoticemanagerRelease = null;
 
     @BindView(R.id.lv_notice_list)
-    public ListView lvNoticeList = null;
+    public ListViewForScrollView lvNoticeList = null;
 
     private NoticeAdapter noticeAdapter = null;
 
@@ -87,11 +106,15 @@ public class NoticeManagerActivity extends BaseActivity {
     private void initAgo() {
         context = this;
         ButterKnife.bind(this);
+        if (!eventBus.isRegistered(this)) {
+            eventBus.register(this);
+        }
     }
 
     private void initView() {
         noticeAdapter = new NoticeAdapter(context);
         lvNoticeList.setAdapter(noticeAdapter);
+
     }
 
     private void initAdapter() {
@@ -99,23 +122,70 @@ public class NoticeManagerActivity extends BaseActivity {
     }
 
     private void initListener() {
-
         srlNoticePull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                srlNoticePull.setRefreshing(false);
+                initPull(false);
             }
         });
     }
 
     private void initBack() {
+        initPull(true);
+    }
 
+    private void initPull(boolean isToast) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
+        String notice = notice(cartState.getUser().getId(), cartState.getUser().getShopid());
+        okHttpRequestWrap.post(notice, isToast, "请稍候", params, new OnHttpRequest() {
+            @Override
+            public void onOkHttpResponse(String response, int id) {
+                Log.e(TAG, "---onOkHttpResponse通知---" + response);
+                if (srlNoticePull != null) {
+                    srlNoticePull.setRefreshing(false);
+                }
+                JSONObject resultJSON = JSON.parseObject(response);
+                int error_code = resultJSON.getInteger("ret");
+                String msg = resultJSON.getString("msg");
+                switch (error_code) {
+                    //获取成功
+                    case 200:
+                        String data = resultJSON.getString("data");
+                        cartState.getNoticeList().clear();
+                        List<Notice> noticeList = gson.fromJson(data, new TypeToken<List<Notice>>() {
+                        }.getType());
+                        cartState.setNoticeList(noticeList);
+                        if (noticeAdapter != null) {
+                            noticeAdapter.notifyDataSetChanged();
+                        }
+                        break;
+                    default:
+                        cartState.initToast(context, msg, true, 0);
+                        break;
+                }
+            }
+
+            @Override
+            public void onOkHttpError(String error) {
+                Log.e(TAG, "---onOkHttpError---" + error);
+            }
+        });
+    }
+
+    private String notice(String staffid, String shopid) {
+        String result = null;
+        CartAddaress.SHOP_NOTICE = CartAddaress.SHOP_NOTICE.replace("STAFFID", cartState.urlEnodeUTF8(staffid));
+        CartAddaress.SHOP_NOTICE = CartAddaress.SHOP_NOTICE.replace("SHOPID", cartState.urlEnodeUTF8(shopid));
+        result = CartAddaress.SHOP_NOTICE;
+        Log.e(TAG, "---通知---" + result);
+        return result;
     }
 
     private void initIntent(Class<?> activity) {
         Intent intent = new Intent(context, activity);
         startActivity(intent);
-        finish();
+//        finish();
     }
 
     @OnClick({R.id.rl_notice_return, R.id.tv_noticemanager_release})
@@ -171,6 +241,16 @@ public class NoticeManagerActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.e(TAG, "---销毁---");
+        eventBus.unregister(this);
+    }
+
+    /**
+     * 发布通知后刷新
+     *
+     * @param r
+     */
+    public void onEventMainThread(ReleasePullFind r) {
+        initPull(true);
     }
 }
 

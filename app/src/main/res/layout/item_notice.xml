@@ -25,6 +25,7 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="5dp"
                 android:background="#FF0000"
+                android:visibility="gone"
                 app:clip_background="true"
                 app:round_as_circle="true" />
 

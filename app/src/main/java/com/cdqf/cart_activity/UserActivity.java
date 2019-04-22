@@ -125,7 +125,7 @@ public class UserActivity extends BaseActivity {
     }
 
     private void initBack() {
-        initPull();
+       // initPull();
     }
 
     private void initPull() {
