@@ -60,11 +60,11 @@
                 android:inputType="number"
                 android:lineSpacingExtra="3dp"
                 android:lines="1"
-                android:paddingTop="15dp"
-                android:paddingBottom="15dp"
+                android:paddingTop="25dp"
+                android:paddingBottom="25dp"
                 android:singleLine="true"
-                android:textColor="#444"
-                android:textColorHint="#444"
+                android:textColor="@color/login_text"
+                android:textColorHint="@color/login_text"
                 android:textCursorDrawable="@drawable/nickname_cursor"
                 android:textSize="14sp" />
 

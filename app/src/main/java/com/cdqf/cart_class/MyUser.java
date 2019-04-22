@@ -1,6 +1,6 @@
 package com.cdqf.cart_class;
 
-public class User {
+public class MyUser {
     private String id;
     private String name;
     private String phone;
@@ -9,13 +9,13 @@ public class User {
     private String login_password;
     private String position_id;
     private String type;
+    private String urgent_phone;
+    private String urgent_name;
+    private String id_card;
     private String state;
     private String add_time;
     private String update_time;
-    private int day;
-    private String notice;
-
-    private ServiceAll serviceAll;
+    private String serviceAll;
 
     public String getId() {
         return id;
@@ -81,6 +81,30 @@ public class User {
         this.type = type;
     }
 
+    public String getUrgent_phone() {
+        return urgent_phone;
+    }
+
+    public void setUrgent_phone(String urgent_phone) {
+        this.urgent_phone = urgent_phone;
+    }
+
+    public String getUrgent_name() {
+        return urgent_name;
+    }
+
+    public void setUrgent_name(String urgent_name) {
+        this.urgent_name = urgent_name;
+    }
+
+    public String getId_card() {
+        return id_card;
+    }
+
+    public void setId_card(String id_card) {
+        this.id_card = id_card;
+    }
+
     public String getState() {
         return state;
     }
@@ -105,23 +129,16 @@ public class User {
         this.update_time = update_time;
     }
 
-    public int getDay() {
-        return day;
+    public String getServiceAll() {
+        return serviceAll;
     }
 
-    public void setDay(int day) {
-        this.day = day;
+    public void setServiceAll(String serviceAll) {
+        this.serviceAll = serviceAll;
     }
 
-    public String getNotice() {
-        return notice;
-    }
+    public class Serviceall {
 
-    public void setNotice(String notice) {
-        this.notice = notice;
-    }
-
-    public class ServiceAll {
         private String months;
         private String count;
 

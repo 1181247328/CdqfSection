@@ -10,10 +10,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cdqf.cart.R;
+import com.cdqf.cart_find.LossManagerOneFind;
+import com.cdqf.cart_state.CartState;
 import com.gcssloop.widget.RCRelativeLayout;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.greenrobot.event.EventBus;
 
 /**
  * 损耗适配器(店长);
@@ -23,6 +27,12 @@ public class LossManagerAdapter extends BaseAdapter {
     private String TAG = LossManagerAdapter.class.getSimpleName();
 
     private Context context = null;
+
+    private ImageLoader imageLoader = ImageLoader.getInstance();
+
+    private EventBus eventBus = EventBus.getDefault();
+
+    private CartState cartState = CartState.getCartState();
 
     public LossManagerAdapter(Context context) {
         this.context = context;
@@ -82,6 +92,8 @@ public class LossManagerAdapter extends BaseAdapter {
         @BindView(R.id.rcrl_lossmanager_item_loss)
         public RCRelativeLayout rcrlLossmanagerItemLoss = null;
 
+        //状态
+        public TextView tvLossmanagerItemAudit = null;
 
         public ViewHolder(View v) {
             ButterKnife.bind(this, v);
@@ -99,6 +111,8 @@ public class LossManagerAdapter extends BaseAdapter {
         @Override
         public void onClick(View v) {
             Log.e(TAG, "---输入数量---" + position);
+            eventBus.post(new LossManagerOneFind(position));
+
         }
     }
 
@@ -116,6 +130,7 @@ public class LossManagerAdapter extends BaseAdapter {
         @Override
         public void onClick(View v) {
             Log.e(TAG, "---添加库存---" + position);
+            eventBus.post(new LossManagerOneFind(position));
         }
     }
 }

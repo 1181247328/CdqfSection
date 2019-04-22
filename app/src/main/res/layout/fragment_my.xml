@@ -3,80 +3,112 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:orientation="vertical">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
-        android:scrollbars="none">
+        android:orientation="vertical">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/white"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:background="@color/tab_main_text_icon">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/tab_main_text_icon"
+                android:layout_centerVertical="true"
+                android:background="@android:color/transparent"
                 android:gravity="center"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
                 android:text="我的"
                 android:textColor="@color/white"
                 android:textSize="38px" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tv_my_exit"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/notice_click"
                 android:gravity="center"
-                android:orientation="vertical"
-                android:paddingTop="39dp"
-                android:paddingBottom="39dp">
+                android:paddingLeft="15dp"
+                android:paddingTop="10dp"
+                android:paddingRight="15dp"
+                android:paddingBottom="10dp"
+                android:text="退出"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
 
-                <com.gcssloop.widget.RCRelativeLayout
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:background="@color/white"
-                    app:clip_background="true"
-                    app:round_as_circle="true">
+        </RelativeLayout>
 
-                    <ImageView
-                        android:id="@+id/iv_my_hear"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@android:color/transparent"
-                        android:scaleType="fitXY"
-                        android:src="@mipmap/test5" />
+        <com.cdqf.cart_view.VerticalSwipeRefreshLayout
+            android:id="@+id/vsrl_my_pull"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white">
 
-                </com.gcssloop.widget.RCRelativeLayout>
-
-                <TextView
-                    android:id="@+id/tv_my_position"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:paddingTop="6dp"
-                    android:text="正式员工"
-                    android:textColor="@color/tab_main_text_default"
-                    android:textSize="14sp"
-                    android:visibility="gone" />
-
-            </LinearLayout>
-
-            <com.cdqf.cart_view.ListViewForScrollView
-                android:id="@+id/lvfsv_my_list"
+            <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
-                android:divider="@null"
-                android:scrollbars="none" />
+                android:scrollbars="none">
 
-        </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:orientation="vertical">
 
-    </ScrollView>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:paddingTop="39dp"
+                        android:paddingBottom="39dp">
 
+                        <com.gcssloop.widget.RCRelativeLayout
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:background="@color/white"
+                            app:clip_background="true"
+                            app:round_as_circle="true">
+
+                            <ImageView
+                                android:id="@+id/iv_my_hear"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@android:color/transparent"
+                                android:scaleType="fitXY"
+                                android:src="@mipmap/test5" />
+
+                        </com.gcssloop.widget.RCRelativeLayout>
+
+                        <TextView
+                            android:id="@+id/tv_my_position"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:paddingTop="6dp"
+                            android:textColor="@color/tab_main_text_default"
+                            android:textSize="14sp" />
+
+                    </LinearLayout>
+
+                    <com.cdqf.cart_view.ListViewForScrollView
+                        android:id="@+id/lvfsv_my_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/white"
+                        android:divider="@null"
+                        android:scrollbars="none" />
+
+                </LinearLayout>
+            </ScrollView>
+        </com.cdqf.cart_view.VerticalSwipeRefreshLayout>
+    </LinearLayout>
 </LinearLayout>

@@ -83,32 +83,32 @@ public class MyAdapter extends BaseAdapter {
         switch (position) {
             //姓名
             case 0:
-                viewHolder.tvMyItemName.setText(cartState.getUser().getName());
+                viewHolder.tvMyItemName.setText(cartState.getMyUser().getName());
                 break;
             //工号
             case 1:
-                viewHolder.tvMyItemName.setText("");
+                viewHolder.tvMyItemName.setText(cartState.getMyUser().getLogin_account());
                 break;
             //职位
             case 2:
                 //审核通过
-                if (TextUtils.equals(cartState.getUser().getType(), "1")) {
+                if (TextUtils.equals(cartState.getMyUser().getType(), "1")) {
                     //员工
-                    viewHolder.tvMyItemName.setText("员工");
-                } else if (TextUtils.equals(cartState.getUser().getType(), "2")) {
+                    viewHolder.tvMyItemName.setText("店员(" + cartState.getMyUser().getPosition_id() + ")");
+                } else if (TextUtils.equals(cartState.getMyUser().getType(), "2")) {
                     //店长
-                    viewHolder.tvMyItemName.setText("店长");
+                    viewHolder.tvMyItemName.setText("店长(" + cartState.getMyUser().getPosition_id() + ")");
                 } else {
                     //TODO
                 }
                 break;
             //紧急电话
             case 3:
-                viewHolder.tvMyItemName.setText("");
+                viewHolder.tvMyItemName.setText(cartState.getMyUser().getPhone());
                 break;
             //服务总数
             case 4:
-                viewHolder.tvMyItemName.setText("");
+                viewHolder.tvMyItemName.setText(cartState.getMyUser().getServiceAll());
                 break;
         }
         return convertView;

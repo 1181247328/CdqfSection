@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.cdqf.cart.R;
+import com.cdqf.cart_find.LossManagerNumberFind;
 import com.cdqf.cart_find.LossReceiveFind;
 import com.cdqf.cart_state.CartState;
 
@@ -37,6 +38,10 @@ public class LossDilogFragment extends DialogFragment {
 
     private EventBus eventBus = EventBus.getDefault();
 
+    private int position = 0;
+
+    private int type = 0;
+
     //物品名称
     @BindView(R.id.tv_loss_dilog_title)
     public TextView tvLossDilogTitle = null;
@@ -56,6 +61,11 @@ public class LossDilogFragment extends DialogFragment {
     //确定
     @BindView(R.id.tv_loss_dilog_determine)
     public TextView tvLossDilogDetermine = null;
+
+    public void number(int type, int position) {
+        this.type = type;
+        this.position = position;
+    }
 
     @Nullable
     @Override
@@ -121,7 +131,23 @@ public class LossDilogFragment extends DialogFragment {
             case R.id.tv_loss_dilog_cancel:
                 break;
             case R.id.tv_loss_dilog_determine:
-                eventBus.post(new LossReceiveFind(1));
+                switch (type) {
+                    //员工领取
+                    case 0:
+                        eventBus.post(new LossReceiveFind(1));
+                        break;
+                    //店长领取
+                    case 1:
+                        String numbers = xetLossDilogContext.getText().toString();
+                        if (numbers.length() <= 0) {
+                            cartState.initToast(getContext(), "请选择要领取的数量", true, 0);
+                            return;
+                        }
+                        int number = Integer.parseInt(numbers);
+                        eventBus.post(new LossManagerNumberFind(position, number));
+                        break;
+                }
+
                 break;
         }
         dismiss();

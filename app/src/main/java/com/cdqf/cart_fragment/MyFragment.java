@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,15 +13,28 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
+import com.cdqf.cart_activity.LoginActivity;
 import com.cdqf.cart_adapter.MyAdapter;
+import com.cdqf.cart_class.MyUser;
+import com.cdqf.cart_okhttp.OKHttpRequestWrap;
+import com.cdqf.cart_okhttp.OnHttpRequest;
+import com.cdqf.cart_state.CartAddaress;
+import com.cdqf.cart_state.CartPreferences;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_view.ListViewForScrollView;
+import com.cdqf.cart_view.VerticalSwipeRefreshLayout;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 
 /**
@@ -39,6 +54,9 @@ public class MyFragment extends Fragment {
 
     private View view = null;
 
+    @BindView(R.id.vsrl_my_pull)
+    public VerticalSwipeRefreshLayout vsrlMyPull = null;
+
     //头像
     @BindView(R.id.iv_my_hear)
     public ImageView ivMyHear = null;
@@ -49,6 +67,9 @@ public class MyFragment extends Fragment {
 
     @BindView(R.id.lvfsv_my_list)
     public ListViewForScrollView lvfsvMyList = null;
+
+    @BindView(R.id.tv_my_exit)
+    public TextView tvMyExit = null;
 
     private MyAdapter myAdapter = null;
 
@@ -76,21 +97,93 @@ public class MyFragment extends Fragment {
     }
 
     private void initListener() {
-
+        vsrlMyPull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                vsrlMyPull.setRefreshing(false);
+                initPull(false);
+            }
+        });
     }
 
     private void initAdapter() {
-        myAdapter = new MyAdapter(getContext());
-        lvfsvMyList.setAdapter(myAdapter);
+
     }
 
     private void initBack() {
+        initPull(true);
+    }
 
+    private void initPull(boolean isToast) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
+        String lossShop = userInformation(cartState.getUser().getId(), cartState.getUser().getShopid());
+        okHttpRequestWrap.post(lossShop, isToast, "请稍候", params, new OnHttpRequest() {
+            @Override
+            public void onOkHttpResponse(String response, int id) {
+                Log.e(TAG, "---onOkHttpResponse我的---" + response);
+                if (vsrlMyPull != null) {
+                    vsrlMyPull.setRefreshing(false);
+                }
+                JSONObject resultJSON = JSON.parseObject(response);
+                int error_code = resultJSON.getInteger("ret");
+                String msg = resultJSON.getString("msg");
+                switch (error_code) {
+                    //获取成功
+                    case 200:
+                        String data = resultJSON.getString("data");
+                        MyUser myUser = gson.fromJson(data, MyUser.class);
+                        cartState.setMyUser(myUser);
+                        //正式名称
+                        if (TextUtils.equals(myUser.getType(), "1")) {
+                            //员工
+                            tvMyPosition.setText("店员");
+                        } else if (TextUtils.equals(myUser.getType(), "2")) {
+                            //店长
+                            tvMyPosition.setText("店长");
+                        } else {
+                            //TODO
+                        }
+                        myAdapter = new MyAdapter(getContext());
+                        lvfsvMyList.setAdapter(myAdapter);
+                        break;
+                    default:
+                        cartState.initToast(getContext(), msg, true, 0);
+                        break;
+                }
+            }
+
+            @Override
+            public void onOkHttpError(String error) {
+                Log.e(TAG, "---onOkHttpError---" + error);
+            }
+        });
+    }
+
+    private String userInformation(String staffid, String shopid) {
+        String result = null;
+        CartAddaress.USER_INFORMATION = CartAddaress.USER_INFORMATION.replace("STAFFID", cartState.urlEnodeUTF8(staffid));
+        CartAddaress.USER_INFORMATION = CartAddaress.USER_INFORMATION.replace("SHOPID", cartState.urlEnodeUTF8(shopid));
+        result = CartAddaress.USER_INFORMATION;
+        Log.e(TAG, "---我的---" + result);
+        return result;
     }
 
     private void forIntent(Class<?> activity) {
         Intent intent = new Intent(getContext(), activity);
         startActivity(intent);
+    }
+
+    @OnClick({R.id.tv_my_exit})
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.tv_my_exit:
+                CartPreferences.clearUser(getContext());
+                cartState.setUser(null);
+                forIntent(LoginActivity.class);
+                getActivity().finish();
+                break;
+        }
     }
 
     @Override

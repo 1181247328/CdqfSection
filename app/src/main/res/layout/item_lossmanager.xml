@@ -78,23 +78,39 @@
                     android:gravity="right|center_vertical"
                     android:orientation="horizontal">
 
+                    <TextView
+                        android:id="@+id/tv_lossmanager_item_audit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:paddingLeft="10dp"
+                        android:paddingTop="6dp"
+                        android:paddingRight="10dp"
+                        android:paddingBottom="6dp"
+                        android:text="审核中"
+                        android:textColor="@color/loss_receive"
+                        android:textSize="12sp"
+                        android:visibility="gone" />
+
                     <com.gcssloop.widget.RCRelativeLayout
                         android:id="@+id/rcrl_lossmanager_item_input"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="3dp"
-                        android:layout_weight="1"
                         android:background="@color/white"
+                        android:visibility="gone"
                         app:clip_background="true"
                         app:round_corner="5dp"
                         app:stroke_color="@color/loss_manager_number"
                         app:stroke_width="1dp">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
+                            android:paddingLeft="10dp"
                             android:paddingTop="6dp"
+                            android:paddingRight="10dp"
                             android:paddingBottom="6dp"
                             android:text="输入数量"
                             android:textColor="@color/loss_manager_number"
@@ -104,21 +120,22 @@
 
                     <com.gcssloop.widget.RCRelativeLayout
                         android:id="@+id/rcrl_lossmanager_item_loss"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="3dp"
-                        android:layout_weight="1"
-                        android:background="@color/loss_receive"
+                        android:background="@drawable/line_reward"
                         app:clip_background="true"
                         app:round_corner="5dp">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
+                            android:paddingLeft="25dp"
                             android:paddingTop="6dp"
+                            android:paddingRight="25dp"
                             android:paddingBottom="6dp"
-                            android:text="点击领取"
+                            android:text="领取"
                             android:textColor="@color/white"
                             android:textSize="12sp" />
 

@@ -23,6 +23,9 @@ public class CartAddaress {
     //店长添加通知
     public static String SHOP_NOTICE_ADD = ADDRESS + "?s=Notice.stenotice&content=CONTENT&staffid=STAFFID&type=TYPE";
 
+    //损耗品
+    public static String SHOP_LOSS = ADDRESS + "?s=Notice.stenotice&content=CONTENT&staffid=STAFFID&type=TYPE";
+
     public static String LOSS = "";
 
     /******员工******/
@@ -31,4 +34,8 @@ public class CartAddaress {
 
     //通知
     public static String STAFF_NOTICE = ADDRESS + "/?s=Notice.getnotice&staffid=STAFFID&shopid=SHOPID";
+
+
+    /******通用******/
+    public static String USER_INFORMATION = ADDRESS + "/?s=staff.getstaff&staffid=STAFFID&shopid=SHOPID";
 }

@@ -22,6 +22,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cdqf.cart.R;
+import com.cdqf.cart_dilog.WhyDilogFragment;
+import com.cdqf.cart_find.ExitFind;
 import com.cdqf.cart_fragment.HomeFragment;
 import com.cdqf.cart_fragment.MyFragment;
 import com.cdqf.cart_state.BaseActivity;
@@ -37,6 +39,7 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 
 /**
  * 首页
@@ -47,6 +50,8 @@ public class MainActivity extends BaseActivity {
     private Context context = null;
 
     private ImageLoader imageLoader = ImageLoader.getInstance();
+
+    private EventBus eventBus = EventBus.getDefault();
 
     private CartState cartState = CartState.getCartState();
 
@@ -129,6 +134,9 @@ public class MainActivity extends BaseActivity {
         context = this;
         ButterKnife.bind(this);
         fragmentManager = getSupportFragmentManager();
+        if (!eventBus.isRegistered(this)) {
+            eventBus.register(this);
+        }
     }
 
     private void initView() {
@@ -278,7 +286,9 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        finish();
+        WhyDilogFragment whyDilogFragment = new WhyDilogFragment();
+        whyDilogFragment.setInit(6, "提示", "是否退出当前程序", "否", "是");
+        whyDilogFragment.show(getSupportFragmentManager(), "退出登录");
     }
 
     @Override
@@ -315,5 +325,15 @@ public class MainActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.e(TAG, "---销毁---");
+        eventBus.unregister(this);
+    }
+
+    /**
+     * 退出登录
+     *
+     * @param r
+     */
+    public void onEventMainThread(ExitFind r) {
+        exit();
     }
 }
