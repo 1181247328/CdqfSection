@@ -1,6 +1,7 @@
 package com.cdqf.cart_adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,7 +41,7 @@ public class LossManagerAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 7;
+        return cartState.getLossManList().size();
     }
 
     @Override
@@ -63,10 +64,28 @@ public class LossManagerAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+        imageLoader.displayImage(cartState.getLossManList().get(position).getImage(), viewHolder.ivLossmanagerItemImage, cartState.getImageLoaderOptions(R.mipmap.not_loaded, R.mipmap.not_loaded, R.mipmap.not_loaded));
+        viewHolder.tvLossmanagerItemName.setText("商品:" + cartState.getLossManList().get(position).getName());
+        viewHolder.tvLossmanagerItemNumber.setText("总量:" + cartState.getLossManList().get(position).getNumber());
         //输入数量
         viewHolder.rcrlLossmanagerItemInput.setOnClickListener(new OnInputListener(position));
         //点击领取
         viewHolder.rcrlLossmanagerItemLoss.setOnClickListener(new OnLossListener(position));
+        if (TextUtils.equals(cartState.getLossManList().get(position).getType(), "1")) {
+            //审核中
+            viewHolder.tvLossmanagerItemAudit.setText("审核中");
+            viewHolder.tvLossmanagerItemAudit.setVisibility(View.VISIBLE);
+            viewHolder.rcrlLossmanagerItemLoss.setVisibility(View.GONE);
+        } else if (TextUtils.equals(cartState.getLossManList().get(position).getType(), "2")) {
+            viewHolder.tvLossmanagerItemAudit.setText("");
+            viewHolder.tvLossmanagerItemAudit.setVisibility(View.GONE);
+            viewHolder.rcrlLossmanagerItemLoss.setVisibility(View.VISIBLE);
+        } else {
+            //TODO
+            viewHolder.tvLossmanagerItemAudit.setText("");
+            viewHolder.tvLossmanagerItemAudit.setVisibility(View.GONE);
+            viewHolder.rcrlLossmanagerItemLoss.setVisibility(View.VISIBLE);
+        }
         return convertView;
     }
 
@@ -93,6 +112,7 @@ public class LossManagerAdapter extends BaseAdapter {
         public RCRelativeLayout rcrlLossmanagerItemLoss = null;
 
         //状态
+        @BindView(R.id.tv_lossmanager_item_audit)
         public TextView tvLossmanagerItemAudit = null;
 
         public ViewHolder(View v) {

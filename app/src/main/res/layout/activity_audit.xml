@@ -22,12 +22,12 @@
                 android:layout_centerVertical="true"
                 android:background="@android:color/transparent"
                 android:gravity="center_horizontal"
-                android:text="损耗品"
+                android:text="审核"
                 android:textColor="@color/white"
                 android:textSize="16sp" />
 
             <RelativeLayout
-                android:id="@+id/rl_loss_return"
+                android:id="@+id/rl_audit_return"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:background="@drawable/notice_click"
@@ -67,7 +67,7 @@
             android:background="@color/white">
 
             <com.cdqf.cart_view.VerticalSwipeRefreshLayout
-                android:id="@+id/srl_loss_pull"
+                android:id="@+id/srl_audit_pull"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white">
@@ -85,15 +85,13 @@
                         android:scrollbars="none">
 
                         <com.cdqf.cart_view.ListViewForScrollView
-                            android:id="@+id/lv_loss_list"
+                            android:id="@+id/lv_audit_list"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:background="@color/service_bak"
                             android:divider="@null"
-                            android:dividerHeight="5dp"
-                            android:paddingLeft="10dp"
+                            android:dividerHeight="1dp"
                             android:paddingTop="10dp"
-                            android:paddingRight="10dp"
                             android:paddingBottom="10dp"
                             android:scrollbars="none" />
                     </LinearLayout>
@@ -102,7 +100,7 @@
             </com.cdqf.cart_view.VerticalSwipeRefreshLayout>
 
             <TextView
-                android:id="@+id/tv_lossmanager_no"
+                android:id="@+id/tv_audit_no"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"

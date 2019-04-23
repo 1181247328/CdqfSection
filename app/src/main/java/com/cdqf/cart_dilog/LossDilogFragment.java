@@ -122,6 +122,8 @@ public class LossDilogFragment extends DialogFragment {
      */
     private void initBack() {
         getDialog().setCanceledOnTouchOutside(false);
+        tvLossDilogTitle.setText(cartState.getLossManList().get(position).getName() + "库存:");
+        tvLossDilogNumber.setText(cartState.getLossManList().get(position).getNumber());
     }
 
     @OnClick({R.id.tv_loss_dilog_cancel, R.id.tv_loss_dilog_determine})

@@ -4,24 +4,35 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ListView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.cdqf.cart.R;
 import com.cdqf.cart_adapter.LossAdapter;
 import com.cdqf.cart_dilog.LossDilogFragment;
 import com.cdqf.cart_find.LossReceiveFind;
 import com.cdqf.cart_find.LossReceiveSubmitFind;
+import com.cdqf.cart_okhttp.OKHttpRequestWrap;
+import com.cdqf.cart_okhttp.OnHttpRequest;
 import com.cdqf.cart_state.BaseActivity;
+import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_state.StatusBarCompat;
+import com.cdqf.cart_view.ListViewForScrollView;
+import com.cdqf.cart_view.VerticalSwipeRefreshLayout;
 import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -43,16 +54,40 @@ public class LossActivity extends BaseActivity {
     private EventBus eventBus = EventBus.getDefault();
 
     @BindView(R.id.srl_loss_pull)
-    public SwipeRefreshLayout srlLossPull = null;
+    public VerticalSwipeRefreshLayout srlLossPull = null;
 
     //帐户
     @BindView(R.id.rl_loss_return)
     public RelativeLayout rlLossReturn = null;
 
     @BindView(R.id.lv_loss_list)
-    public ListView lvLossList = null;
+    public ListViewForScrollView lvLossList = null;
+
+    @BindView(R.id.tv_loss_no)
+    public TextView tvLossNo = null;
+
+    @BindView(R.id.ll_loss_one)
+    public LinearLayout llLossOne = null;
 
     private LossAdapter lossAdapter = null;
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0x001:
+                    lvLossList.setVisibility(View.VISIBLE);
+                    llLossOne.setVisibility(View.VISIBLE);
+                    tvLossNo.setVisibility(View.GONE);
+                    break;
+                case 0x002:
+                    lvLossList.setVisibility(View.GONE);
+                    llLossOne.setVisibility(View.GONE);
+                    tvLossNo.setVisibility(View.VISIBLE);
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,20 +152,19 @@ public class LossActivity extends BaseActivity {
     }
 
     private void initPull() {
-//        Map<String, Object> params = new HashMap<String, Object>();
-//        params.put("", "");
-//        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-//        okHttpRequestWrap.post(CartAddaress.LOSS, true, "请稍候", params, new OnHttpRequest() {
-//            @Override
-//            public void onOkHttpResponse(String response, int id) {
-//                Log.e(TAG, "---onOkHttpResponse损耗品---" + response);
-//            }
-//
-//            @Override
-//            public void onOkHttpError(String error) {
-//                Log.e(TAG, "---onOkHttpError---" + error);
-//            }
-//        });
+        Map<String, Object> params = new HashMap<String, Object>();
+        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
+        okHttpRequestWrap.post(CartAddaress.LOSS, true, "请稍候", params, new OnHttpRequest() {
+            @Override
+            public void onOkHttpResponse(String response, int id) {
+                Log.e(TAG, "---onOkHttpResponse损耗品---" + response);
+            }
+
+            @Override
+            public void onOkHttpError(String error) {
+                Log.e(TAG, "---onOkHttpError---" + error);
+            }
+        });
     }
 
     private void initIntent(Class<?> activity) {
@@ -197,6 +231,7 @@ public class LossActivity extends BaseActivity {
      */
     public void onEventMainThread(LossReceiveFind l) {
         LossDilogFragment lossDilogFragment = new LossDilogFragment();
+        lossDilogFragment.number(0, l.position);
         lossDilogFragment.show(getSupportFragmentManager(), "领取");
     }
 

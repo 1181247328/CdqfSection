@@ -37,4 +37,8 @@
 
     <color name="loss_manager_number">#a6a5a5</color>
 
+    <color name="audit_text">#474747</color>
+
+    <color name="datils_text">#909090</color>
+
 </resources>

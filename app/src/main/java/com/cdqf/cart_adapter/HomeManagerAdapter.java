@@ -33,7 +33,7 @@ public class HomeManagerAdapter extends BaseAdapter {
             "损耗品",
             "店总",
             "通知",
-            "用户"
+            "审核"
     };
 
     public HomeManagerAdapter(Context context) {

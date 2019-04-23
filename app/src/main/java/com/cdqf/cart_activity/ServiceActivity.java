@@ -4,13 +4,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -67,7 +71,26 @@ public class ServiceActivity extends BaseActivity {
     @BindView(R.id.lv_service_list)
     public ListViewForScrollView lvServiceList = null;
 
+    @BindView(R.id.tv_service_no)
+    public TextView tvServiceNo = null;
+
     private ServiceAdapter serviceAdapter = null;
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0x001:
+                    lvServiceList.setVisibility(View.VISIBLE);
+                    tvServiceNo.setVisibility(View.GONE);
+                    break;
+                case 0x002:
+                    lvServiceList.setVisibility(View.GONE);
+                    tvServiceNo.setVisibility(View.VISIBLE);
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,6 +171,11 @@ public class ServiceActivity extends BaseActivity {
                     //获取成功
                     case 200:
                         String data = resultJSON.getString("data");
+                        if (TextUtils.equals(data, "2222")) {
+                            handler.sendEmptyMessage(0x002);
+                            return;
+                        }
+                        handler.sendEmptyMessage(0x001);
                         cartState.getShopList().clear();
                         List<Shop> routeList = gson.fromJson(data, new TypeToken<List<Shop>>() {
                         }.getType());
@@ -157,6 +185,7 @@ public class ServiceActivity extends BaseActivity {
                         }
                         break;
                     default:
+                        handler.sendEmptyMessage(0x002);
                         cartState.initToast(context, msg, true, 0);
                         break;
                 }

@@ -19,14 +19,8 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
-import com.cdqf.cart_adapter.LossManagerAdapter;
-import com.cdqf.cart_class.LossMan;
-import com.cdqf.cart_dilog.LossDilogFragment;
-import com.cdqf.cart_dilog.WhyDilogFragment;
-import com.cdqf.cart_find.LossManagerNumberFind;
+import com.cdqf.cart_adapter.AuditAdapter;
 import com.cdqf.cart_find.LossManagerOneFind;
-import com.cdqf.cart_find.LossManagerReceiveFind;
-import com.cdqf.cart_find.LossReceiveSubmitFind;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;
 import com.cdqf.cart_state.BaseActivity;
@@ -34,11 +28,9 @@ import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_state.StatusBarCompat;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -47,9 +39,9 @@ import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 
 /**
- * 损耗品(店长)
+ * 审核
  */
-public class LossManagerActivity extends BaseActivity {
+public class AuditActivity extends BaseActivity {
     private String TAG = LossManagerActivity.class.getSimpleName();
 
     private Context context = null;
@@ -62,20 +54,20 @@ public class LossManagerActivity extends BaseActivity {
 
     private Gson gson = new Gson();
 
-    @BindView(R.id.srl_loss_pull)
-    public SwipeRefreshLayout srlLossPull = null;
+    @BindView(R.id.srl_audit_pull)
+    public SwipeRefreshLayout srlAuditPull = null;
 
     //帐户
-    @BindView(R.id.rl_loss_return)
-    public RelativeLayout rlLossReturn = null;
+    @BindView(R.id.rl_audit_return)
+    public RelativeLayout rlAuditReturn = null;
 
-    @BindView(R.id.lv_loss_list)
-    public ListView lvLossList = null;
+    @BindView(R.id.lv_audit_list)
+    public ListView lvAuditList = null;
 
-    @BindView(R.id.tv_lossmanager_no)
-    public TextView tvLossmanagerNo = null;
+    @BindView(R.id.tv_audit_no)
+    public TextView tvAuditNo = null;
 
-    private LossManagerAdapter lossManagerAdapter = null;
+    private AuditAdapter auditAdapter = null;
 
     //领取的数量
     private int number = 0;
@@ -85,12 +77,12 @@ public class LossManagerActivity extends BaseActivity {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0x001:
-                    lvLossList.setVisibility(View.VISIBLE);
-                    tvLossmanagerNo.setVisibility(View.GONE);
+                    lvAuditList.setVisibility(View.VISIBLE);
+                    tvAuditNo.setVisibility(View.GONE);
                     break;
                 case 0x002:
-                    lvLossList.setVisibility(View.GONE);
-                    tvLossmanagerNo.setVisibility(View.VISIBLE);
+                    lvAuditList.setVisibility(View.GONE);
+                    tvAuditNo.setVisibility(View.VISIBLE);
                     break;
             }
         }
@@ -108,7 +100,7 @@ public class LossManagerActivity extends BaseActivity {
         }
 
         //加载布局
-        setContentView(R.layout.activity_lossmanager);
+        setContentView(R.layout.activity_audit);
 
         //API>=20以上用于沉侵式菜单栏
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
@@ -137,8 +129,8 @@ public class LossManagerActivity extends BaseActivity {
     }
 
     private void initView() {
-        lossManagerAdapter = new LossManagerAdapter(context);
-        lvLossList.setAdapter(lossManagerAdapter);
+        auditAdapter = new AuditAdapter(context);
+        lvAuditList.setAdapter(auditAdapter);
     }
 
     private void initAdapter() {
@@ -147,28 +139,28 @@ public class LossManagerActivity extends BaseActivity {
 
     private void initListener() {
 
-        srlLossPull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        srlAuditPull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                initPull(false);
+                // initPull(false);
             }
         });
     }
 
     private void initBack() {
-        initPull(true);
+        // initPull(true);
     }
 
     private void initPull(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("s", "TotalGoods.lists");
+        params.put("", "");
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
         okHttpRequestWrap.post(CartAddaress.SHOP_TOTAL, isToast, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
-                Log.e(TAG, "---onOkHttpResponse耗材列表---" + response);
-                if (srlLossPull != null) {
-                    srlLossPull.setRefreshing(false);
+                Log.e(TAG, "---onOkHttpResponse审核---" + response);
+                if (srlAuditPull != null) {
+                    srlAuditPull.setRefreshing(false);
                 }
                 JSONObject resultJSON = JSON.parseObject(response);
                 int error_code = resultJSON.getInteger("ret");
@@ -178,13 +170,13 @@ public class LossManagerActivity extends BaseActivity {
                     case 200:
                         handler.sendEmptyMessage(0x001);
                         String data = resultJSON.getString("data");
-                        cartState.getLossManList().clear();
-                        List<LossMan> lossManList = gson.fromJson(data, new TypeToken<List<LossMan>>() {
-                        }.getType());
-                        cartState.setLossManList(lossManList);
-                        if (lossManagerAdapter != null) {
-                            lossManagerAdapter.notifyDataSetChanged();
-                        }
+//                        cartState.getLossManList().clear();
+//                        List<LossMan> lossManList = gson.fromJson(data, new TypeToken<List<LossMan>>() {
+//                        }.getType());
+//                        cartState.setLossManList(lossManList);
+//                        if (lossManagerAdapter != null) {
+//                            lossManagerAdapter.notifyDataSetChanged();
+//                        }
                         break;
                     default:
                         handler.sendEmptyMessage(0x002);
@@ -205,11 +197,11 @@ public class LossManagerActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    @OnClick({R.id.rl_loss_return})
+    @OnClick({R.id.rl_audit_return})
     public void onClick(View v) {
         switch (v.getId()) {
-            //登录
-            case R.id.rl_loss_return:
+            //返回
+            case R.id.rl_audit_return:
                 finish();
                 break;
         }
@@ -263,71 +255,7 @@ public class LossManagerActivity extends BaseActivity {
      * @param r
      */
     public void onEventMainThread(LossManagerOneFind r) {
-        LossDilogFragment lossDilogFragment = new LossDilogFragment();
-        lossDilogFragment.number(1, r.position);
-        lossDilogFragment.show(getSupportFragmentManager(), "领取数量");
-    }
 
-    /**
-     * 数量
-     *
-     * @param l
-     */
-    public void onEventMainThread(LossManagerNumberFind l) {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("s", "TotalGoods.receive");
-        params.put("goods_id", cartState.getLossManList().get(l.position).getId());
-        params.put("user_id", cartState.getUser().getId());
-        params.put("number", l.number);
-        params.put("shop_id", cartState.getUser().getShopid());
-        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        okHttpRequestWrap.post(CartAddaress.SHOP_RECEIVE, true, "请稍候", params, new OnHttpRequest() {
-            @Override
-            public void onOkHttpResponse(String response, int id) {
-                Log.e(TAG, "---onOkHttpResponse领取物品---" + response);
-                JSONObject resultJSON = JSON.parseObject(response);
-                int error_code = resultJSON.getInteger("ret");
-                String msg = resultJSON.getString("msg");
-                switch (error_code) {
-                    //获取成功
-                    case 200:
-                        String data = resultJSON.getString("data");
-                        cartState.initToast(context, "领取物品成功", true, 0);
-                        initPull(true);
-                        break;
-                    default:
-                        cartState.initToast(context, msg, true, 0);
-                        break;
-                }
-            }
-
-            @Override
-            public void onOkHttpError(String error) {
-                Log.e(TAG, "---onOkHttpError---" + error);
-            }
-        });
-    }
-
-    /**
-     * 确定认领取第一次
-     *
-     * @param l
-     */
-    public void onEventMainThread(LossManagerReceiveFind l) {
-        if (number <= 0) {
-            cartState.initToast(context, "请选择领取数量", true, 0);
-            return;
-        }
-        WhyDilogFragment whyDilogFragment = new WhyDilogFragment();
-        whyDilogFragment.setInit(5, "提示", "您正在领取毛巾" + number + "条", "否", "是");
-        whyDilogFragment.show(getSupportFragmentManager(), "确定领取");
-    }
-
-    /**
-     * 确定领取
-     *
-     * @param l
-     */
-    public void onEventMainThread(LossReceiveSubmitFind l) {
     }
 }
+

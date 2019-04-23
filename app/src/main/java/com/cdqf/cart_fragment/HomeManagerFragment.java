@@ -12,10 +12,10 @@ import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.cdqf.cart.R;
+import com.cdqf.cart_activity.AuditActivity;
 import com.cdqf.cart_activity.LossManagerActivity;
 import com.cdqf.cart_activity.NoticeManagerActivity;
 import com.cdqf.cart_activity.ShopActivity;
-import com.cdqf.cart_activity.UserActivity;
 import com.cdqf.cart_adapter.HomeManagerAdapter;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_view.MyGridView;
@@ -99,7 +99,7 @@ public class HomeManagerFragment extends Fragment {
                         break;
                     //用户
                     case 3:
-                        initIntent(UserActivity.class);
+                        initIntent(AuditActivity.class);
                         break;
                 }
             }
