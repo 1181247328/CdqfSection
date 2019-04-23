@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.cdqf.cart.R;
 import com.cdqf.cart_dilogadapter.ServiceTwoFind;
+import com.cdqf.cart_find.DatilsPhoneFind;
 import com.cdqf.cart_find.ExitFind;
 import com.cdqf.cart_find.ReleaseFind;
 import com.cdqf.cart_find.ShopServiceTwoFind;
@@ -201,6 +202,10 @@ public class WhyDilogFragment extends DialogFragment {
                     //MainManagerActivity
                     case 6:
                         eventBus.post(new ExitFind());
+                        break;
+                    //DatilsActivity
+                    case 7:
+                        eventBus.post(new DatilsPhoneFind());
                         break;
                 }
                 break;

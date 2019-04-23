@@ -20,11 +20,23 @@ public class CartAddaress {
     //店长添加通知
     public static String SHOP_NOTICE_ADD = ADDRESS + "/?s=Notice.stenotice&content=CONTENT&staffid=STAFFID&type=TYPE";
 
+    //店长查看通知
+    public static String SHOP_DATILE = ADDRESS + "/?s=Order.getorderinfo&ordernum=ORDERNUM";
+
     //店长领取
     public static String SHOP_RECEIVE = ADDRESS + "/?s=TotalGoods.receive";
 
     //店长耗材
     public static String SHOP_TOTAL = ADDRESS + "/?s=TotalGoods.lists";
+
+    //店长审核列表
+    public static String SHOP_AUDIT = ADDRESS + "/?s=TotalGoods.shop_approval_list";
+
+    //店长通过
+    public static String SHOP_THROUGH = ADDRESS + "/?s=TotalGoods.shop_approval";
+
+    //店长不通过
+    public static String SHOP_THROUGH_NO = ADDRESS + "/?s=TotalGoods.shop_exit";
 
     public static String LOSS = ADDRESS + "";
 

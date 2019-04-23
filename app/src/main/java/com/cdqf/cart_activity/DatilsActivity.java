@@ -2,6 +2,7 @@ package com.cdqf.cart_activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -16,7 +17,9 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
-import com.cdqf.cart_find.LossManagerOneFind;
+import com.cdqf.cart_class.Datils;
+import com.cdqf.cart_dilog.WhyDilogFragment;
+import com.cdqf.cart_find.DatilsPhoneFind;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;
 import com.cdqf.cart_state.BaseActivity;
@@ -99,6 +102,10 @@ public class DatilsActivity extends BaseActivity {
     @BindView(R.id.rcrl_datils_add)
     public RCRelativeLayout rcrlDatilsAdd = null;
 
+    private int position = 0;
+
+    private Datils datils = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,6 +140,8 @@ public class DatilsActivity extends BaseActivity {
     private void initAgo() {
         context = this;
         ButterKnife.bind(this);
+        Intent intent = getIntent();
+        position = intent.getIntExtra("position", 0);
         imageLoader = cartState.getImageLoader(context);
         if (!eventBus.isRegistered(this)) {
             eventBus.register(this);
@@ -158,17 +167,17 @@ public class DatilsActivity extends BaseActivity {
     }
 
     private void initBack() {
-        // initPull(true);
+        initPull(true);
     }
 
     private void initPull(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("", "");
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        okHttpRequestWrap.post(CartAddaress.SHOP_TOTAL, isToast, "请稍候", params, new OnHttpRequest() {
+        String ordernum = ordernum(cartState.getShopList().get(position).getOrdernum());
+        okHttpRequestWrap.post(ordernum, isToast, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
-                Log.e(TAG, "---onOkHttpResponse审核---" + response);
+                Log.e(TAG, "---onOkHttpResponse详情---" + response);
 
                 JSONObject resultJSON = JSON.parseObject(response);
                 int error_code = resultJSON.getInteger("ret");
@@ -176,15 +185,22 @@ public class DatilsActivity extends BaseActivity {
                 switch (error_code) {
                     //获取成功
                     case 200:
-
                         String data = resultJSON.getString("data");
-//                        cartState.getLossManList().clear();
-//                        List<LossMan> lossManList = gson.fromJson(data, new TypeToken<List<LossMan>>() {
-//                        }.getType());
-//                        cartState.setLossManList(lossManList);
-//                        if (lossManagerAdapter != null) {
-//                            lossManagerAdapter.notifyDataSetChanged();
-//                        }
+                        datils = gson.fromJson(data, Datils.class);
+                        //金额
+                        tvDatilsMount.setText(datils.getZongprice());
+                        //电话
+                        tvDatilsPhone.setText(datils.getPhone());
+                        //服务项目
+                        String goodsNmae = "";
+                        for (String name : datils.getGoodsname()) {
+                            goodsNmae += name + " ";
+                        }
+                        tvDatilsAdd.setText(goodsNmae);
+                        //订单编号
+                        tvDatilsSerial.setText(datils.getOrdernum());
+                        //下单时间
+                        tvDatilsTimer.setText(datils.getAddtime());
                         break;
                     default:
                         cartState.initToast(context, msg, true, 0);
@@ -197,6 +213,13 @@ public class DatilsActivity extends BaseActivity {
                 Log.e(TAG, "---onOkHttpError---" + error);
             }
         });
+    }
+
+    private String ordernum(String ordernum) {
+        String result = null;
+        result = CartAddaress.ADDRESS + "/?s=Order.getorderinfo&ordernum=" + ordernum;
+        Log.e(TAG, "---详情---" + result);
+        return result;
     }
 
     private void initIntent(Class<?> activity) {
@@ -213,6 +236,9 @@ public class DatilsActivity extends BaseActivity {
                 break;
             //电话拨打
             case R.id.rcrl_datils_call:
+                WhyDilogFragment whyTwoDilogFragment = new WhyDilogFragment();
+                whyTwoDilogFragment.setInit(7, "提示", "是否拨打" + datils.getPhone() + "的电话", "否", "是");
+                whyTwoDilogFragment.show(getSupportFragmentManager(), "联系我们");
                 break;
             //追加服务
             case R.id.rcrl_datils_add:
@@ -267,7 +293,8 @@ public class DatilsActivity extends BaseActivity {
      *
      * @param r
      */
-    public void onEventMainThread(LossManagerOneFind r) {
-
+    public void onEventMainThread(DatilsPhoneFind r) {
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + datils.getPhone()));
+        startActivity(intent);
     }
 }

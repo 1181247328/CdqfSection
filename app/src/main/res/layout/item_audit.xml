@@ -113,10 +113,35 @@
                     android:gravity="right|center_vertical">
 
                     <com.gcssloop.widget.RCRelativeLayout
-                        android:id="@+id/rcrl_audit_item_through"
+                        android:id="@+id/rcrl_audit_item_refused"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/component_click"
+                        android:background="@android:color/transparent"
+                        app:clip_background="true"
+                        app:stroke_color="#f75c3e"
+                        android:layout_marginRight="2dp"
+                        app:stroke_width="1dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:paddingLeft="15dp"
+                            android:paddingTop="5dp"
+                            android:paddingRight="15dp"
+                            android:paddingBottom="5dp"
+                            android:text="拒绝"
+                            android:textColor="#f75c3e"
+                            android:textSize="14sp" />
+
+                    </com.gcssloop.widget.RCRelativeLayout>
+
+                    <com.gcssloop.widget.RCRelativeLayout
+                        android:id="@+id/rcrl_audit_item_through"
+                        android:layout_width="wrap_content"
+                        android:layout_marginLeft="2dp"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
                         app:clip_background="true"
                         app:stroke_color="#f75c3e"
                         app:stroke_width="1dp">
@@ -125,11 +150,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@android:color/transparent"
-                            android:paddingLeft="20dp"
+                            android:paddingLeft="15dp"
                             android:paddingTop="5dp"
-                            android:paddingRight="20dp"
+                            android:paddingRight="15dp"
                             android:paddingBottom="5dp"
-                            android:text="审核通过"
+                            android:text="通过"
                             android:textColor="#f75c3e"
                             android:textSize="14sp" />
 

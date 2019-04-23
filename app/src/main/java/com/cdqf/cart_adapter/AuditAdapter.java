@@ -9,11 +9,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cdqf.cart.R;
+import com.cdqf.cart_find.ThroughFind;
 import com.cdqf.cart_state.CartState;
 import com.gcssloop.widget.RCRelativeLayout;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.greenrobot.event.EventBus;
 
 /**
  * 审核适配器
@@ -23,6 +26,10 @@ public class AuditAdapter extends BaseAdapter {
 
     private Context context = null;
 
+    private ImageLoader imageLoader = ImageLoader.getInstance();
+
+    private EventBus eventBus = EventBus.getDefault();
+
     private CartState cartState = CartState.getCartState();
 
     public AuditAdapter(Context context) {
@@ -31,7 +38,7 @@ public class AuditAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 5;
+        return cartState.getAuditList().size();
     }
 
     @Override
@@ -54,7 +61,18 @@ public class AuditAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-
+        imageLoader.displayImage(cartState.getAuditList().get(position).getImage(), viewHolder.ivAuditItemImage, cartState.getImageLoaderOptions(R.mipmap.not_loaded, R.mipmap.not_loaded, R.mipmap.not_loaded));
+        //物品
+        viewHolder.tvAuditItemName.setText(cartState.getAuditList().get(position).getGoods_name());
+        //数量
+        viewHolder.tvAuditItemNumber.setText(cartState.getAuditList().get(position).getNumber() + "条");
+        //人物
+        viewHolder.tvAuditItemFigure.setText("申请人:" + cartState.getAuditList().get(position).getName());
+        //时间
+        viewHolder.tvAuditItemTimer.setText(cartState.getAuditList().get(position).getAdd_time());
+        viewHolder.rcrlAuditItemRefused.setOnClickListener(new OnRefusedListener(position));
+        //通过
+        viewHolder.rcrlAuditItemThrough.setOnClickListener(new OnThroughListener(position));
         return convertView;
     }
 
@@ -80,13 +98,50 @@ public class AuditAdapter extends BaseAdapter {
         @BindView(R.id.tv_audit_item_timer)
         public TextView tvAuditItemTimer = null;
 
-        //审核通过
+        //拒绝
+        @BindView(R.id.rcrl_audit_item_refused)
+        public RCRelativeLayout rcrlAuditItemRefused = null;
+        //通过
         @BindView(R.id.rcrl_audit_item_through)
         public RCRelativeLayout rcrlAuditItemThrough = null;
 
 
         public ViewHolder(View v) {
             ButterKnife.bind(this, v);
+        }
+    }
+
+    /**
+     * 拒绝
+     */
+    class OnRefusedListener implements View.OnClickListener {
+
+        private int position;
+
+        public OnRefusedListener(int position) {
+            this.position = position;
+        }
+
+        @Override
+        public void onClick(View v) {
+            eventBus.post(new ThroughFind(position, false));
+        }
+    }
+
+    /**
+     * 同意
+     */
+    class OnThroughListener implements View.OnClickListener {
+
+        private int position;
+
+        public OnThroughListener(int position) {
+            this.position = position;
+        }
+
+        @Override
+        public void onClick(View v) {
+            eventBus.post(new ThroughFind(position, true));
         }
     }
 }

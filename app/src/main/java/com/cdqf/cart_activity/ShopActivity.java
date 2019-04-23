@@ -153,7 +153,7 @@ public class ShopActivity extends BaseActivity {
         lvShopList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                initIntent(DatilsActivity.class, position);
             }
         });
     }
@@ -235,6 +235,13 @@ public class ShopActivity extends BaseActivity {
         Intent intent = new Intent(context, activity);
         startActivity(intent);
     }
+
+    private void initIntent(Class<?> activity, int position) {
+        Intent intent = new Intent(context, activity);
+        intent.putExtra("position", position);
+        startActivity(intent);
+    }
+
 
     @OnClick({R.id.rl_shop_return})
     public void onClick(View v) {

@@ -20,7 +20,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
 import com.cdqf.cart_adapter.AuditAdapter;
-import com.cdqf.cart_find.LossManagerOneFind;
+import com.cdqf.cart_class.Audit;
+import com.cdqf.cart_find.ThroughFind;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;
 import com.cdqf.cart_state.BaseActivity;
@@ -28,9 +29,11 @@ import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_state.StatusBarCompat;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -42,7 +45,7 @@ import de.greenrobot.event.EventBus;
  * 审核
  */
 public class AuditActivity extends BaseActivity {
-    private String TAG = LossManagerActivity.class.getSimpleName();
+    private String TAG = AuditActivity.class.getSimpleName();
 
     private Context context = null;
 
@@ -142,20 +145,21 @@ public class AuditActivity extends BaseActivity {
         srlAuditPull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                // initPull(false);
+                initPull(false);
             }
         });
     }
 
     private void initBack() {
-        // initPull(true);
+        initPull(true);
     }
 
     private void initPull(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("", "");
+        params.put("s", "TotalGoods.shop_approval_list");
+        params.put("shop_id", cartState.getUser().getShopid());
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        okHttpRequestWrap.post(CartAddaress.SHOP_TOTAL, isToast, "请稍候", params, new OnHttpRequest() {
+        okHttpRequestWrap.post(CartAddaress.SHOP_AUDIT, isToast, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse审核---" + response);
@@ -170,13 +174,13 @@ public class AuditActivity extends BaseActivity {
                     case 200:
                         handler.sendEmptyMessage(0x001);
                         String data = resultJSON.getString("data");
-//                        cartState.getLossManList().clear();
-//                        List<LossMan> lossManList = gson.fromJson(data, new TypeToken<List<LossMan>>() {
-//                        }.getType());
-//                        cartState.setLossManList(lossManList);
-//                        if (lossManagerAdapter != null) {
-//                            lossManagerAdapter.notifyDataSetChanged();
-//                        }
+                        cartState.getAuditList().clear();
+                        List<Audit> auditList = gson.fromJson(data, new TypeToken<List<Audit>>() {
+                        }.getType());
+                        cartState.setAuditList(auditList);
+                        if (auditAdapter != null) {
+                            auditAdapter.notifyDataSetChanged();
+                        }
                         break;
                     default:
                         handler.sendEmptyMessage(0x002);
@@ -250,12 +254,58 @@ public class AuditActivity extends BaseActivity {
     }
 
     /**
-     * 输入领取数量
+     * 通过
      *
-     * @param r
+     * @param t
      */
-    public void onEventMainThread(LossManagerOneFind r) {
+    public void onEventMainThread(ThroughFind t) {
+        final boolean isTHrough = t.isThrough;
+        Map<String, Object> params = new HashMap<String, Object>();
+        if (t.isThrough) {
+            params.put("s", "TotalGoods.shop_approval_list");
+        } else {
+            params.put("s", "TotalGoods.shop_exit");
+        }
+        params.put("goods_id", cartState.getAuditList().get(t.position).getGoods_id());
+        params.put("shop_id", cartState.getUser().getShopid());
+        params.put("id", cartState.getAuditList().get(t.position).getId());
+        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
+        String address = null;
+        if (t.isThrough) {
+            address = CartAddaress.SHOP_THROUGH;
+        } else {
+            address = CartAddaress.SHOP_THROUGH_NO;
+        }
+        Log.e(TAG, "---" + address);
+        okHttpRequestWrap.post(address, true, "请稍候", params, new OnHttpRequest() {
+            @Override
+            public void onOkHttpResponse(String response, int id) {
+                Log.e(TAG, "---onOkHttpResponse通过---" + response);
+                JSONObject resultJSON = JSON.parseObject(response);
+                int error_code = resultJSON.getInteger("ret");
+                String msg = resultJSON.getString("msg");
+                switch (error_code) {
+                    //获取成功
+                    case 200:
+                        handler.sendEmptyMessage(0x001);
+                        if (isTHrough) {
+                            cartState.initToast(context, "已同意申请", true, 0);
+                        } else {
+                            cartState.initToast(context, "已拒绝申请", true, 0);
+                        }
+                        initPull(true);
+                        break;
+                    default:
+                        cartState.initToast(context, msg, true, 0);
+                        break;
+                }
+            }
 
+            @Override
+            public void onOkHttpError(String error) {
+                Log.e(TAG, "---onOkHttpError---" + error);
+            }
+        });
     }
 }
 

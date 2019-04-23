@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.apkfuns.xprogressdialog.XProgressDialog;
 import com.cdqf.cart.R;
 import com.cdqf.cart_ble.Ble;
+import com.cdqf.cart_class.Audit;
 import com.cdqf.cart_class.LossMan;
 import com.cdqf.cart_class.LossStaff;
 import com.cdqf.cart_class.MyUser;
@@ -131,6 +132,9 @@ public class CartState {
 
     //耗材(员工)
     private List<LossStaff> lossStaffList = new CopyOnWriteArrayList<>();
+
+    //审核列表
+    private List<Audit> auditList = new CopyOnWriteArrayList<>();
 
 
     /**
@@ -858,5 +862,13 @@ public class CartState {
 
     public void setLossStaffList(List<LossStaff> lossStaffList) {
         this.lossStaffList = lossStaffList;
+    }
+
+    public List<Audit> getAuditList() {
+        return auditList;
+    }
+
+    public void setAuditList(List<Audit> auditList) {
+        this.auditList = auditList;
     }
 }
