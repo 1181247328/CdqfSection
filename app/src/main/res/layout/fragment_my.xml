@@ -84,7 +84,7 @@
                                 android:layout_height="wrap_content"
                                 android:background="@android:color/transparent"
                                 android:scaleType="fitXY"
-                                android:src="@mipmap/test5" />
+                                android:src="@mipmap/test6" />
 
                         </com.gcssloop.widget.RCRelativeLayout>
 

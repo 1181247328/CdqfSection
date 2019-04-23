@@ -134,10 +134,8 @@ public class LoginActivity extends BaseActivity {
     }
 
     private String loginAccPass(String account, String password) {
-        String result = null;
-        CartAddaress.LOGIN = CartAddaress.LOGIN.replace("ACCOUNT", cartState.urlEnodeUTF8(account));
-        CartAddaress.LOGIN = CartAddaress.LOGIN.replace("PASSWORD", cartState.urlEnodeUTF8(password));
-        result = CartAddaress.LOGIN;
+        String result = "";
+        result = CartAddaress.ADDRESS+"/?s=Staff.login&account="+account+"&password="+password;
         Log.e(TAG, "---登录---" + result);
         return result;
     }

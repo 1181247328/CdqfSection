@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
@@ -11,7 +13,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -70,7 +74,26 @@ public class ShopActivity extends BaseActivity {
     @BindView(R.id.lv_shop_list)
     public ListViewForScrollView lvShopList = null;
 
+    @BindView(R.id.tv_shop_no)
+    public TextView tvShopNo = null;
+
     private ShopAdapter shopAdapter = null;
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0x001:
+                    lvShopList.setVisibility(View.VISIBLE);
+                    tvShopNo.setVisibility(View.GONE);
+                    break;
+                case 0x002:
+                    lvShopList.setVisibility(View.GONE);
+                    tvShopNo.setVisibility(View.VISIBLE);
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,6 +150,12 @@ public class ShopActivity extends BaseActivity {
                 initPull(false);
             }
         });
+        lvShopList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+        });
     }
 
     private void initBack() {
@@ -150,6 +179,7 @@ public class ShopActivity extends BaseActivity {
                 switch (error_code) {
                     //获取成功
                     case 200:
+                        handler.sendEmptyMessage(0x001);
                         String data = resultJSON.getString("data");
                         cartState.getShopList().clear();
                         List<Shop> routeList = gson.fromJson(data, new TypeToken<List<Shop>>() {
@@ -160,6 +190,7 @@ public class ShopActivity extends BaseActivity {
                         }
                         break;
                     default:
+                        handler.sendEmptyMessage(0x002);
                         cartState.initToast(context, msg, true, 0);
                         break;
                 }

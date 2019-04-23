@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.cdqf.cart.R;
 import com.cdqf.cart_find.LossManagerNumberFind;
-import com.cdqf.cart_find.LossReceiveFind;
+import com.cdqf.cart_find.LossReceiveSubmitFind;
 import com.cdqf.cart_state.CartState;
 
 import butterknife.BindView;
@@ -122,8 +122,19 @@ public class LossDilogFragment extends DialogFragment {
      */
     private void initBack() {
         getDialog().setCanceledOnTouchOutside(false);
-        tvLossDilogTitle.setText(cartState.getLossManList().get(position).getName() + "库存:");
-        tvLossDilogNumber.setText(cartState.getLossManList().get(position).getNumber());
+        switch (type) {
+            //店员
+            case 0:
+                tvLossDilogTitle.setText(cartState.getLossStaffList().get(position).getName() + "库存:");
+                tvLossDilogNumber.setText(cartState.getLossStaffList().get(position).getNumber());
+                break;
+            //店长
+            case 1:
+                tvLossDilogTitle.setText(cartState.getLossManList().get(position).getName() + "库存:");
+                tvLossDilogNumber.setText(cartState.getLossManList().get(position).getNumber());
+                break;
+        }
+
     }
 
     @OnClick({R.id.tv_loss_dilog_cancel, R.id.tv_loss_dilog_determine})
@@ -133,19 +144,19 @@ public class LossDilogFragment extends DialogFragment {
             case R.id.tv_loss_dilog_cancel:
                 break;
             case R.id.tv_loss_dilog_determine:
+                String numbers = xetLossDilogContext.getText().toString();
+                int number = Integer.parseInt(numbers);
+                if (numbers.length() <= 0) {
+                    cartState.initToast(getContext(), "请选择要领取的数量", true, 0);
+                    return;
+                }
                 switch (type) {
                     //员工领取
                     case 0:
-                        eventBus.post(new LossReceiveFind(1));
+                        eventBus.post(new LossReceiveSubmitFind(position, number));
                         break;
                     //店长领取
                     case 1:
-                        String numbers = xetLossDilogContext.getText().toString();
-                        if (numbers.length() <= 0) {
-                            cartState.initToast(getContext(), "请选择要领取的数量", true, 0);
-                            return;
-                        }
-                        int number = Integer.parseInt(numbers);
                         eventBus.post(new LossManagerNumberFind(position, number));
                         break;
                 }

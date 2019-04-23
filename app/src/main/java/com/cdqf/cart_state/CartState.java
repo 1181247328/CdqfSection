@@ -29,6 +29,7 @@ import com.apkfuns.xprogressdialog.XProgressDialog;
 import com.cdqf.cart.R;
 import com.cdqf.cart_ble.Ble;
 import com.cdqf.cart_class.LossMan;
+import com.cdqf.cart_class.LossStaff;
 import com.cdqf.cart_class.MyUser;
 import com.cdqf.cart_class.Notice;
 import com.cdqf.cart_class.Shop;
@@ -125,7 +126,11 @@ public class CartState {
 
     private MyUser myUser = new MyUser();
 
+    //耗材(店长)
     private List<LossMan> lossManList = new CopyOnWriteArrayList<>();
+
+    //耗材(员工)
+    private List<LossStaff> lossStaffList = new CopyOnWriteArrayList<>();
 
 
     /**
@@ -845,5 +850,13 @@ public class CartState {
 
     public void setLossManList(List<LossMan> lossManList) {
         this.lossManList = lossManList;
+    }
+
+    public List<LossStaff> getLossStaffList() {
+        return lossStaffList;
+    }
+
+    public void setLossStaffList(List<LossStaff> lossStaffList) {
+        this.lossStaffList = lossStaffList;
     }
 }

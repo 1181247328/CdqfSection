@@ -117,6 +117,7 @@ public class MyFragment extends Fragment {
     private void initPull(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
+        Log.e(TAG, "---id---"+cartState.getUser().getId());
         String lossShop = userInformation(cartState.getUser().getId(), cartState.getUser().getShopid());
         okHttpRequestWrap.post(lossShop, isToast, "请稍候", params, new OnHttpRequest() {
             @Override

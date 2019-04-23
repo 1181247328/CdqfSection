@@ -20,7 +20,6 @@ import android.widget.TextView;
 import com.cdqf.cart.R;
 import com.cdqf.cart_dilogadapter.ServiceTwoFind;
 import com.cdqf.cart_find.ExitFind;
-import com.cdqf.cart_find.LossReceiveSubmitFind;
 import com.cdqf.cart_find.ReleaseFind;
 import com.cdqf.cart_find.ShopServiceTwoFind;
 import com.cdqf.cart_find.ShopTwoFind;
@@ -197,7 +196,7 @@ public class WhyDilogFragment extends DialogFragment {
                         break;
                     //LossManagerActivity
                     case 5:
-                        eventBus.post(new LossReceiveSubmitFind(position));
+//                        eventBus.post(new LossReceiveSubmitFind(position));
                         break;
                     //MainManagerActivity
                     case 6:

@@ -64,7 +64,7 @@ public class DownloadService extends Service {
 
     private void notifyMsg(String title, String content, int progress) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);//为了向下兼容，这里采用了v7包下的NotificationCompat来构造
-        builder.setSmallIcon(R.mipmap.ic_launcher).setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher)).setContentTitle(title);
+        builder.setSmallIcon(R.mipmap.ic_launchers).setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launchers)).setContentTitle(title);
         if (progress > 0 && progress < 100) {
             //下载进行中
             builder.setProgress(100, progress, false);

@@ -125,10 +125,7 @@ public class ReleaseActivity extends BaseActivity {
     //服务订单
     private String shopService(String content, String staffid, String type) {
         String result = null;
-        CartAddaress.SHOP_NOTICE_ADD = CartAddaress.SHOP_NOTICE_ADD.replace("CONTENT", cartState.urlEnodeUTF8(content));
-        CartAddaress.SHOP_NOTICE_ADD = CartAddaress.SHOP_NOTICE_ADD.replace("STAFFID", cartState.urlEnodeUTF8(staffid));
-        CartAddaress.SHOP_NOTICE_ADD = CartAddaress.SHOP_NOTICE_ADD.replace("TYPE", cartState.urlEnodeUTF8(type));
-        result = CartAddaress.SHOP_NOTICE_ADD;
+        result = CartAddaress.ADDRESS + "/?s=Notice.stenotice&content=" + content + "&staffid=" + staffid + "&type=" + type;
         Log.e(TAG, "---店长发布通知---" + result);
         return result;
     }

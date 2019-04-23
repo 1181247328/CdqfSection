@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
@@ -18,23 +16,18 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
-import com.cdqf.cart_adapter.NoticeAdapter;
-import com.cdqf.cart_class.Notice;
-import com.cdqf.cart_find.ReleasePullFind;
+import com.cdqf.cart_find.LossManagerOneFind;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;
 import com.cdqf.cart_state.BaseActivity;
 import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_state.StatusBarCompat;
-import com.cdqf.cart_view.ListViewForScrollView;
-import com.cdqf.cart_view.VerticalSwipeRefreshLayout;
+import com.gcssloop.widget.RCRelativeLayout;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -43,11 +36,11 @@ import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 
 /**
- * 通知(店长)
+ * 订单详情
  */
-public class NoticeManagerActivity extends BaseActivity {
+public class DatilsActivity extends BaseActivity {
 
-    private String TAG = NoticeManagerActivity.class.getSimpleName();
+    private String TAG = DatilsActivity.class.getSimpleName();
 
     private Context context = null;
 
@@ -59,39 +52,52 @@ public class NoticeManagerActivity extends BaseActivity {
 
     private Gson gson = new Gson();
 
-    @BindView(R.id.srl_notice_pull)
-    public VerticalSwipeRefreshLayout srlNoticePull = null;
+    @BindView(R.id.srl_datils_pull)
+    public SwipeRefreshLayout srlDatilsPull = null;
 
     //返回
-    @BindView(R.id.rl_notice_return)
-    public RelativeLayout rlNoticeReturn = null;
+    @BindView(R.id.rl_datils_return)
+    public RelativeLayout rlDatilsReturn = null;
 
-    @BindView(R.id.tv_noticemanager_release)
-    public TextView tvNoticemanagerRelease = null;
+    //金额
+    @BindView(R.id.tv_datils_mount)
+    public TextView tvDatilsMount = null;
 
-    @BindView(R.id.lv_notice_list)
-    public ListViewForScrollView lvNoticeList = null;
+    //账户
+    @BindView(R.id.tv_datils_user)
+    public TextView tvDatilsUser = null;
 
-    @BindView(R.id.tv_noticemanager_no)
-    public TextView tvNoticemanagerNo = null;
+    //电话
+    @BindView(R.id.tv_datils_phone)
+    public TextView tvDatilsPhone = null;
 
-    private NoticeAdapter noticeAdapter = null;
+    //电话拨打
+    @BindView(R.id.rcrl_datils_call)
+    public RCRelativeLayout rcrlDatilsCall = null;
 
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 0x001:
-                    lvNoticeList.setVisibility(View.VISIBLE);
-                    tvNoticemanagerNo.setVisibility(View.GONE);
-                    break;
-                case 0x002:
-                    lvNoticeList.setVisibility(View.GONE);
-                    tvNoticemanagerNo.setVisibility(View.VISIBLE);
-                    break;
-            }
-        }
-    };
+    //服务项目
+    @BindView(R.id.tv_datils_add)
+    public TextView tvDatilsAdd = null;
+
+    //追加
+    @BindView(R.id.tv_datils_adds)
+    public TextView tvDatilsAdds = null;
+
+    //订单编号
+    @BindView(R.id.tv_datils_serial)
+    public TextView tvDatilsSerial = null;
+
+    //下单时间
+    @BindView(R.id.tv_datils_timer)
+    public TextView tvDatilsTimer = null;
+
+    //备注
+    @BindView(R.id.tv_datils_note)
+    public TextView tvDatilsNote = null;
+
+    //追加服务
+    @BindView(R.id.rcrl_datils_add)
+    public RCRelativeLayout rcrlDatilsAdd = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,7 +111,7 @@ public class NoticeManagerActivity extends BaseActivity {
         }
 
         //加载布局
-        setContentView(R.layout.activity_noticemanager);
+        setContentView(R.layout.activity_datils);
 
         //API>=20以上用于沉侵式菜单栏
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
@@ -127,14 +133,13 @@ public class NoticeManagerActivity extends BaseActivity {
     private void initAgo() {
         context = this;
         ButterKnife.bind(this);
+        imageLoader = cartState.getImageLoader(context);
         if (!eventBus.isRegistered(this)) {
             eventBus.register(this);
         }
     }
 
     private void initView() {
-        noticeAdapter = new NoticeAdapter(context);
-        lvNoticeList.setAdapter(noticeAdapter);
 
     }
 
@@ -143,47 +148,45 @@ public class NoticeManagerActivity extends BaseActivity {
     }
 
     private void initListener() {
-        srlNoticePull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+        srlDatilsPull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                initPull(false);
+                // initPull(false);
             }
         });
     }
 
     private void initBack() {
-        initPull(true);
+        // initPull(true);
     }
 
     private void initPull(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
+        params.put("", "");
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        String notice = notice(cartState.getUser().getId(), cartState.getUser().getShopid());
-        okHttpRequestWrap.post(notice, isToast, "请稍候", params, new OnHttpRequest() {
+        okHttpRequestWrap.post(CartAddaress.SHOP_TOTAL, isToast, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
-                Log.e(TAG, "---onOkHttpResponse通知---" + response);
-                if (srlNoticePull != null) {
-                    srlNoticePull.setRefreshing(false);
-                }
+                Log.e(TAG, "---onOkHttpResponse审核---" + response);
+
                 JSONObject resultJSON = JSON.parseObject(response);
                 int error_code = resultJSON.getInteger("ret");
                 String msg = resultJSON.getString("msg");
                 switch (error_code) {
                     //获取成功
                     case 200:
-                        handler.sendEmptyMessage(0x001);
+
                         String data = resultJSON.getString("data");
-                        cartState.getNoticeList().clear();
-                        List<Notice> noticeList = gson.fromJson(data, new TypeToken<List<Notice>>() {
-                        }.getType());
-                        cartState.setNoticeList(noticeList);
-                        if (noticeAdapter != null) {
-                            noticeAdapter.notifyDataSetChanged();
-                        }
+//                        cartState.getLossManList().clear();
+//                        List<LossMan> lossManList = gson.fromJson(data, new TypeToken<List<LossMan>>() {
+//                        }.getType());
+//                        cartState.setLossManList(lossManList);
+//                        if (lossManagerAdapter != null) {
+//                            lossManagerAdapter.notifyDataSetChanged();
+//                        }
                         break;
                     default:
-                        handler.sendEmptyMessage(0x002);
                         cartState.initToast(context, msg, true, 0);
                         break;
                 }
@@ -196,31 +199,23 @@ public class NoticeManagerActivity extends BaseActivity {
         });
     }
 
-    private String notice(String staffid, String shopid) {
-        String result = null;
-        CartAddaress.SHOP_NOTICE = CartAddaress.SHOP_NOTICE.replace("STAFFID", cartState.urlEnodeUTF8(staffid));
-        CartAddaress.SHOP_NOTICE = CartAddaress.SHOP_NOTICE.replace("SHOPID", cartState.urlEnodeUTF8(shopid));
-        result = CartAddaress.SHOP_NOTICE;
-        Log.e(TAG, "---通知---" + result);
-        return result;
-    }
-
     private void initIntent(Class<?> activity) {
         Intent intent = new Intent(context, activity);
         startActivity(intent);
-//        finish();
     }
 
-    @OnClick({R.id.rl_notice_return, R.id.tv_noticemanager_release})
+    @OnClick({R.id.rl_datils_return, R.id.rcrl_datils_call, R.id.rcrl_datils_add})
     public void onClick(View v) {
         switch (v.getId()) {
             //返回
-            case R.id.rl_notice_return:
+            case R.id.rl_datils_return:
                 finish();
                 break;
-            //发布
-            case R.id.tv_noticemanager_release:
-                initIntent(ReleaseActivity.class);
+            //电话拨打
+            case R.id.rcrl_datils_call:
+                break;
+            //追加服务
+            case R.id.rcrl_datils_add:
                 break;
         }
     }
@@ -268,12 +263,11 @@ public class NoticeManagerActivity extends BaseActivity {
     }
 
     /**
-     * 发布通知后刷新
+     * 输入领取数量
      *
      * @param r
      */
-    public void onEventMainThread(ReleasePullFind r) {
-        initPull(true);
+    public void onEventMainThread(LossManagerOneFind r) {
+
     }
 }
-

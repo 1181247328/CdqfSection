@@ -180,6 +180,7 @@
                                 android:orientation="horizontal">
 
                                 <com.gcssloop.widget.RCRelativeLayout
+                                    android:id="@+id/rcrl_datils_call"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:background="@drawable/component_click"
@@ -310,6 +311,7 @@
                                 android:orientation="horizontal">
 
                                 <com.gcssloop.widget.RCRelativeLayout
+                                    android:id="@+id/rcrl_datils_add"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:background="@drawable/component_click"

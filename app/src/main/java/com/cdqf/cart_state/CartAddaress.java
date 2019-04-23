@@ -29,10 +29,17 @@ public class CartAddaress {
     public static String LOSS = ADDRESS + "";
 
     /******员工******/
-    //服务
+
+    //员工耗材
+    public static String STAFF_TOTAL = ADDRESS + "/?TotalGoods.staff_shop_list";
+
+    //员工领取
+    public static String STAFF_RECEIVE = ADDRESS + "/?TotalGoods.staff_receiving";
+
+    //员工服务
     public static String STAFF_SHOP = ADDRESS + "/?s=order.staff&shopid=SHOPID";
 
-    //通知
+    //员工通知
     public static String STAFF_NOTICE = ADDRESS + "/?s=Notice.getnotice&staffid=STAFFID&shopid=SHOPID";
 
 
