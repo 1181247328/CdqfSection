@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -14,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cdqf.cart.R;
+import com.cdqf.cart_adapter.NameAdapter;
 import com.cdqf.cart_adapter.UserAdapter;
 import com.cdqf.cart_find.LossReceiveFind;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
@@ -22,6 +24,7 @@ import com.cdqf.cart_state.BaseActivity;
 import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_state.StatusBarCompat;
+import com.cdqf.cart_view.VerticalSwipeRefreshLayout;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.HashMap;
@@ -46,8 +49,8 @@ public class UserActivity extends BaseActivity {
 
     private EventBus eventBus = EventBus.getDefault();
 
-//    @BindView(R.id.srl_user_pull)
-//    public SwipeRefreshLayout srlUserPull = null;
+    @BindView(R.id.srl_user_pull)
+    public VerticalSwipeRefreshLayout srlUserPull = null;
 
     //返回
     @BindView(R.id.rl_user_return)
@@ -61,6 +64,13 @@ public class UserActivity extends BaseActivity {
     @BindView(R.id.tv_user_order)
     public TextView tvUserOrder = null;
 
+    //服务名称集合
+    @BindView(R.id.lv_user_name)
+    public ListView lvUserName = null;
+
+    private NameAdapter nameAdapter = null;
+
+    //服务内容
     @BindView(R.id.lv_user_list)
     public ListView lvUserList = null;
 
@@ -106,6 +116,9 @@ public class UserActivity extends BaseActivity {
     }
 
     private void initView() {
+        nameAdapter = new NameAdapter(context);
+        lvUserName.setAdapter(nameAdapter);
+
         userAdapter = new UserAdapter(context);
         lvUserList.setAdapter(userAdapter);
     }
@@ -115,17 +128,16 @@ public class UserActivity extends BaseActivity {
     }
 
     private void initListener() {
-
-//        srlUserPull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                srlUserPull.setRefreshing(false);
-//            }
-//        });
+        srlUserPull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                srlUserPull.setRefreshing(false);
+            }
+        });
     }
 
     private void initBack() {
-       // initPull();
+        // initPull();
     }
 
     private void initPull() {

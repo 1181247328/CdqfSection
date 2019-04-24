@@ -91,7 +91,8 @@
                             android:divider="@null"
                             android:dividerHeight="10dp"
                             android:padding="10dp"
-                            android:scrollbars="none" />
+                            android:scrollbars="none"
+                            android:visibility="gone" />
 
                     </LinearLayout>
                 </ScrollView>

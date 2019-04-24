@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -21,7 +22,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
 import com.cdqf.cart_adapter.AuditAdapter;
 import com.cdqf.cart_class.Audit;
+import com.cdqf.cart_dilog.WhyDilogFragment;
+import com.cdqf.cart_find.RefusedFind;
+import com.cdqf.cart_find.RefusedTwoFind;
 import com.cdqf.cart_find.ThroughFind;
+import com.cdqf.cart_find.ThroughTwoFind;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;
 import com.cdqf.cart_state.BaseActivity;
@@ -63,6 +68,10 @@ public class AuditActivity extends BaseActivity {
     //帐户
     @BindView(R.id.rl_audit_return)
     public RelativeLayout rlAuditReturn = null;
+
+    //记录
+    @BindView(R.id.tv_audit_record)
+    public TextView tvAuditRecord = null;
 
     @BindView(R.id.lv_audit_list)
     public ListView lvAuditList = null;
@@ -172,8 +181,14 @@ public class AuditActivity extends BaseActivity {
                 switch (error_code) {
                     //获取成功
                     case 200:
-                        handler.sendEmptyMessage(0x001);
+
                         String data = resultJSON.getString("data");
+                        Log.e(TAG, "---审核---" + data);
+                        if (TextUtils.equals(data, "20")) {
+                            handler.sendEmptyMessage(0x002);
+                            return;
+                        }
+                        handler.sendEmptyMessage(0x001);
                         cartState.getAuditList().clear();
                         List<Audit> auditList = gson.fromJson(data, new TypeToken<List<Audit>>() {
                         }.getType());
@@ -201,12 +216,14 @@ public class AuditActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    @OnClick({R.id.rl_audit_return})
+    @OnClick({R.id.rl_audit_return, R.id.tv_audit_record})
     public void onClick(View v) {
         switch (v.getId()) {
             //返回
             case R.id.rl_audit_return:
                 finish();
+                break;
+            case R.id.tv_audit_record:
                 break;
         }
     }
@@ -254,30 +271,29 @@ public class AuditActivity extends BaseActivity {
     }
 
     /**
-     * 通过
+     * 通过第一次
      *
      * @param t
      */
     public void onEventMainThread(ThroughFind t) {
-        final boolean isTHrough = t.isThrough;
+        WhyDilogFragment whyDilogFragment = new WhyDilogFragment();
+        whyDilogFragment.setInit(8, "提示", "是否通过" + cartState.getAuditList().get(t.position).getName() + "申请" + cartState.getAuditList().get(t.position).getGoods_name() + "的请求", "否", "是", t.position);
+        whyDilogFragment.show(getSupportFragmentManager(), "通过");
+    }
+
+    /**
+     * 通过第二次
+     *
+     * @param t
+     */
+    public void onEventMainThread(ThroughTwoFind t) {
         Map<String, Object> params = new HashMap<String, Object>();
-        if (t.isThrough) {
-            params.put("s", "TotalGoods.shop_approval_list");
-        } else {
-            params.put("s", "TotalGoods.shop_exit");
-        }
+        params.put("s", "TotalGoods.shop_approval");
         params.put("goods_id", cartState.getAuditList().get(t.position).getGoods_id());
         params.put("shop_id", cartState.getUser().getShopid());
         params.put("id", cartState.getAuditList().get(t.position).getId());
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        String address = null;
-        if (t.isThrough) {
-            address = CartAddaress.SHOP_THROUGH;
-        } else {
-            address = CartAddaress.SHOP_THROUGH_NO;
-        }
-        Log.e(TAG, "---" + address);
-        okHttpRequestWrap.post(address, true, "请稍候", params, new OnHttpRequest() {
+        okHttpRequestWrap.post(CartAddaress.SHOP_THROUGH, true, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse通过---" + response);
@@ -287,12 +303,56 @@ public class AuditActivity extends BaseActivity {
                 switch (error_code) {
                     //获取成功
                     case 200:
-                        handler.sendEmptyMessage(0x001);
-                        if (isTHrough) {
-                            cartState.initToast(context, "已同意申请", true, 0);
-                        } else {
-                            cartState.initToast(context, "已拒绝申请", true, 0);
-                        }
+                        cartState.initToast(context, "已同意申请", true, 0);
+                        initPull(true);
+                        break;
+                    default:
+                        cartState.initToast(context, msg, true, 0);
+                        break;
+                }
+            }
+
+            @Override
+            public void onOkHttpError(String error) {
+                Log.e(TAG, "---onOkHttpError---" + error);
+            }
+        });
+    }
+
+    /**
+     * 拒绝第一次
+     *
+     * @param t
+     */
+    public void onEventMainThread(RefusedFind t) {
+        WhyDilogFragment whyDilogFragment = new WhyDilogFragment();
+        whyDilogFragment.setInit(9, "提示", "是否拒绝" + cartState.getAuditList().get(t.position).getName() + "申请" + cartState.getAuditList().get(t.position).getGoods_name() + "的请求", "否", "是", t.position);
+        whyDilogFragment.show(getSupportFragmentManager(), "拒绝");
+    }
+
+    /**
+     * 拒绝第二次
+     *
+     * @param r
+     */
+    public void onEventMainThread(RefusedTwoFind r) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("s", "TotalGoods.shop_exit");
+        params.put("goods_id", cartState.getAuditList().get(r.position).getGoods_id());
+        params.put("shop_id", cartState.getUser().getShopid());
+        params.put("id", cartState.getAuditList().get(r.position).getId());
+        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
+        okHttpRequestWrap.post(CartAddaress.SHOP_THROUGH_NO, true, "请稍候", params, new OnHttpRequest() {
+            @Override
+            public void onOkHttpResponse(String response, int id) {
+                Log.e(TAG, "---onOkHttpResponse通过---" + response);
+                JSONObject resultJSON = JSON.parseObject(response);
+                int error_code = resultJSON.getInteger("ret");
+                String msg = resultJSON.getString("msg");
+                switch (error_code) {
+                    //获取成功
+                    case 200:
+                        cartState.initToast(context, "已拒绝申请", true, 0);
                         initPull(true);
                         break;
                     default:

@@ -18,12 +18,14 @@ import android.view.Window;
 import android.widget.TextView;
 
 import com.cdqf.cart.R;
-import com.cdqf.cart_dilogadapter.ServiceTwoFind;
+import com.cdqf.cart_find.ServiceTwoFind;
 import com.cdqf.cart_find.DatilsPhoneFind;
 import com.cdqf.cart_find.ExitFind;
+import com.cdqf.cart_find.RefusedTwoFind;
 import com.cdqf.cart_find.ReleaseFind;
 import com.cdqf.cart_find.ShopServiceTwoFind;
 import com.cdqf.cart_find.ShopTwoFind;
+import com.cdqf.cart_find.ThroughTwoFind;
 import com.cdqf.cart_state.CartState;
 
 import butterknife.BindView;
@@ -206,6 +208,14 @@ public class WhyDilogFragment extends DialogFragment {
                     //DatilsActivity
                     case 7:
                         eventBus.post(new DatilsPhoneFind());
+                        break;
+                    //AuditActivity
+                    case 8:
+                        eventBus.post(new ThroughTwoFind(position));
+                        break;
+                    //AuditActivity
+                    case 9:
+                        eventBus.post(new RefusedTwoFind(position));
                         break;
                 }
                 break;

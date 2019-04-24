@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cdqf.cart.R;
+import com.cdqf.cart_find.RefusedFind;
 import com.cdqf.cart_find.ThroughFind;
 import com.cdqf.cart_state.CartState;
 import com.gcssloop.widget.RCRelativeLayout;
@@ -65,7 +66,7 @@ public class AuditAdapter extends BaseAdapter {
         //物品
         viewHolder.tvAuditItemName.setText(cartState.getAuditList().get(position).getGoods_name());
         //数量
-        viewHolder.tvAuditItemNumber.setText(cartState.getAuditList().get(position).getNumber() + "条");
+        viewHolder.tvAuditItemNumber.setText("数量:" + cartState.getAuditList().get(position).getNumber());
         //人物
         viewHolder.tvAuditItemFigure.setText("申请人:" + cartState.getAuditList().get(position).getName());
         //时间
@@ -124,7 +125,7 @@ public class AuditAdapter extends BaseAdapter {
 
         @Override
         public void onClick(View v) {
-            eventBus.post(new ThroughFind(position, false));
+            eventBus.post(new RefusedFind(position));
         }
     }
 
@@ -141,7 +142,7 @@ public class AuditAdapter extends BaseAdapter {
 
         @Override
         public void onClick(View v) {
-            eventBus.post(new ThroughFind(position, true));
+            eventBus.post(new ThroughFind(position));
         }
     }
 }

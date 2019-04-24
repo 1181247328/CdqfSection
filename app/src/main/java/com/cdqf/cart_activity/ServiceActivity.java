@@ -22,7 +22,7 @@ import com.cdqf.cart.R;
 import com.cdqf.cart_adapter.ServiceAdapter;
 import com.cdqf.cart_class.Shop;
 import com.cdqf.cart_dilog.WhyDilogFragment;
-import com.cdqf.cart_dilogadapter.ServiceTwoFind;
+import com.cdqf.cart_find.ServiceTwoFind;
 import com.cdqf.cart_find.ServiceOneFind;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;

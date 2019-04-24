@@ -255,5 +255,19 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 
+        <!--追加金额-->
+        <activity
+            android:name="com.cdqf.cart_activity.AddmountActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
+        <!--审核记录-->
+        <activity
+            android:name="com.cdqf.cart_activity.RecordActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+
+        </activity>
+
     </application>
 </manifest>

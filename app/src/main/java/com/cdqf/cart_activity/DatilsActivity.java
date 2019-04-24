@@ -161,7 +161,7 @@ public class DatilsActivity extends BaseActivity {
         srlDatilsPull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                // initPull(false);
+                initPull(false);
             }
         });
     }
@@ -242,6 +242,7 @@ public class DatilsActivity extends BaseActivity {
                 break;
             //追加服务
             case R.id.rcrl_datils_add:
+                initIntent(AddmountActivity.class);
                 break;
         }
     }

@@ -40,5 +40,7 @@
     <color name="audit_text">#474747</color>
 
     <color name="datils_text">#909090</color>
+    
+    <color name="name_text">#b0b0b0</color>
 
 </resources>
