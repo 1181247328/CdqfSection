@@ -222,9 +222,7 @@ public class ShopActivity extends BaseActivity {
     //完成订单
     private String shopYes(String id, int number) {
         String result = null;
-        CartAddaress.SHOP_YES = CartAddaress.SHOP_YES.replace("ID", cartState.urlEnodeUTF8(id));
-        CartAddaress.SHOP_YES = CartAddaress.SHOP_YES.replace("NUMBER", cartState.urlEnodeUTF8(String.valueOf(number)));
-        result = CartAddaress.SHOP_YES;
+        result = CartAddaress.ADDRESS + "/?s=order.getordertype&id=" + id + "&number=" + number;
         Log.e(TAG, "---订单---" + result);
         return result;
     }
@@ -324,6 +322,7 @@ public class ShopActivity extends BaseActivity {
                     case 200:
                         String data = resultJSON.getString("data");
                         initPull(true);
+                        cartState.initToast(context, "接单成功", true, 0);
                         break;
                     default:
                         cartState.initToast(context, msg, true, 0);

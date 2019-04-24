@@ -232,7 +232,7 @@ public class UserActivity extends BaseActivity {
 
     private String order(String cartype, String goodsid, String userid, String shopid, String carnum, String phone, String number) {
         String result = null;
-        result = CartAddaress.ADDRESS + "?s=order.appendorder&cartype=" + cartype + "&goodsid=" + goodsid + "&userid=" + 66 + "&shopid=" + 1 + "&carnum=" + carnum + "&phone=" + phone + "&number=" + number;
+        result = CartAddaress.ADDRESS + "?s=order.appendorder&cartype=" + cartype + "&goodsid=" + goodsid + "&userid=" + userid + "&shopid=" + shopid + "&carnum=" + carnum + "&phone=" + phone + "&number=" + number;
         Log.e(TAG, "---提交订单---" + result);
         return result;
     }
