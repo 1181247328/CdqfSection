@@ -26,6 +26,7 @@ import com.cdqf.cart_find.ReleaseFind;
 import com.cdqf.cart_find.ShopServiceTwoFind;
 import com.cdqf.cart_find.ShopTwoFind;
 import com.cdqf.cart_find.ThroughTwoFind;
+import com.cdqf.cart_find.UserSumberFind;
 import com.cdqf.cart_state.CartState;
 
 import butterknife.BindView;
@@ -216,6 +217,10 @@ public class WhyDilogFragment extends DialogFragment {
                     //AuditActivity
                     case 9:
                         eventBus.post(new RefusedTwoFind(position));
+                        break;
+                    //UserActivity
+                    case 10:
+                        eventBus.post(new UserSumberFind());
                         break;
                 }
                 break;

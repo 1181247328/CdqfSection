@@ -1,6 +1,7 @@
 package com.cdqf.cart_adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,7 +38,7 @@ public class RecordAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 4;
+        return cartState.getRecordList().size();
     }
 
     @Override
@@ -60,16 +61,23 @@ public class RecordAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-//        imageLoader.displayImage(cartState.getAuditList().get(position).getImage(), viewHolder.ivAuditItemImage, cartState.getImageLoaderOptions(R.mipmap.not_loaded, R.mipmap.not_loaded, R.mipmap.not_loaded));
-//        //物品
-//        viewHolder.tvAuditItemName.setText(cartState.getAuditList().get(position).getGoods_name());
-//        //数量
-//        viewHolder.tvAuditItemNumber.setText("数量:" + cartState.getAuditList().get(position).getNumber());
-//        //人物
-//        viewHolder.tvAuditItemFigure.setText("申请人:" + cartState.getAuditList().get(position).getName());
-//        //时间
-//        viewHolder.tvAuditItemTimer.setText(cartState.getAuditList().get(position).getAdd_time());
-
+        imageLoader.displayImage(cartState.getRecordList().get(position).getImage(), viewHolder.ivRecordItemImage, cartState.getImageLoaderOptions(R.mipmap.not_loaded, R.mipmap.not_loaded, R.mipmap.not_loaded));
+        //物品
+        viewHolder.tvRecordItemName.setText(cartState.getRecordList().get(position).getGoods_name());
+        //数量
+        viewHolder.tvRecordItemNumber.setText("数量:" + cartState.getRecordList().get(position).getNumber());
+        //人物
+        viewHolder.tvRecordItemFigure.setText("申请人:" + cartState.getRecordList().get(position).getName());
+        //时间
+        viewHolder.tvRecordItemTimer.setText(cartState.getFetureDate(Long.parseLong(cartState.getRecordList().get(position).getAdd_time())));
+        if (TextUtils.equals(cartState.getRecordList().get(position).getState(), "2")) {
+            viewHolder.tvRecordItemState.setText("拒绝");
+        } else if (TextUtils.equals(cartState.getRecordList().get(position).getState(), "3")) {
+            viewHolder.tvRecordItemState.setText("审核中");
+        } else if (TextUtils.equals(cartState.getRecordList().get(position).getState(), "1")) {
+            //TODO
+            viewHolder.tvRecordItemState.setText("通过");
+        }
         return convertView;
     }
 

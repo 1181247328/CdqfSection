@@ -3,7 +3,10 @@ package com.cdqf.cart_state;
 public class CartAddaress {
 
     //线下
-    public static final String ADDRESS = "http://192.168.31.131";
+    //public static final String ADDRESS = "http://192.168.31.131";
+
+    //线上
+    public static final String ADDRESS = "http://testapi.baodi520.com";
 
     //店总
     public static String SHOP = ADDRESS + "/?s=order.shopowenr&shopid=SHOPID";
@@ -11,7 +14,7 @@ public class CartAddaress {
     //店长完成订单
     public static String SHOP_YES = ADDRESS + "/?s=order.getordertype&id=ID&number=NUMBER";
 
-    //店长完成订单
+    //店长服务订单
     public static String SHOP_SERVICE = ADDRESS + "/?s=Service.setservice&ordernum=ORDERNUMB&staffid=STAFFID";
 
     //店长通知
@@ -38,9 +41,18 @@ public class CartAddaress {
     //店长不通过
     public static String SHOP_THROUGH_NO = ADDRESS + "/?s=TotalGoods.shop_exit";
 
+    //店长审核记录
+    public static String SHOP_RECORD = ADDRESS + "/?s=TotalGoods.goodsext_staff";
+
+    //店长追加
+    public static String SHOP_GOODS = ADDRESS + "/?s=goods.goodsall";
+
     public static String LOSS = ADDRESS + "";
 
     /******员工******/
+
+    //员工服务
+    public static String STAFF_SERVICE = ADDRESS + "/?s=Service.setservice&ordernum=ORDERNUMB&staffid=STAFFID";
 
     //员工耗材
     public static String STAFF_TOTAL = ADDRESS + "/?TotalGoods.staff_shop_list";

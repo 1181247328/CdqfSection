@@ -72,7 +72,7 @@
                     android:lines="1"
                     android:paddingLeft="6dp"
                     android:singleLine="true"
-                    android:textColor="@color/login_text"
+                    android:textColor="@color/audit_text"
                     android:textColorHint="@color/login_text"
                     android:textCursorDrawable="@drawable/nickname_cursor"
                     android:textSize="14sp" />
@@ -113,7 +113,7 @@
                     android:lines="1"
                     android:paddingLeft="6dp"
                     android:singleLine="true"
-                    android:textColor="@color/login_text"
+                    android:textColor="@color/audit_text"
                     android:textColorHint="@color/login_text"
                     android:textCursorDrawable="@drawable/nickname_cursor"
                     android:textSize="14sp" />

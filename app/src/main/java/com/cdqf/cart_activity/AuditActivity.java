@@ -224,6 +224,7 @@ public class AuditActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.tv_audit_record:
+                initIntent(RecordActivity.class);
                 break;
         }
     }

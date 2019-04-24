@@ -117,7 +117,7 @@ public class MyFragment extends Fragment {
     private void initPull(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
-        Log.e(TAG, "---id---"+cartState.getUser().getId());
+        Log.e(TAG, "---id---" + cartState.getUser().getId());
         String lossShop = userInformation(cartState.getUser().getId(), cartState.getUser().getShopid());
         okHttpRequestWrap.post(lossShop, isToast, "请稍候", params, new OnHttpRequest() {
             @Override
@@ -163,9 +163,7 @@ public class MyFragment extends Fragment {
 
     private String userInformation(String staffid, String shopid) {
         String result = null;
-        CartAddaress.USER_INFORMATION = CartAddaress.USER_INFORMATION.replace("STAFFID", cartState.urlEnodeUTF8(staffid));
-        CartAddaress.USER_INFORMATION = CartAddaress.USER_INFORMATION.replace("SHOPID", cartState.urlEnodeUTF8(shopid));
-        result = CartAddaress.USER_INFORMATION;
+        result = CartAddaress.ADDRESS + "/?s=staff.getstaff&staffid=" + staffid + "&shopid=" + shopid;
         Log.e(TAG, "---我的---" + result);
         return result;
     }

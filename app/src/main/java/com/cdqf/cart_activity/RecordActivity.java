@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -20,7 +19,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
 import com.cdqf.cart_adapter.RecordAdapter;
-import com.cdqf.cart_class.Audit;
+import com.cdqf.cart_class.Record;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;
 import com.cdqf.cart_state.BaseActivity;
@@ -42,8 +41,11 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 
+/**
+ * 记录(店长)
+ */
 public class RecordActivity extends BaseActivity {
-    private String TAG = AuditActivity.class.getSimpleName();
+    private String TAG = RecordActivity.class.getSimpleName();
 
     private Context context = null;
 
@@ -140,7 +142,7 @@ public class RecordActivity extends BaseActivity {
         vsrlRecordPull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-
+                initPull(false);
             }
         });
 
@@ -158,44 +160,43 @@ public class RecordActivity extends BaseActivity {
     }
 
     private void initBack() {
-        //initPull(true);
-        vsrlRecordPull.setEnabled(false);
+        initPull(true);
+        ptrlRecordPull.setPullDownEnable(false);
+        ptrlRecordPull.setPullUpEnable(false);
+        vsrlRecordPull.setEnabled(true);
     }
 
     private void initPull(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("s", "TotalGoods.shop_approval_list");
+        params.put("s", "TotalGoods.goodsext_staff");
         params.put("shop_id", cartState.getUser().getShopid());
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        okHttpRequestWrap.post(CartAddaress.SHOP_AUDIT, isToast, "请稍候", params, new OnHttpRequest() {
+        okHttpRequestWrap.post(CartAddaress.SHOP_RECORD, isToast, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse审核审核记录---" + response);
-
+                if(vsrlRecordPull!=null){
+                    vsrlRecordPull.setRefreshing(false);
+                }
                 JSONObject resultJSON = JSON.parseObject(response);
                 int error_code = resultJSON.getInteger("ret");
                 String msg = resultJSON.getString("msg");
                 switch (error_code) {
                     //获取成功
                     case 200:
-
                         String data = resultJSON.getString("data");
                         Log.e(TAG, "---审核记录---" + data);
-                        if (TextUtils.equals(data, "20")) {
-                            handler.sendEmptyMessage(0x002);
-                            return;
-                        }
-                        handler.sendEmptyMessage(0x001);
-                        cartState.getAuditList().clear();
-                        List<Audit> auditList = gson.fromJson(data, new TypeToken<List<Audit>>() {
+//                        handler.sendEmptyMessage(0x001);
+                        cartState.getRecordList().clear();
+                        List<Record> recordList = gson.fromJson(data, new TypeToken<List<Record>>() {
                         }.getType());
-                        cartState.setAuditList(auditList);
+                        cartState.setRecordList(recordList);
                         if (recordAdapter != null) {
                             recordAdapter.notifyDataSetChanged();
                         }
                         break;
                     default:
-                        handler.sendEmptyMessage(0x002);
+//                        handler.sendEmptyMessage(0x002);
                         cartState.initToast(context, msg, true, 0);
                         break;
                 }

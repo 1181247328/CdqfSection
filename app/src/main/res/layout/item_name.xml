@@ -15,8 +15,8 @@
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:gravity="center"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
             android:text="洗车"
             android:textColor="@color/name_text"
             android:textSize="14sp" />

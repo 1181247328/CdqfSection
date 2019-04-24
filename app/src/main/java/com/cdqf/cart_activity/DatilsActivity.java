@@ -20,6 +20,7 @@ import com.cdqf.cart.R;
 import com.cdqf.cart_class.Datils;
 import com.cdqf.cart_dilog.WhyDilogFragment;
 import com.cdqf.cart_find.DatilsPhoneFind;
+import com.cdqf.cart_find.DatilsPullFind;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;
 import com.cdqf.cart_state.BaseActivity;
@@ -178,7 +179,9 @@ public class DatilsActivity extends BaseActivity {
             @Override
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse详情---" + response);
-
+                if (srlDatilsPull != null) {
+                    srlDatilsPull.setRefreshing(false);
+                }
                 JSONObject resultJSON = JSON.parseObject(response);
                 int error_code = resultJSON.getInteger("ret");
                 String msg = resultJSON.getString("msg");
@@ -227,6 +230,12 @@ public class DatilsActivity extends BaseActivity {
         startActivity(intent);
     }
 
+    private void initIntent(Class<?> activity, int position) {
+        Intent intent = new Intent(context, activity);
+        intent.putExtra("position", position);
+        startActivity(intent);
+    }
+
     @OnClick({R.id.rl_datils_return, R.id.rcrl_datils_call, R.id.rcrl_datils_add})
     public void onClick(View v) {
         switch (v.getId()) {
@@ -242,7 +251,7 @@ public class DatilsActivity extends BaseActivity {
                 break;
             //追加服务
             case R.id.rcrl_datils_add:
-                initIntent(AddmountActivity.class);
+                initIntent(UserActivity.class, position);
                 break;
         }
     }
@@ -287,6 +296,10 @@ public class DatilsActivity extends BaseActivity {
         super.onDestroy();
         Log.e(TAG, "---销毁---");
         eventBus.unregister(this);
+    }
+
+    public void onEventMainThread(DatilsPullFind r) {
+        initPull(true);
     }
 
     /**

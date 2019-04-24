@@ -10,6 +10,7 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.cdqf.cart.R;
+import com.cdqf.cart_find.UserAddFind;
 import com.cdqf.cart_state.CartState;
 
 import java.util.HashMap;
@@ -38,13 +39,20 @@ public class UserAdapter extends BaseAdapter {
 
     private EventBus eventBus = EventBus.getDefault();
 
+    private static int position = 0;
+
     public UserAdapter(Context context) {
         this.context = context;
     }
 
+    public void setPosition(int position) {
+        this.position = position;
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getCount() {
-        return 30;
+        return cartState.getUserGoodsList().get(this.position).getData().size();
     }
 
     @Override
@@ -67,10 +75,17 @@ public class UserAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+        viewHolder.tvUserItemName.setText(cartState.getUserGoodsList().get(this.position).getData().get(position).getGoodsname());
+        viewHolder.tvUserItemPrice.setText("￥" + cartState.getUserGoodsList().get(this.position).getData().get(position).getPrice());
         lightConnectMap.put(viewHolder.cbUserItemCheckbox, position);
-        viewHolder.cbUserItemCheckbox.setChecked(lightCheckMap.get(position) == null ? false : true);
-//        viewHolder.cbUserItemCheckbox.setChecked(lightCheckMap.get(viewHolder.cbUserItemCheckbox));
+//        viewHolder.cbUserItemCheckbox.setChecked(lightCheckMap.get(position) == null ? false : true);
+        viewHolder.cbUserItemCheckbox.setChecked(cartState.getUserGoodsList().get(this.position).getData().get(position).isSelect());
         viewHolder.cbUserItemCheckbox.setOnCheckedChangeListener(new OnCartCheckedChangeListener(position));
+        if (this.position == cartState.getUserGoodsList().size()-1) {
+            viewHolder.cbUserItemCheckbox.setVisibility(View.GONE);
+        } else {
+            viewHolder.cbUserItemCheckbox.setVisibility(View.VISIBLE);
+        }
         return convertView;
     }
 
@@ -89,8 +104,12 @@ public class UserAdapter extends BaseAdapter {
             }
             if (isChecked) {
                 lightCheckMap.put(lightConnectMap.get(buttonView), isChecked);
+                cartState.getUserGoodsList().get(UserAdapter.position).getData().get(position).setSelect(true);
+                eventBus.post(new UserAddFind(position));
             } else {
                 lightCheckMap.remove(lightConnectMap.get(buttonView));
+                cartState.getUserGoodsList().get(UserAdapter.position).getData().get(position).setSelect(false);
+                eventBus.post(new UserAddFind(position));
             }
         }
     }

@@ -209,9 +209,7 @@ public class ServiceActivity extends BaseActivity {
     //服务订单
     private String shopService(String ordernumb, String staffid) {
         String result = null;
-        CartAddaress.SHOP_SERVICE = CartAddaress.SHOP_SERVICE.replace("ORDERNUMB", cartState.urlEnodeUTF8(ordernumb));
-        CartAddaress.SHOP_SERVICE = CartAddaress.SHOP_SERVICE.replace("STAFFID", cartState.urlEnodeUTF8(staffid));
-        result = CartAddaress.SHOP_SERVICE;
+        result = CartAddaress.ADDRESS + "/?s=Service.setservice&ordernum=" + ordernumb + "&staffid=" + staffid;
         Log.e(TAG, "---服务---" + result);
         return result;
     }
@@ -303,6 +301,7 @@ public class ServiceActivity extends BaseActivity {
                 switch (ret) {
                     case 200:
                         String data = resultJSON.getString("data");
+                        cartState.initToast(context, "接单成功", true, 0);
                         initPull(true);
                         break;
                     default:

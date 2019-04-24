@@ -33,8 +33,10 @@ import com.cdqf.cart_class.LossMan;
 import com.cdqf.cart_class.LossStaff;
 import com.cdqf.cart_class.MyUser;
 import com.cdqf.cart_class.Notice;
+import com.cdqf.cart_class.Record;
 import com.cdqf.cart_class.Shop;
 import com.cdqf.cart_class.User;
+import com.cdqf.cart_class.UserGoods;
 import com.cdqf.cart_service.Province;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -58,8 +60,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -136,6 +140,11 @@ public class CartState {
     //审核列表
     private List<Audit> auditList = new CopyOnWriteArrayList<>();
 
+    //审核记录
+    private List<Record> recordList = new CopyOnWriteArrayList<>();
+
+    //追加商品
+    private List<UserGoods> userGoodsList = new CopyOnWriteArrayList<>();
 
     /**
      * 提示信息
@@ -735,6 +744,24 @@ public class CartState {
         return result;
     }
 
+    /**
+     * 转换时间戳
+     *
+     * @param expire
+     * @return
+     */
+    public String getFetureDate(long expire) {
+        if (String.valueOf(expire).length() == 10) {
+            expire = expire * 1000;
+        }
+        Date date = new Date(expire);
+        SimpleDateFormat format = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
+        String result = format.format(date);
+        if (result.startsWith("0")) {
+            result = result.substring(1);
+        }
+        return result;
+    }
 
     public Bitmap getHeadBitmap() {
         return headBitmap;
@@ -870,5 +897,21 @@ public class CartState {
 
     public void setAuditList(List<Audit> auditList) {
         this.auditList = auditList;
+    }
+
+    public List<Record> getRecordList() {
+        return recordList;
+    }
+
+    public void setRecordList(List<Record> recordList) {
+        this.recordList = recordList;
+    }
+
+    public List<UserGoods> getUserGoodsList() {
+        return userGoodsList;
+    }
+
+    public void setUserGoodsList(List<UserGoods> userGoodsList) {
+        this.userGoodsList = userGoodsList;
     }
 }

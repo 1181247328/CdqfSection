@@ -1,6 +1,7 @@
 package com.cdqf.cart_adapter;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,13 +25,24 @@ public class NameAdapter extends BaseAdapter {
 
     private CartState cartState = CartState.getCartState();
 
+    private int type = 0;
+
     public NameAdapter(Context context) {
         this.context = context;
     }
 
+    public void setType(int type) {
+        this.type = type;
+        notifyDataSetChanged();
+    }
+
+    public int getType() {
+        return type;
+    }
+
     @Override
     public int getCount() {
-        return 4;
+        return cartState.getUserGoodsList().size();
     }
 
     @Override
@@ -53,9 +65,16 @@ public class NameAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+        viewHolder.tvNameItemContext.setText(cartState.getUserGoodsList().get(position).getName());
+        if (type == position) {
+            viewHolder.tvNameItemContext.setTextColor(ContextCompat.getColor(context, R.color.shop));
+            viewHolder.tvNameItemContext.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
+        } else {
+            viewHolder.tvNameItemContext.setTextColor(ContextCompat.getColor(context, R.color.name_text));
+            viewHolder.tvNameItemContext.setBackgroundColor(ContextCompat.getColor(context, R.color.service_bak));
+        }
         return convertView;
     }
-
 
     class ViewHolder {
         @BindView(R.id.tv_name_item_context)
