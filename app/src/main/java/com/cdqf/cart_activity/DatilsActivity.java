@@ -63,6 +63,10 @@ public class DatilsActivity extends BaseActivity {
     @BindView(R.id.rl_datils_return)
     public RelativeLayout rlDatilsReturn = null;
 
+    //车牌号
+    @BindView(R.id.tv_datils_number)
+    public TextView tvDatilsNumber = null;
+
     //金额
     @BindView(R.id.tv_datils_mount)
     public TextView tvDatilsMount = null;
@@ -190,6 +194,8 @@ public class DatilsActivity extends BaseActivity {
                     case 200:
                         String data = resultJSON.getString("data");
                         datils = gson.fromJson(data, Datils.class);
+                        //车牌号码
+                        tvDatilsNumber.setText(datils.getCarnum());
                         //金额
                         tvDatilsMount.setText(datils.getZongprice());
                         //电话

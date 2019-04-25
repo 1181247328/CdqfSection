@@ -98,6 +98,36 @@
                                 android:layout_height="wrap_content"
                                 android:background="@color/white"
                                 android:gravity="center_vertical"
+                                android:text="车牌号码:"
+                                android:textColor="@color/datils_text"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/tv_datils_number"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:lines="1"
+                                android:paddingTop="8dp"
+                                android:paddingBottom="8dp"
+                                android:paddingLeft="10dp"
+                                android:singleLine="true"
+                                android:textColor="@color/audit_text"
+                                android:textSize="14sp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/white"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@color/white"
+                                android:gravity="center_vertical"
                                 android:text="消费金额:"
                                 android:textColor="@color/datils_text"
                                 android:textSize="14sp" />

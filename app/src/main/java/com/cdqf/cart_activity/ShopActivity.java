@@ -205,8 +205,7 @@ public class ShopActivity extends BaseActivity {
 
     private String shop(String shopid) {
         String result = null;
-        CartAddaress.SHOP = CartAddaress.SHOP.replace("SHOPID", cartState.urlEnodeUTF8(shopid));
-        result = CartAddaress.SHOP;
+        result = CartAddaress.ADDRESS + "/?s=order.shopowenr&shopid=" + shopid;
         Log.e(TAG, "---店总---" + result);
         return result;
     }

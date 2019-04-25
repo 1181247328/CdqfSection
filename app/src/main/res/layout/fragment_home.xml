@@ -13,7 +13,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:background="@color/white"
             android:orientation="vertical">
 
@@ -72,19 +72,21 @@
                 android:layout_height="1dp"
                 android:background="#f3f3f3" />
 
-            <com.cdqf.cart_view.MyGridView
-                android:id="@+id/mgv_home_list"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/white"
-                android:horizontalSpacing="40dp"
-                android:numColumns="2"
-                android:paddingLeft="78dp"
-                android:paddingTop="50dp"
-                android:paddingRight="78dp"
-                android:paddingBottom="10dp"
-                android:scrollbars="none"
-                android:verticalSpacing="75dp" />
+                android:background="@color/white">
+
+                <com.cdqf.cart_view.LineGridView
+                    android:id="@+id/mgv_home_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:numColumns="2"
+                    android:paddingBottom="10dp"
+                    android:scrollbars="none" />
+
+            </LinearLayout>
 
         </LinearLayout>
 

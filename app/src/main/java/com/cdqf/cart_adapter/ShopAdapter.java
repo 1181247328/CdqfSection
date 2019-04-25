@@ -1,6 +1,8 @@
 package com.cdqf.cart_adapter;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,6 +73,16 @@ public class ShopAdapter extends BaseAdapter {
         viewHolder.rcrlShopItemClaim.setOnClickListener(new OnServiceListener(position));
         //完成
         viewHolder.rcrlShopItemWashed.setOnClickListener(new OnWashedListener(position));
+        String shop = "("+cartState.getShopList().get(position).getService() + "人)";
+        viewHolder.tvShopItemNumber.setText(shop);
+        //完成状态
+        int service = Integer.parseInt(cartState.getShopList().get(position).getService());
+        Log.e(TAG, "---当前服务人数---" + service);
+        if (service > 0) {
+            viewHolder.rcrlShopItemWashed.setBackgroundColor(ContextCompat.getColor(context, R.color.loss_receive));
+        } else {
+            viewHolder.rcrlShopItemWashed.setBackgroundColor(ContextCompat.getColor(context, R.color.lossmanager_stock));
+        }
         return convertView;
     }
 
@@ -98,6 +110,10 @@ public class ShopAdapter extends BaseAdapter {
         //时间
         @BindView(R.id.tv_shop_item_timer)
         public TextView tvShopItemTimer = null;
+
+        //服务人员
+        @BindView(R.id.tv_shop_item_number)
+        public TextView tvShopItemNumber = null;
 
         public ViewHolder(View v) {
             ButterKnife.bind(this, v);
@@ -134,7 +150,12 @@ public class ShopAdapter extends BaseAdapter {
 
         @Override
         public void onClick(View v) {
-            eventBus.post(new ShopOneFind(position));
+            int service = Integer.parseInt(cartState.getShopList().get(position).getService());
+            if (service > 0) {
+                eventBus.post(new ShopOneFind(position));
+            } else {
+                cartState.initToast(context, "此车暂无服务人员", true, 0);
+            }
         }
     }
 }

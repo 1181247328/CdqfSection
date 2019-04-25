@@ -68,6 +68,8 @@ public class ServiceAdapter extends BaseAdapter {
         viewHolder.tvServiceItemTimer.setText("时间:" + cartState.getShopList().get(position).getAddtime());
         //服务
         viewHolder.rcrlServiceItemWashed.setOnClickListener(new OnServiceListener(position));
+        String shop = "(" + cartState.getShopList().get(position).getService() + "人)";
+        viewHolder.tvShopItemNumber.setText(shop);
         return convertView;
     }
 
@@ -95,6 +97,10 @@ public class ServiceAdapter extends BaseAdapter {
         //时间
         @BindView(R.id.tv_service_item_timer)
         public TextView tvServiceItemTimer = null;
+
+        //服务人员
+        @BindView(R.id.tv_shop_item_number)
+        public TextView tvShopItemNumber = null;
 
         public ViewHolder(View v) {
             ButterKnife.bind(this, v);

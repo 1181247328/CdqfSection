@@ -205,6 +205,7 @@ public class UserActivity extends BaseActivity {
                     //获取成功
                     case 200:
                         String data = resultJSON.getString("data");
+                        tvUserPrice.setText("总计:￥0.0");
                         cartState.getUserGoodsList().clear();
                         List<UserGoods> userGoodsList = gson.fromJson(data, new TypeToken<List<UserGoods>>() {
                         }.getType());
@@ -325,6 +326,16 @@ public class UserActivity extends BaseActivity {
      */
     public void onEventMainThread(UserNumberFind u) {
         numbers = u.number;
+        sum = numbers;
+        for (int i = 0; i < cartState.getUserGoodsList().size(); i++) {
+            for (int j = 0; j < cartState.getUserGoodsList().get(i).getData().size(); j++) {
+                if (cartState.getUserGoodsList().get(i).getData().get(j).isSelect()) {
+                    double money = Double.parseDouble(cartState.getUserGoodsList().get(i).getData().get(j).getPrice());
+                    sum = DoubleOperationUtil.add(sum, money);
+                }
+            }
+        }
+        tvUserPrice.setText("总计:￥" + sum);
     }
 
     /**
@@ -345,8 +356,9 @@ public class UserActivity extends BaseActivity {
             }
         }
         Log.e(TAG, "---商品id---" + goodsid);
-        if (numbers > 1) {
+        if (numbers >= 1) {
             isSelect = true;
+            goodsid = goodsid + cartState.getUserGoodsList().get(cartState.getUserGoodsList().size() - 1).getData().get(0).getId();
         }
 
         if (!isSelect) {

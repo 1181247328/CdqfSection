@@ -1,9 +1,16 @@
 package com.cdqf.cart_activity;
 
+import android.Manifest;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -24,6 +31,11 @@ import com.cdqf.cart_state.BaseActivity;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_state.StatusBarCompat;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.zxy.tiny.Tiny;
+import com.zxy.tiny.callback.FileCallback;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -84,6 +96,11 @@ public class MainManagerActivity extends BaseActivity {
     //首页的fragment
     private HomeManagerFragment homeManagerFragment = null;
     private MyFragment myFragment = null;
+
+    private Uri photoUri = null;
+
+    //相机
+    private static final int REQUEST_CODE_TAKE_PICTURE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -198,6 +215,20 @@ public class MainManagerActivity extends BaseActivity {
         }
     }
 
+    /**
+     * 相机
+     */
+    private void camera() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        SimpleDateFormat timeStampFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+        String filename = timeStampFormat.format(new Date());
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.TITLE, filename);
+        photoUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+        startActivityForResult(intent, REQUEST_CODE_TAKE_PICTURE);
+    }
+
     private void initIntent(Class<?> activity) {
         Intent intent = new Intent(context, activity);
         startActivity(intent);
@@ -216,6 +247,50 @@ public class MainManagerActivity extends BaseActivity {
                 break;
             //扫一扫
             case R.id.ll_main_scan:
+                if (Build.VERSION.SDK_INT >= 23) {
+                    if (ContextCompat.checkSelfPermission(MainManagerActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(MainManagerActivity.this, new String[]{Manifest.permission.CAMERA}, 8);
+                    } else {
+                        camera();
+                    }
+                } else {
+                    camera();
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            //相机
+            case REQUEST_CODE_TAKE_PICTURE:
+                Uri uri = null;
+                if (data != null && data.getData() != null) {
+                    Log.e(TAG, "---Uri不为空---");
+                    uri = data.getData();
+                } else {
+                    Log.e(TAG, "---Uri为空---");
+                    uri = photoUri;
+                }
+                Tiny.FileCompressOptions options = new Tiny.FileCompressOptions();
+                Tiny.getInstance().source(uri).asFile().withOptions(options).compress(new FileCallback() {
+                    @Override
+                    public void callback(boolean isSuccess, String outfile, Throwable t) {
+                        Log.e(TAG, "---员工使用扫一扫---" + outfile);
+                    }
+                });
+                break;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case 8:
+                cartState.initToast(context, "请打开相机权限,否则无法使用扫一扫功能", true, 0);
                 break;
         }
     }

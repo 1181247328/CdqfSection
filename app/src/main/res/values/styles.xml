@@ -16,4 +16,12 @@
         <item name="android:textColor">@color/shop</item>
     </style>
 
+    <style name="style_shop_one">
+        <item name="android:textSize">@dimen/text_shop_one</item>
+    </style>
+
+    <style name="style_shop_two">
+        <item name="android:textColor">@dimen/text_shop_two</item>
+    </style>
+
 </resources>

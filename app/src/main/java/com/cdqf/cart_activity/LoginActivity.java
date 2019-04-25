@@ -101,7 +101,7 @@ public class LoginActivity extends BaseActivity {
     private void initAgo() {
         context = this;
         ButterKnife.bind(this);
-        cartState.permission(this);
+//        cartState.permission(this);
     }
 
     private void initView() {
