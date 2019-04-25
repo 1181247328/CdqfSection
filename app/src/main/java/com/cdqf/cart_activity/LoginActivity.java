@@ -22,6 +22,7 @@ import com.cdqf.cart_state.BaseActivity;
 import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartPreferences;
 import com.cdqf.cart_state.CartState;
+import com.cdqf.cart_state.ScreenUtils;
 import com.cdqf.cart_state.StatusBarCompat;
 import com.gcssloop.widget.RCRelativeLayout;
 import com.google.gson.Gson;
@@ -101,6 +102,7 @@ public class LoginActivity extends BaseActivity {
     private void initAgo() {
         context = this;
         ButterKnife.bind(this);
+        Log.e(TAG, "---宽度---" + ScreenUtils.getScreenWidth(context) + "---高度---" + ScreenUtils.getScreenHeight(context));
 //        cartState.permission(this);
     }
 
@@ -135,7 +137,7 @@ public class LoginActivity extends BaseActivity {
 
     private String loginAccPass(String account, String password) {
         String result = "";
-        result = CartAddaress.ADDRESS+"/?s=Staff.login&account="+account+"&password="+password;
+        result = CartAddaress.ADDRESS + "/?s=Staff.login&account=" + account + "&password=" + password;
         Log.e(TAG, "---登录---" + result);
         return result;
     }

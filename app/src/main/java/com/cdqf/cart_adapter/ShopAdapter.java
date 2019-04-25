@@ -76,7 +76,8 @@ public class ShopAdapter extends BaseAdapter {
         String shop = "("+cartState.getShopList().get(position).getService() + "人)";
         viewHolder.tvShopItemNumber.setText(shop);
         //完成状态
-        int service = Integer.parseInt(cartState.getShopList().get(position).getService());
+        Log.e(TAG, "--字符串---"+cartState.getShopList().get(position).getService().trim());
+        int service = Integer.parseInt(cartState.getShopList().get(position).getService().trim());
         Log.e(TAG, "---当前服务人数---" + service);
         if (service > 0) {
             viewHolder.rcrlShopItemWashed.setBackgroundColor(ContextCompat.getColor(context, R.color.loss_receive));

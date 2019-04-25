@@ -32,10 +32,10 @@
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
                     android:gravity="center_horizontal|center_vertical"
-                    android:paddingTop="20dp"
+                    android:paddingTop="@dimen/dp_20"
                     android:text="毛巾库存:"
                     android:textColor="@color/tab_main_text_default"
-                    android:textSize="16sp" />
+                    android:textSize="@dimen/sp_16" />
 
                 <TextView
                     android:id="@+id/tv_loss_dilog_number"
@@ -43,10 +43,10 @@
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
                     android:gravity="center_horizontal|center_vertical"
-                    android:paddingTop="20dp"
+                    android:paddingTop="@dimen/dp_20"
                     android:text="15"
                     android:textColor="@color/tab_main_text_default"
-                    android:textSize="18sp" />
+                    android:textSize="@dimen/sp_18" />
 
             </LinearLayout>
 
@@ -58,15 +58,15 @@
                 android:gravity="center"
                 android:hint="请输入领取的数量"
                 android:inputType="number"
-                android:lineSpacingExtra="3dp"
+                android:lineSpacingExtra="@dimen/dp_3"
                 android:lines="1"
-                android:paddingTop="25dp"
-                android:paddingBottom="25dp"
+                android:paddingTop="@dimen/dp_25"
+                android:paddingBottom="@dimen/dp_25"
                 android:singleLine="true"
-                android:textColor="@color/login_text"
+                android:textColor="@color/audit_text"
                 android:textColorHint="@color/login_text"
                 android:textCursorDrawable="@drawable/nickname_cursor"
-                android:textSize="14sp" />
+                android:textSize="@dimen/sp_14" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -76,7 +76,7 @@
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
+                    android:layout_height="@dimen/dp_1"
                     android:background="@color/lossmanager_stock" />
 
                 <LinearLayout
@@ -92,14 +92,14 @@
                         android:layout_weight="1"
                         android:background="@drawable/component_click"
                         android:gravity="center"
-                        android:paddingTop="10dp"
-                        android:paddingBottom="10dp"
+                        android:paddingTop="@dimen/dp_10"
+                        android:paddingBottom="@dimen/dp_10"
                         android:text="取消"
                         android:textColor="@color/route_determine"
-                        android:textSize="16sp" />
+                        android:textSize="@dimen/sp_16" />
 
                     <TextView
-                        android:layout_width="1dp"
+                        android:layout_width="@dimen/dp_1"
                         android:layout_height="match_parent"
                         android:background="@color/lossmanager_stock" />
 
@@ -110,11 +110,11 @@
                         android:layout_weight="1"
                         android:background="@drawable/component_click"
                         android:gravity="center"
-                        android:paddingTop="10dp"
-                        android:paddingBottom="10dp"
+                        android:paddingTop="@dimen/dp_10"
+                        android:paddingBottom="@dimen/dp_10"
                         android:text="确定"
                         android:textColor="@color/route_determine"
-                        android:textSize="16sp" />
+                        android:textSize="@dimen/sp_16" />
 
                 </LinearLayout>
 

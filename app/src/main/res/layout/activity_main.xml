@@ -21,7 +21,7 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="@dimen/dp_1"
             android:background="@color/general_one" />
 
         <LinearLayout
@@ -39,13 +39,13 @@
                 android:background="@android:color/transparent"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp">
+                android:paddingTop="@dimen/dp_10"
+                android:paddingBottom="@dimen/dp_10">
 
                 <ImageView
                     android:id="@+id/iv_main_home"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="@dimen/dp_30"
+                    android:layout_height="@dimen/dp_30"
                     android:background="@android:color/transparent"
                     android:src="@mipmap/main_tab_home_icn" />
 
@@ -55,10 +55,10 @@
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
                     android:gravity="center_horizontal"
-                    android:paddingTop="2dp"
+                    android:paddingTop="@dimen/dp_2"
                     android:text="首页"
                     android:textColor="@color/tab_main_text_icon"
-                    android:textSize="14sp" />
+                    android:textSize="@dimen/sp_14" />
 
             </LinearLayout>
 
@@ -70,13 +70,13 @@
                 android:background="@drawable/loss_click"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp">
+                android:paddingTop="@dimen/dp_10"
+                android:paddingBottom="@dimen/dp_10">
 
                 <ImageView
                     android:id="@+id/iv_main_scan"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="@dimen/dp_30"
+                    android:layout_height="@dimen/dp_30"
                     android:background="@android:color/transparent"
                     android:src="@mipmap/main_tab_scan_default" />
 
@@ -86,10 +86,10 @@
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
                     android:gravity="center_horizontal"
-                    android:paddingTop="2dp"
+                    android:paddingTop="@dimen/dp_2"
                     android:text="扫一扫"
                     android:textColor="@color/tab_main_text_default"
-                    android:textSize="14sp" />
+                    android:textSize="@dimen/sp_14" />
 
             </LinearLayout>
 
@@ -101,13 +101,13 @@
                 android:background="@android:color/transparent"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp">
+                android:paddingTop="@dimen/dp_10"
+                android:paddingBottom="@dimen/dp_10">
 
                 <ImageView
                     android:id="@+id/iv_main_my"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="@dimen/dp_30"
+                    android:layout_height="@dimen/dp_30"
                     android:background="@android:color/transparent"
                     android:src="@mipmap/main_tab_my_default" />
 
@@ -117,10 +117,10 @@
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
                     android:gravity="center_horizontal"
-                    android:paddingTop="2dp"
+                    android:paddingTop="@dimen/dp_2"
                     android:text="我的"
                     android:textColor="@color/tab_main_text_default"
-                    android:textSize="14sp" />
+                    android:textSize="@dimen/sp_14" />
 
             </LinearLayout>
 
