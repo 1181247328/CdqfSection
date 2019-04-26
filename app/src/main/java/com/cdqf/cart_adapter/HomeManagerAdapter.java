@@ -23,14 +23,16 @@ public class HomeManagerAdapter extends BaseAdapter {
             R.mipmap.home_loss,
             R.mipmap.home_service,
             R.mipmap.home_notices,
-            R.mipmap.home_user
+            R.mipmap.home_user,
+            R.mipmap.home_shop
     };
 
     private String[] name = {
             "损耗品",
             "店总",
             "通知",
-            "审核"
+            "审核",
+            "店员管理"
     };
 
     public HomeManagerAdapter(Context context) {

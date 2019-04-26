@@ -57,13 +57,21 @@ public class HomeManagerFragment extends Fragment {
 
     private HomeManagerAdapter homeManagerAdapter = null;
 
+    //数量
+    @BindView(R.id.tv_homemanager_number)
+    public TextView tvHomemanagerNumber = null;
+
+    //营业额
+    @BindView(R.id.tv_homemanager_money)
+    public TextView tvHomemanagerMoney = null;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         Log.e(TAG, "---创建---");
 
-        view = inflater.inflate(R.layout.fragment_home, container, false);
+        view = inflater.inflate(R.layout.fragment_homemanager, container, false);
 
         initAgo();
 

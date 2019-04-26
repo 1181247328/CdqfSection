@@ -15,8 +15,8 @@
 
         <ImageView
             android:id="@+id/iv_home_item_loss"
-            android:layout_width="@dimen/dp_60"
-            android:layout_height="@dimen/dp_60"
+            android:layout_width="@dimen/dp_50"
+            android:layout_height="@dimen/dp_50"
             android:background="@android:color/transparent"
             android:src="@mipmap/home_loss" />
 
