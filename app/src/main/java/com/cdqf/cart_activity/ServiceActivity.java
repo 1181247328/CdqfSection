@@ -157,7 +157,7 @@ public class ServiceActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<String, Object>();
         String shop = shop(cartState.getUser().getShopid());
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        okHttpRequestWrap.post(CartAddaress.STAFF_SHOP, isToast, "请稍候", params, new OnHttpRequest() {
+        okHttpRequestWrap.post(shop, isToast, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse服务---" + response);
@@ -200,8 +200,7 @@ public class ServiceActivity extends BaseActivity {
 
     private String shop(String shopid) {
         String result = null;
-        CartAddaress.STAFF_SHOP = CartAddaress.STAFF_SHOP.replace("SHOPID", cartState.urlEnodeUTF8(shopid));
-        result = CartAddaress.STAFF_SHOP;
+        result = CartAddaress.ADDRESS + "/?s=order.staff&shopid=" + shopid;
         Log.e(TAG, "---店总---" + result);
         return result;
     }

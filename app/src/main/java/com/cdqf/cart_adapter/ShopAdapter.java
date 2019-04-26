@@ -2,6 +2,7 @@ package com.cdqf.cart_adapter;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,7 +65,17 @@ public class ShopAdapter extends BaseAdapter {
         //订单号
         viewHolder.tvShopItemId.setText("订单:" + cartState.getShopList().get(position).getOrdernum());
         //车牌号
-        viewHolder.tvShopItemPlate.setText(cartState.getShopList().get(position).getCarnum());
+        if (TextUtils.equals(cartState.getShopList().get(position).getCarnum(), "")) {
+            viewHolder.tvShopItemPlate.setText("此订单不可无须服务");
+            viewHolder.rcrlShopItemClaim.setVisibility(View.GONE);
+            //完成
+            viewHolder.rcrlShopItemWashed.setVisibility(View.GONE);
+        } else {
+            viewHolder.tvShopItemPlate.setText(cartState.getShopList().get(position).getCarnum());
+            viewHolder.rcrlShopItemClaim.setVisibility(View.VISIBLE);
+            //完成
+            viewHolder.rcrlShopItemWashed.setVisibility(View.VISIBLE);
+        }
         //车型
         viewHolder.tvShopItemType.setText(cartState.getShopList().get(position).getType());
         //时间
@@ -73,11 +84,16 @@ public class ShopAdapter extends BaseAdapter {
         viewHolder.rcrlShopItemClaim.setOnClickListener(new OnServiceListener(position));
         //完成
         viewHolder.rcrlShopItemWashed.setOnClickListener(new OnWashedListener(position));
-        String shop = "("+cartState.getShopList().get(position).getService() + "人)";
+        String shop = "(" + cartState.getShopList().get(position).getService() + "人)";
         viewHolder.tvShopItemNumber.setText(shop);
         //完成状态
-        Log.e(TAG, "--字符串---"+cartState.getShopList().get(position).getService().trim());
-        int service = Integer.parseInt(cartState.getShopList().get(position).getService().trim());
+        int service = 0;
+        try {
+            service = Integer.parseInt(cartState.getShopList().get(position).getService().trim());
+        } catch (Exception e) {
+            e.printStackTrace();
+            service = 0;
+        }
         Log.e(TAG, "---当前服务人数---" + service);
         if (service > 0) {
             viewHolder.rcrlShopItemWashed.setBackgroundColor(ContextCompat.getColor(context, R.color.loss_receive));

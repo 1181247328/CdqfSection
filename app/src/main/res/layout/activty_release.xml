@@ -25,20 +25,20 @@
                 android:gravity="center_horizontal"
                 android:text="通知"
                 android:textColor="@color/white"
-                android:textSize="16sp" />
+                android:textSize="@dimen/sp_16" />
 
             <RelativeLayout
                 android:id="@+id/rl_release_return"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
+                android:layout_height="@dimen/dp_40"
                 android:background="@drawable/notice_click"
-                android:paddingLeft="6dp"
-                android:paddingRight="8dp">
+                android:paddingLeft="@dimen/dp_6"
+                android:paddingRight="@dimen/dp_8">
 
                 <ImageView
                     android:id="@+id/iv_notice_return"
-                    android:layout_width="17dp"
-                    android:layout_height="17dp"
+                    android:layout_width="@dimen/dp_17"
+                    android:layout_height="@dimen/dp_17"
                     android:layout_centerVertical="true"
                     android:background="@android:color/transparent"
                     android:src="@mipmap/pldetails_return" />
@@ -48,36 +48,36 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_toRightOf="@id/iv_notice_return"
-                    android:paddingLeft="5dp"
+                    android:paddingLeft="@dimen/dp_5"
                     android:text="返回"
                     android:textColor="@color/white"
-                    android:textSize="14sp" />
+                    android:textSize="@dimen/sp_14" />
 
             </RelativeLayout>
 
             <TextView
                 android:id="@+id/tv_release_release"
-                android:layout_width="50dp"
-                android:layout_height="40dp"
+                android:layout_width="@dimen/dp_50"
+                android:layout_height="@dimen/dp_40"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:background="@drawable/notice_click"
                 android:gravity="center_horizontal|center"
                 android:text="发布"
                 android:textColor="@color/white"
-                android:textSize="14sp" />
+                android:textSize="@dimen/sp_14" />
 
         </RelativeLayout>
 
         <com.gcssloop.widget.RCRelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="418px"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
+            android:layout_height="@dimen/dp_170"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:layout_marginTop="@dimen/dp_10"
+            android:layout_marginRight="@dimen/dp_10"
             android:background="@color/white"
             app:clip_background="true"
-            app:round_corner="16dp">
+            app:round_corner="@dimen/dp_16">
 
             <EditText
                 android:id="@+id/et_release_input"
@@ -86,11 +86,11 @@
                 android:background="@color/white"
                 android:gravity="top"
                 android:hint="输入需要发布的内容"
-                android:padding="14dp"
+                android:padding="@dimen/dp_14"
                 android:textColor="#dcdcdc"
                 android:textColorHint="#dcdcdc"
                 android:textCursorDrawable="@drawable/nickname_cursor"
-                android:textSize="14sp" />
+                android:textSize="@dimen/sp_14" />
 
         </com.gcssloop.widget.RCRelativeLayout>
 

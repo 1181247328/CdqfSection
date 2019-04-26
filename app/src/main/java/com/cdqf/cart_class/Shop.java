@@ -15,7 +15,7 @@ public class Shop {
     private String couponid;
     private String addtime;
     private String updtime;
-    private String service;
+    private String service = "0";
 
     public String getId() {
         return id;

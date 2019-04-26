@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         app:clip_background="true"
-        app:round_corner="15dp">
+        app:round_corner="@dimen/dp_15">
 
         <LinearLayout
             android:id="@+id/ll_why_dilog_one"
@@ -32,17 +32,17 @@
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
                     android:gravity="center_horizontal|center_vertical"
-                    android:paddingTop="15dp"
-                    android:paddingBottom="5dp"
+                    android:paddingTop="@dimen/dp_15"
+                    android:paddingBottom="@dimen/dp_5"
                     android:text="其它"
                     android:textColor="@color/tab_main_text_default"
-                    android:textSize="16sp" />
+                    android:textSize="@dimen/sp_16" />
 
             </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/dp_1"
                 android:background="@color/lossmanager_stock" />
 
 
@@ -54,15 +54,15 @@
                 android:gravity="center"
                 android:hint="请输入购买的数量"
                 android:inputType="number"
-                android:lineSpacingExtra="3dp"
+                android:lineSpacingExtra="@dimen/dp_3"
                 android:lines="1"
-                android:paddingTop="20dp"
-                android:paddingBottom="20dp"
+                android:paddingTop="@dimen/dp_20"
+                android:paddingBottom="@dimen/dp_20"
                 android:singleLine="true"
                 android:textColor="@color/login_text"
                 android:textColorHint="@color/login_text"
                 android:textCursorDrawable="@drawable/nickname_cursor"
-                android:textSize="14sp" />
+                android:textSize="@dimen/sp_14" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -72,7 +72,7 @@
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
+                    android:layout_height="@dimen/dp_1"
                     android:background="@color/lossmanager_stock" />
 
                 <LinearLayout
@@ -88,14 +88,14 @@
                         android:layout_weight="1"
                         android:background="@drawable/component_click"
                         android:gravity="center"
-                        android:paddingTop="10dp"
-                        android:paddingBottom="10dp"
+                        android:paddingTop="@dimen/dp_10"
+                        android:paddingBottom="@dimen/dp_10"
                         android:text="取消"
                         android:textColor="@color/route_determine"
-                        android:textSize="16sp" />
+                        android:textSize="@dimen/sp_16" />
 
                     <TextView
-                        android:layout_width="1dp"
+                        android:layout_width="@dimen/dp_1"
                         android:layout_height="match_parent"
                         android:background="@color/lossmanager_stock" />
 
@@ -106,11 +106,11 @@
                         android:layout_weight="1"
                         android:background="@drawable/component_click"
                         android:gravity="center"
-                        android:paddingTop="10dp"
-                        android:paddingBottom="10dp"
+                        android:paddingTop="@dimen/dp_10"
+                        android:paddingBottom="@dimen/dp_10"
                         android:text="确定"
                         android:textColor="@color/route_determine"
-                        android:textSize="16sp" />
+                        android:textSize="@dimen/sp_16" />
 
                 </LinearLayout>
 

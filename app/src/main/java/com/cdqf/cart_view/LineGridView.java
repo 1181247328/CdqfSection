@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.GridView;
 
@@ -51,7 +52,6 @@ public class LineGridView extends GridView {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-
         int childCount = getChildCount();
         Paint paint = new Paint();
         paint.setStyle(Paint.Style.STROKE);
@@ -70,15 +70,21 @@ public class LineGridView extends GridView {
             {
                 canvas.drawLine(cellView.getRight(), cellView.getTop() + 1, cellView.getRight(), cellView.getBottom() + 1, paint);
             }
-//            if ((i + column) >= childCount)  //最后column个单元格画上底边线
-//            {
-//                canvas.drawLine(cellView.getLeft(), cellView.getBottom() + 1, cellView.getRight(), cellView.getBottom() + 1, paint);
-//            }
+            int rows = 1;
+            if (childCount % column == 0) {
+                rows = childCount / column;
+            } else {
+                rows = childCount / column + 1;
+            }
+            Log.e("GridView", "---行数---" + rows);
+            if ((i + column) >= childCount && (i < (column * rows - column)))  //最后column个单元格画上底边线
+            {
+                canvas.drawLine(cellView.getLeft(), cellView.getBottom() + 1, cellView.getRight(), cellView.getBottom() + 1, paint);
+            }
             if (childCount % column != 0 && i == childCount - 1)   //如果最后一个单元格不在最右一列，单独为它画上右边线
             {
-                canvas.drawLine(cellView.getRight() + 1, cellView.getTop() + 1, cellView.getRight() + 1, cellView.getBottom() + 1, paint);
+                canvas.drawLine(cellView.getRight() + 1, cellView.getTop() + 1, cellView.getRight() + 1, cellView.getBottom(), paint);
             }
         }
     }
-
 }

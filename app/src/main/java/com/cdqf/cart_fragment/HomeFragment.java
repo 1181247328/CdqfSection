@@ -17,7 +17,7 @@ import com.cdqf.cart_activity.NoticeActivity;
 import com.cdqf.cart_activity.ServiceActivity;
 import com.cdqf.cart_adapter.HomeAdapter;
 import com.cdqf.cart_state.CartState;
-import com.cdqf.cart_view.MyGridView;
+import com.cdqf.cart_view.LineGridView;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -52,7 +52,7 @@ public class HomeFragment extends Fragment {
 
     //集合
     @BindView(R.id.mgv_home_list)
-    public MyGridView mgvHomeList = null;
+    public LineGridView mgvHomeList = null;
 
     private HomeAdapter homeAdapter = null;
 

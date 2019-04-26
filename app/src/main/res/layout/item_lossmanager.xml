@@ -95,7 +95,7 @@
                         android:id="@+id/rcrl_lossmanager_item_input"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="3dp"
+                        android:layout_marginRight="@dimen/dp_3"
                         android:background="@color/white"
                         android:visibility="gone"
                         app:clip_background="true"
@@ -121,10 +121,10 @@
                         android:id="@+id/rcrl_lossmanager_item_loss"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="3dp"
+                        android:layout_marginLeft="@dimen/dp_3"
                         android:background="@drawable/line_reward"
                         app:clip_background="true"
-                        app:round_corner="5dp">
+                        app:round_corner="@dimen/dp_5">
 
                         <TextView
                             android:layout_width="wrap_content"
