@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.cdqf.cart.R;
 import com.cdqf.cart_find.LossManagerOneFind;
+import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
 import com.gcssloop.widget.RCRelativeLayout;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -64,7 +65,7 @@ public class LossManagerAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        imageLoader.displayImage(cartState.getLossManList().get(position).getImage(), viewHolder.ivLossmanagerItemImage, cartState.getImageLoaderOptions(R.mipmap.not_loaded, R.mipmap.not_loaded, R.mipmap.not_loaded));
+        imageLoader.displayImage(CartAddaress.ADDRESS + cartState.getLossManList().get(position).getImage_url(), viewHolder.ivLossmanagerItemImage, cartState.getImageLoaderOptions(R.mipmap.not_loaded, R.mipmap.not_loaded, R.mipmap.not_loaded));
         viewHolder.tvLossmanagerItemName.setText("商品:" + cartState.getLossManList().get(position).getName());
         viewHolder.tvLossmanagerItemNumber.setText("总量:" + cartState.getLossManList().get(position).getNumber());
         //输入数量

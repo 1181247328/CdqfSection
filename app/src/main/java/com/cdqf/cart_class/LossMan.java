@@ -4,7 +4,7 @@ public class LossMan {
     private String id;
     private String name;
     private String number;
-    private String image;
+    private String image_url;
     private String type;
 
     public String getId() {
@@ -31,12 +31,12 @@ public class LossMan {
         this.number = number;
     }
 
-    public String getImage() {
-        return image;
+    public String getImage_url() {
+        return image_url;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setImage_url(String image_url) {
+        this.image_url = image_url;
     }
 
     public String getType() {

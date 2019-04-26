@@ -22,8 +22,8 @@ import com.cdqf.cart.R;
 import com.cdqf.cart_adapter.ServiceAdapter;
 import com.cdqf.cart_class.Shop;
 import com.cdqf.cart_dilog.WhyDilogFragment;
-import com.cdqf.cart_find.ServiceTwoFind;
 import com.cdqf.cart_find.ServiceOneFind;
+import com.cdqf.cart_find.ServiceTwoFind;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;
 import com.cdqf.cart_state.BaseActivity;
@@ -39,6 +39,9 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -75,6 +78,8 @@ public class ServiceActivity extends BaseActivity {
     public TextView tvServiceNo = null;
 
     private ServiceAdapter serviceAdapter = null;
+
+    private ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(5);
 
     private Handler handler = new Handler() {
         @Override
@@ -153,6 +158,51 @@ public class ServiceActivity extends BaseActivity {
         initPull(true);
     }
 
+    private void initPullData(boolean isToast) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        String shop = shop(cartState.getUser().getShopid());
+        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
+        okHttpRequestWrap.post(shop, isToast, "请稍候", params, new OnHttpRequest() {
+            @Override
+            public void onOkHttpResponse(String response, int id) {
+                Log.e(TAG, "---onOkHttpResponse服务---" + response);
+                if (srlServicePull != null) {
+                    srlServicePull.setRefreshing(false);
+                }
+                JSONObject resultJSON = JSON.parseObject(response);
+                int error_code = resultJSON.getInteger("ret");
+                String msg = resultJSON.getString("msg");
+                switch (error_code) {
+                    //获取成功
+                    case 200:
+                        String data = resultJSON.getString("data");
+                        if (TextUtils.equals(data, "2222")) {
+                            handler.sendEmptyMessage(0x002);
+                            return;
+                        }
+                        handler.sendEmptyMessage(0x001);
+                        cartState.getShopList().clear();
+                        List<Shop> routeList = gson.fromJson(data, new TypeToken<List<Shop>>() {
+                        }.getType());
+                        cartState.setShopList(routeList);
+                        if (serviceAdapter != null) {
+                            serviceAdapter.notifyDataSetChanged();
+                        }
+                        break;
+                    default:
+                        handler.sendEmptyMessage(0x002);
+                        cartState.initToast(context, msg, true, 0);
+                        break;
+                }
+            }
+
+            @Override
+            public void onOkHttpError(String error) {
+                Log.e(TAG, "---onOkHttpError---" + error);
+            }
+        });
+    }
+
     private void initPull(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
         String shop = shop(cartState.getUser().getShopid());
@@ -183,6 +233,15 @@ public class ServiceActivity extends BaseActivity {
                         if (serviceAdapter != null) {
                             serviceAdapter.notifyDataSetChanged();
                         }
+                        scheduledThreadPool.scheduleAtFixedRate(new Runnable() {
+
+                            @Override
+                            public void run() {
+
+                                Log.e(TAG, "---次---");
+                                initPullData(false);
+                            }
+                        }, 2, 2, TimeUnit.SECONDS);
                         break;
                     default:
                         handler.sendEmptyMessage(0x002);

@@ -44,9 +44,9 @@
     <application
         android:name="com.cdqf.cart_hear.App"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launchers"
+        android:icon="@mipmap/log_new"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launchers"
+        android:roundIcon="@mipmap/log_new"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 

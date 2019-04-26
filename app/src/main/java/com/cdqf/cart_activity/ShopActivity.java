@@ -42,6 +42,9 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -78,6 +81,8 @@ public class ShopActivity extends BaseActivity {
     public TextView tvShopNo = null;
 
     private ShopAdapter shopAdapter = null;
+
+    private ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(5);
 
     private Handler handler = new Handler() {
         @Override
@@ -162,6 +167,47 @@ public class ShopActivity extends BaseActivity {
         initPull(true);
     }
 
+    private void initPullData(boolean isToast){
+        Map<String, Object> params = new HashMap<String, Object>();
+        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
+        String shop = shop(cartState.getUser().getShopid());
+        okHttpRequestWrap.post(shop, isToast, "请稍候", params, new OnHttpRequest() {
+            @Override
+            public void onOkHttpResponse(String response, int id) {
+                Log.e(TAG, "---onOkHttpResponse店总---" + response);
+                if (srlShopPull != null) {
+                    srlShopPull.setRefreshing(false);
+                }
+                JSONObject resultJSON = JSON.parseObject(response);
+                int error_code = resultJSON.getInteger("ret");
+                String msg = resultJSON.getString("msg");
+                switch (error_code) {
+                    //获取成功
+                    case 200:
+                        handler.sendEmptyMessage(0x001);
+                        String data = resultJSON.getString("data");
+                        cartState.getShopList().clear();
+                        List<Shop> routeList = gson.fromJson(data, new TypeToken<List<Shop>>() {
+                        }.getType());
+                        cartState.setShopList(routeList);
+                        if (shopAdapter != null) {
+                            shopAdapter.notifyDataSetChanged();
+                        }
+                        break;
+                    default:
+                        handler.sendEmptyMessage(0x002);
+                        cartState.initToast(context, msg, true, 0);
+                        break;
+                }
+            }
+
+            @Override
+            public void onOkHttpError(String error) {
+                Log.e(TAG, "---onOkHttpError---" + error);
+            }
+        });
+    }
+
     private void initPull(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
@@ -188,6 +234,14 @@ public class ShopActivity extends BaseActivity {
                         if (shopAdapter != null) {
                             shopAdapter.notifyDataSetChanged();
                         }
+                        scheduledThreadPool.scheduleAtFixedRate(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                Log.e(TAG, "---次---");
+                                initPullData(false);
+                            }
+                        }, 2, 2, TimeUnit.SECONDS);
                         break;
                     default:
                         handler.sendEmptyMessage(0x002);
