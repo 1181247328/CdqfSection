@@ -47,6 +47,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 
 /**
  * 服务(员工)
@@ -334,6 +335,7 @@ public class ServiceActivity extends BaseActivity {
      *
      * @param s
      */
+    @Subscribe
     public void onEventMainThread(ServiceOneFind s) {
         WhyDilogFragment whyDilogFragment = new WhyDilogFragment();
         whyDilogFragment.setInit(4, "提示", "是否领取车牌号为" + cartState.getShopList().get(s.position).getCarnum() + "的订单.", "否", "是", s.position);
@@ -345,6 +347,7 @@ public class ServiceActivity extends BaseActivity {
      *
      * @param s
      */
+    @Subscribe
     public void onEventMainThread(ServiceTwoFind s) {
         Map<String, Object> params = new HashMap<String, Object>();
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);

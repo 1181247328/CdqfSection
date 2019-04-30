@@ -38,6 +38,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 
 /**
  * 订单详情
@@ -304,6 +305,7 @@ public class DatilsActivity extends BaseActivity {
         eventBus.unregister(this);
     }
 
+    @Subscribe
     public void onEventMainThread(DatilsPullFind r) {
         initPull(true);
     }
@@ -313,6 +315,7 @@ public class DatilsActivity extends BaseActivity {
      *
      * @param r
      */
+    @Subscribe
     public void onEventMainThread(DatilsPhoneFind r) {
         Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + datils.getPhone()));
         startActivity(intent);

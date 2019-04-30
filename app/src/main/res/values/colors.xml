@@ -45,4 +45,6 @@
 
     <color name="name_text">#b0b0b0</color>
 
+    <color name="news_loss">#ef770d</color>
+
 </resources>

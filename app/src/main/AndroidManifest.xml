@@ -269,5 +269,18 @@
 
         </activity>
 
+        <!--添加店员-->
+        <activity
+            android:name="com.cdqf.cart_activity.EmployeesAddActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
+        <!--新损耗品-->
+        <activity
+            android:name="com.cdqf.cart_activity.LossNewsActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
+
     </application>
 </manifest>

@@ -35,6 +35,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 
 /**
  * 发布(店长)
@@ -216,6 +217,7 @@ public class ReleaseActivity extends BaseActivity {
      *
      * @param r
      */
+    @Subscribe
     public void onEventMainThread(ReleaseFind r) {
         Map<String, Object> params = new HashMap<String, Object>();
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);

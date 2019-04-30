@@ -1,0 +1,496 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/service_bak"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/tab_main_text_icon">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:background="@android:color/transparent"
+                android:gravity="center_horizontal"
+                android:text="添加店员"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_16" />
+
+            <RelativeLayout
+                android:id="@+id/rl_addemployees_return"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/dp_40"
+                android:background="@drawable/notice_click"
+                android:paddingLeft="@dimen/dp_6"
+                android:paddingRight="@dimen/dp_8">
+
+                <ImageView
+                    android:id="@+id/iv_notice_return"
+                    android:layout_width="@dimen/dp_17"
+                    android:layout_height="@dimen/dp_17"
+                    android:layout_centerVertical="true"
+                    android:background="@android:color/transparent"
+                    android:src="@mipmap/pldetails_return" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@id/iv_notice_return"
+                    android:paddingLeft="@dimen/dp_5"
+                    android:text="返回"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tv_employess_add"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/dp_40"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/notice_click"
+                android:gravity="center"
+                android:paddingLeft="@dimen/dp_12"
+                android:paddingRight="@dimen/dp_12"
+                android:text="添加店员"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_16"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/service_bak">
+
+            <TextView
+                android:id="@+id/tv_addemployees_submit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/notice_click"
+                android:gravity="center"
+                android:paddingTop="@dimen/dp_10"
+                android:paddingBottom="@dimen/dp_10"
+                android:text="提交"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_16" />
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@id/tv_addemployees_submit"
+                android:background="@color/service_bak"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/service_bak"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:orientation="vertical"
+                        android:paddingLeft="@dimen/dp_15"
+                        android:paddingRight="@dimen/dp_15"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:text="员工ID:"
+                            android:textColor="@color/audit_text"
+                            android:textSize="@dimen/sp_14" />
+
+                        <com.gcssloop.widget.RCRelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dp_6"
+                            android:background="@color/white"
+                            app:clip_background="true"
+                            app:round_corner="@dimen/dp_8">
+
+                            <TextView
+                                android:id="@+id/tv_addemployees_id"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/dp_35"
+                                android:background="@android:color/transparent"
+                                android:gravity="center_vertical"
+                                android:paddingLeft="@dimen/dp_12"
+                                android:paddingRight="@dimen/dp_12"
+                                android:singleLine="true"
+                                android:text="W0001"
+                                android:textColor="@color/audit_text"
+                                android:textSize="@dimen/sp_13" />
+
+                        </com.gcssloop.widget.RCRelativeLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:orientation="vertical"
+                        android:paddingLeft="@dimen/dp_15"
+                        android:paddingTop="@dimen/dp_16"
+                        android:paddingRight="@dimen/dp_15">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:text="员工姓名:"
+                            android:textColor="@color/audit_text"
+                            android:textSize="@dimen/sp_14" />
+
+                        <com.gcssloop.widget.RCRelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dp_6"
+                            android:background="@color/white"
+                            app:round_corner="@dimen/dp_5">
+
+                            <com.xw.repo.XEditText
+                                android:id="@+id/xet_addemployees_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/dp_35"
+                                android:background="@android:color/transparent"
+                                android:gravity="center_vertical"
+                                android:hint="请输入姓名"
+                                android:paddingLeft="@dimen/dp_12"
+                                android:paddingRight="@dimen/dp_12"
+                                android:singleLine="true"
+                                android:textColor="@color/audit_text"
+                                android:textColorHint="@color/login_text"
+                                android:textCursorDrawable="@drawable/nickname_cursor"
+                                android:textSize="@dimen/sp_13" />
+
+                        </com.gcssloop.widget.RCRelativeLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:orientation="vertical"
+                        android:paddingLeft="@dimen/dp_15"
+                        android:paddingTop="@dimen/dp_16"
+                        android:paddingRight="@dimen/dp_15">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:text="员工职位:"
+                            android:textColor="@color/audit_text"
+                            android:textSize="@dimen/sp_14" />
+
+                        <com.gcssloop.widget.RCRelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dp_6"
+                            android:background="@color/white"
+                            app:round_corner="@dimen/dp_5">
+
+                            <org.angmarch.views.NiceSpinner
+                                android:id="@+id/ns_addemployees_position"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/dp_40"
+                                android:background="@android:color/transparent"
+                                android:gravity="center_vertical"
+                                android:hint="请选择职位"
+                                android:singleLine="true"
+                                android:textColor="@color/audit_text"
+                                android:textColorHint="@color/login_text"
+                                android:textCursorDrawable="@drawable/nickname_cursor"
+                                android:textSize="@dimen/sp_13" />
+
+                        </com.gcssloop.widget.RCRelativeLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:orientation="vertical"
+                        android:paddingLeft="@dimen/dp_15"
+                        android:paddingTop="@dimen/dp_16"
+                        android:paddingRight="@dimen/dp_15">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:text="手机号码:"
+                            android:textColor="@color/audit_text"
+                            android:textSize="@dimen/sp_14" />
+
+                        <com.gcssloop.widget.RCRelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dp_6"
+                            android:background="@color/white"
+                            app:round_corner="@dimen/dp_5">
+
+                            <com.xw.repo.XEditText
+                                android:id="@+id/xet_addemployees_phone"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/dp_35"
+                                android:background="@android:color/transparent"
+                                android:gravity="center_vertical"
+                                android:hint="请输入手机号码"
+                                android:inputType="phone"
+                                android:paddingLeft="@dimen/dp_12"
+                                android:paddingRight="@dimen/dp_12"
+                                android:singleLine="true"
+                                android:textColor="@color/audit_text"
+                                android:textColorHint="@color/login_text"
+                                android:textCursorDrawable="@drawable/nickname_cursor"
+                                android:textSize="@dimen/sp_13" />
+
+                        </com.gcssloop.widget.RCRelativeLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:orientation="vertical"
+                        android:paddingLeft="@dimen/dp_15"
+                        android:paddingTop="@dimen/dp_16"
+                        android:paddingRight="@dimen/dp_15">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:text="紧急联系人:"
+                            android:textColor="@color/audit_text"
+                            android:textSize="@dimen/sp_14" />
+
+                        <com.gcssloop.widget.RCRelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dp_6"
+                            android:background="@color/white"
+                            app:round_corner="@dimen/dp_5">
+
+                            <com.xw.repo.XEditText
+                                android:id="@+id/xet_addemployees_contact"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/dp_35"
+                                android:background="@android:color/transparent"
+                                android:gravity="center_vertical"
+                                android:hint="请输入紧急联系人"
+                                android:paddingLeft="@dimen/dp_12"
+                                android:paddingRight="@dimen/dp_12"
+                                android:singleLine="true"
+                                android:textColor="@color/audit_text"
+                                android:textColorHint="@color/login_text"
+                                android:textCursorDrawable="@drawable/nickname_cursor"
+                                android:textSize="@dimen/sp_13" />
+
+                        </com.gcssloop.widget.RCRelativeLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:orientation="vertical"
+                        android:paddingLeft="@dimen/dp_15"
+                        android:paddingTop="@dimen/dp_16"
+                        android:paddingRight="@dimen/dp_15">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:text="紧急联系人手机号码:"
+                            android:textColor="@color/audit_text"
+                            android:textSize="@dimen/sp_14" />
+
+                        <com.gcssloop.widget.RCRelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dp_6"
+                            android:background="@color/white"
+                            app:round_corner="@dimen/dp_5">
+
+                            <com.xw.repo.XEditText
+                                android:id="@+id/xet_addemployees_number"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/dp_35"
+                                android:background="@android:color/transparent"
+                                android:gravity="center_vertical"
+                                android:hint="请输入紧急联系人手机号码"
+                                android:inputType="phone"
+                                android:paddingLeft="@dimen/dp_12"
+                                android:paddingRight="@dimen/dp_12"
+                                android:singleLine="true"
+                                android:textColor="@color/audit_text"
+                                android:textColorHint="@color/login_text"
+                                android:textCursorDrawable="@drawable/nickname_cursor"
+                                android:textSize="@dimen/sp_13" />
+
+                        </com.gcssloop.widget.RCRelativeLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:orientation="vertical"
+                        android:paddingLeft="@dimen/dp_15"
+                        android:paddingTop="@dimen/dp_16"
+                        android:paddingRight="@dimen/dp_15">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:text="身份证证件号:"
+                            android:textColor="@color/audit_text"
+                            android:textSize="@dimen/sp_14" />
+
+                        <com.gcssloop.widget.RCRelativeLayout
+                            android:id="@+id/rcrcl_addemployees_certificate"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dp_6"
+                            android:background="@color/white"
+                            app:round_corner="@dimen/dp_5">
+
+                            <com.xw.repo.XEditText
+                                android:id="@+id/xet_addemployees_certificate"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/dp_35"
+                                android:background="@android:color/transparent"
+                                android:gravity="center_vertical"
+                                android:hint="请输入身份证证件号"
+                                android:paddingLeft="@dimen/dp_12"
+                                android:paddingRight="@dimen/dp_12"
+                                android:singleLine="true"
+                                android:textColor="@color/audit_text"
+                                android:textColorHint="@color/login_text"
+                                android:textCursorDrawable="@drawable/nickname_cursor"
+                                android:textSize="@dimen/sp_13" />
+
+                        </com.gcssloop.widget.RCRelativeLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:orientation="vertical"
+                        android:paddingLeft="@dimen/dp_15"
+                        android:paddingTop="@dimen/dp_25"
+                        android:paddingRight="@dimen/dp_15">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:text="身份证正面:"
+                            android:textColor="@color/audit_text"
+                            android:textSize="@dimen/sp_14" />
+
+                        <com.gcssloop.widget.RCRelativeLayout
+                            android:id="@+id/rcrl_addemployees_positive"
+                            android:layout_width="@dimen/dp_180"
+                            android:layout_height="@dimen/dp_100"
+                            android:layout_marginTop="@dimen/dp_6"
+                            android:background="@color/service_bak"
+                            app:clip_background="true"
+                            app:round_corner="@dimen/dp_3"
+                            app:stroke_color="@color/datils_text"
+                            app:stroke_width="@dimen/dp_0_5">
+
+                            <ImageView
+                                android:id="@+id/iv_addemployees_positive"
+                                android:layout_width="@dimen/dp_180"
+                                android:layout_height="@dimen/dp_100"
+                                android:background="@android:color/transparent"
+                                android:scaleType="center"
+                                android:src="@mipmap/addemployees" />
+
+                        </com.gcssloop.widget.RCRelativeLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:orientation="vertical"
+                        android:paddingLeft="@dimen/dp_15"
+                        android:paddingTop="@dimen/dp_16"
+                        android:paddingRight="@dimen/dp_15"
+                        android:paddingBottom="@dimen/dp_16">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:text="身份证反面:"
+                            android:textColor="@color/audit_text"
+                            android:textSize="@dimen/sp_14" />
+
+                        <com.gcssloop.widget.RCRelativeLayout
+                            android:id="@+id/rcrl_addemployees_reverse"
+                            android:layout_width="@dimen/dp_180"
+                            android:layout_height="@dimen/dp_100"
+                            android:layout_marginTop="@dimen/dp_6"
+                            android:background="@color/service_bak"
+                            app:clip_background="true"
+                            app:round_corner="@dimen/dp_3"
+                            app:stroke_color="@color/datils_text"
+                            app:stroke_width="@dimen/dp_0_5">
+
+                            <ImageView
+                                android:id="@+id/iv_addemployees_reverse"
+                                android:layout_width="@dimen/dp_180"
+                                android:layout_height="@dimen/dp_100"
+                                android:background="@android:color/transparent"
+                                android:scaleType="center"
+                                android:src="@mipmap/addemployees" />
+
+                        </com.gcssloop.widget.RCRelativeLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </ScrollView>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

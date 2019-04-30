@@ -41,6 +41,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 
 /**
  * 通知(店长)
@@ -272,6 +273,7 @@ public class NoticeManagerActivity extends BaseActivity {
      *
      * @param r
      */
+    @Subscribe
     public void onEventMainThread(ReleasePullFind r) {
         initPull(true);
     }

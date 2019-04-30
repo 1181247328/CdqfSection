@@ -45,6 +45,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 
 /**
  * 审核
@@ -276,6 +277,7 @@ public class AuditActivity extends BaseActivity {
      *
      * @param t
      */
+    @Subscribe
     public void onEventMainThread(ThroughFind t) {
         WhyDilogFragment whyDilogFragment = new WhyDilogFragment();
         whyDilogFragment.setInit(8, "提示", "是否通过" + cartState.getAuditList().get(t.position).getName() + "申请" + cartState.getAuditList().get(t.position).getGoods_name() + "的请求", "否", "是", t.position);
@@ -287,6 +289,7 @@ public class AuditActivity extends BaseActivity {
      *
      * @param t
      */
+    @Subscribe
     public void onEventMainThread(ThroughTwoFind t) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("s", "TotalGoods.shop_approval");
@@ -325,6 +328,7 @@ public class AuditActivity extends BaseActivity {
      *
      * @param t
      */
+    @Subscribe
     public void onEventMainThread(RefusedFind t) {
         WhyDilogFragment whyDilogFragment = new WhyDilogFragment();
         whyDilogFragment.setInit(9, "提示", "是否拒绝" + cartState.getAuditList().get(t.position).getName() + "申请" + cartState.getAuditList().get(t.position).getGoods_name() + "的请求", "否", "是", t.position);
@@ -336,6 +340,7 @@ public class AuditActivity extends BaseActivity {
      *
      * @param r
      */
+    @Subscribe
     public void onEventMainThread(RefusedTwoFind r) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("s", "TotalGoods.shop_exit");

@@ -27,8 +27,10 @@ import com.cdqf.cart_find.ShopOneFind;
 import com.cdqf.cart_find.ShopServiceOneFind;
 import com.cdqf.cart_find.ShopServiceTwoFind;
 import com.cdqf.cart_find.ShopTwoFind;
+import com.cdqf.cart_find.ShopViscousFind;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;
+import com.cdqf.cart_state.ACache;
 import com.cdqf.cart_state.BaseActivity;
 import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
@@ -50,6 +52,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
+import de.greenrobot.event.ThreadMode;
 
 /**
  * 店总
@@ -81,6 +85,8 @@ public class ShopActivity extends BaseActivity {
     public TextView tvShopNo = null;
 
     private ShopAdapter shopAdapter = null;
+
+    private ACache aCache = null;
 
     private ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(5);
 
@@ -133,19 +139,17 @@ public class ShopActivity extends BaseActivity {
 
     private void initAgo() {
         context = this;
+        aCache = ACache.get(context);
         ButterKnife.bind(this);
-        if (!eventBus.isRegistered(this)) {
-            eventBus.register(this);
-        }
     }
 
     private void initView() {
-        shopAdapter = new ShopAdapter(context);
-        lvShopList.setAdapter(shopAdapter);
+
     }
 
     private void initAdapter() {
-
+        shopAdapter = new ShopAdapter(context);
+        lvShopList.setAdapter(shopAdapter);
     }
 
     private void initListener() {
@@ -164,10 +168,34 @@ public class ShopActivity extends BaseActivity {
     }
 
     private void initBack() {
-        initPull(true);
+        if (!eventBus.isRegistered(this)) {
+            eventBus.register(this);
+        }
+
+        if (aCache.getAsString("shop") != null) {
+//            handler.sendEmptyMessage(0x001);
+            String data = aCache.getAsString("shop");
+            cartState.getShopList().clear();
+            List<Shop> routeList = gson.fromJson(data, new TypeToken<List<Shop>>() {
+            }.getType());
+            cartState.setShopList(routeList);
+            if (shopAdapter != null) {
+                shopAdapter.notifyDataSetChanged();
+            }
+            scheduledThreadPool.scheduleAtFixedRate(new Runnable() {
+
+                @Override
+                public void run() {
+                    Log.e(TAG, "---次---");
+                    initPullData(false);
+                }
+            }, 2, 2, TimeUnit.SECONDS);
+        } else {
+            initPull(true);
+        }
     }
 
-    private void initPullData(boolean isToast){
+    private void initPullData(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
         String shop = shop(cartState.getUser().getShopid());
@@ -186,6 +214,7 @@ public class ShopActivity extends BaseActivity {
                     case 200:
                         handler.sendEmptyMessage(0x001);
                         String data = resultJSON.getString("data");
+                        aCache.put("shop", data);
                         cartState.getShopList().clear();
                         List<Shop> routeList = gson.fromJson(data, new TypeToken<List<Shop>>() {
                         }.getType());
@@ -228,6 +257,7 @@ public class ShopActivity extends BaseActivity {
                         handler.sendEmptyMessage(0x001);
                         String data = resultJSON.getString("data");
                         cartState.getShopList().clear();
+                        aCache.put("shop", data);
                         List<Shop> routeList = gson.fromJson(data, new TypeToken<List<Shop>>() {
                         }.getType());
                         cartState.setShopList(routeList);
@@ -341,7 +371,42 @@ public class ShopActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.e(TAG, "---销毁---");
+        eventBus.removeAllStickyEvents();
         eventBus.unregister(this);
+        if (scheduledThreadPool != null) {
+            scheduledThreadPool.shutdown();
+        }
+    }
+
+    /**
+     * 预加载得到的数据
+     *
+     * @param s
+     */
+    @Subscribe(threadMode = ThreadMode.MainThread, sticky = true)
+    public void onEvent(ShopViscousFind s) {
+        Log.e(TAG, "---预加载得到的数据---" + s.shop + "---是否加载了---" + s.isShop);
+        if (s.isShop) {
+//            handler.sendEmptyMessage(0x001);
+            cartState.getShopList().clear();
+            aCache.put("shop", s.shop);
+            List<Shop> routeList = gson.fromJson(s.shop, new TypeToken<List<Shop>>() {
+            }.getType());
+            cartState.setShopList(routeList);
+            if (shopAdapter != null) {
+                shopAdapter.notifyDataSetChanged();
+            }
+            scheduledThreadPool.scheduleAtFixedRate(new Runnable() {
+
+                @Override
+                public void run() {
+                    Log.e(TAG, "---次---");
+                    initPullData(false);
+                }
+            }, 2, 2, TimeUnit.SECONDS);
+        } else {
+            initPullData(true);
+        }
     }
 
     /**
@@ -349,6 +414,7 @@ public class ShopActivity extends BaseActivity {
      *
      * @param s
      */
+    @Subscribe
     public void onEventMainThread(ShopServiceOneFind s) {
         WhyDilogFragment whyDilogFragment = new WhyDilogFragment();
         whyDilogFragment.setInit(1, "提示", "是否领取车牌号为" + cartState.getShopList().get(s.position).getCarnum() + "的订单.", "否", "是", s.position);
@@ -360,6 +426,7 @@ public class ShopActivity extends BaseActivity {
      *
      * @param s
      */
+    @Subscribe
     public void onEventMainThread(ShopServiceTwoFind s) {
         Map<String, Object> params = new HashMap<String, Object>();
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
@@ -395,6 +462,7 @@ public class ShopActivity extends BaseActivity {
      *
      * @param r
      */
+    @Subscribe
     public void onEventMainThread(ShopOneFind r) {
         WhyDilogFragment whyDilogFragment = new WhyDilogFragment();
         whyDilogFragment.setInit(0, "提示", "是否完成车牌号为" + cartState.getShopList().get(r.position).getCarnum() + "的订单.", "否", "是", r.position);
@@ -406,6 +474,7 @@ public class ShopActivity extends BaseActivity {
      *
      * @param r
      */
+    @Subscribe
     public void onEventMainThread(ShopTwoFind r) {
         Map<String, Object> params = new HashMap<String, Object>();
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);

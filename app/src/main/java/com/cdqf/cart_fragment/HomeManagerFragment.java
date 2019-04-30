@@ -11,16 +11,25 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
 import com.cdqf.cart_activity.AuditActivity;
 import com.cdqf.cart_activity.LossManagerActivity;
 import com.cdqf.cart_activity.NoticeManagerActivity;
 import com.cdqf.cart_activity.ShopActivity;
 import com.cdqf.cart_adapter.HomeManagerAdapter;
+import com.cdqf.cart_find.ShopViscousFind;
+import com.cdqf.cart_okhttp.OKHttpRequestWrap;
+import com.cdqf.cart_okhttp.OnHttpRequest;
+import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_view.LineGridView;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,7 +40,7 @@ import de.greenrobot.event.EventBus;
  */
 public class HomeManagerFragment extends Fragment {
 
-    private String TAG = HomeFragment.class.getSimpleName();
+    private String TAG = HomeManagerFragment.class.getSimpleName();
 
     private CartState cartState = CartState.getCartState();
 
@@ -64,6 +73,8 @@ public class HomeManagerFragment extends Fragment {
     //营业额
     @BindView(R.id.tv_homemanager_money)
     public TextView tvHomemanagerMoney = null;
+
+    private int s = 0;
 
     @Nullable
     @Override
@@ -122,11 +133,56 @@ public class HomeManagerFragment extends Fragment {
     private void initBack() {
         tvHomeName.setText(cartState.getUser().getName() + ":");
         tvHomeContext.setText("今天是您加入脱狗车宝第" + cartState.getUser().getDay() + "天!");
+
+        initShopPull();
     }
 
     private void initIntent(Class<?> activity) {
         Intent intent = new Intent(getContext(), activity);
         startActivity(intent);
+    }
+
+    private void initShopPull() {
+        Map<String, Object> params = new HashMap<String, Object>();
+        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
+        String shop = shop(cartState.getUser().getShopid());
+        okHttpRequestWrap.post(shop, false, "请稍候", params, new OnHttpRequest() {
+            @Override
+            public void onOkHttpResponse(String response, int id) {
+                Log.e(TAG, "---onOkHttpResponse服务的粘性事件---" + response);
+                JSONObject resultJSON = JSON.parseObject(response);
+                int error_code = resultJSON.getInteger("ret");
+                String msg = resultJSON.getString("msg");
+                switch (error_code) {
+                    //获取成功
+                    case 200:
+                        String data = resultJSON.getString("data");
+                        eventBus.postSticky(new ShopViscousFind(data, true));
+                        break;
+                    default:
+                        s++;
+                        if (s == 3) {
+                            s = 0;
+                            eventBus.postSticky(new ShopViscousFind(msg, false));
+                        } else {
+                            initShopPull();
+                        }
+                        break;
+                }
+            }
+
+            @Override
+            public void onOkHttpError(String error) {
+                Log.e(TAG, "---onOkHttpError---" + error);
+            }
+        });
+    }
+
+    private String shop(String shopid) {
+        String result = null;
+        result = CartAddaress.ADDRESS + "/?s=order.shopowenr&shopid=" + shopid;
+        Log.e(TAG, "---店总---" + result);
+        return result;
     }
 
     @Override

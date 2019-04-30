@@ -105,7 +105,7 @@
                             android:layout_height="match_parent"
                             android:background="@color/service_bak"
                             android:divider="@null"
-                            android:columnWidth="5"
+                            android:numColumns="5"
                             android:scrollbars="none" />
 
                     </LinearLayout>

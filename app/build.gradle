@@ -94,6 +94,8 @@ dependencies {
     api 'com.squareup.okhttp3:okhttp-urlconnection:3.12.1'
     api 'com.github.franmontiel:PersistentCookieJar:v0.9.3'
     implementation 'com.zxy.android:tiny:1.1.0'
+    implementation 'com.github.arcadefire:nice-spinner:1.4'
+    implementation 'de.greenrobot:eventbus:3.0.0-beta1'
 }
 
 

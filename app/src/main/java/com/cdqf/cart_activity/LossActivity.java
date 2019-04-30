@@ -44,6 +44,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 
 /**
  * 损耗品
@@ -264,6 +265,7 @@ public class LossActivity extends BaseActivity {
      *
      * @param l
      */
+    @Subscribe
     public void onEventMainThread(LossReceiveFind l) {
         LossDilogFragment lossDilogFragment = new LossDilogFragment();
         lossDilogFragment.number(0, l.position);
@@ -275,6 +277,7 @@ public class LossActivity extends BaseActivity {
      *
      * @param s
      */
+    @Subscribe
     public void onEventMainThread(LossReceiveSubmitFind s) {
         Log.e(TAG, "---数量---" + s.number + "---位置---" + s.position);
         Map<String, Object> params = new HashMap<String, Object>();

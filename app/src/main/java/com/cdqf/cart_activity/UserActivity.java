@@ -47,6 +47,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 
 /**
  * 用户
@@ -306,6 +307,7 @@ public class UserActivity extends BaseActivity {
      *
      * @param l
      */
+    @Subscribe
     public void onEventMainThread(UserAddFind l) {
         sum = 0;
         for (int i = 0; i < cartState.getUserGoodsList().size(); i++) {
@@ -324,6 +326,7 @@ public class UserActivity extends BaseActivity {
      *
      * @param u
      */
+    @Subscribe
     public void onEventMainThread(UserNumberFind u) {
         numbers = u.number;
         sum = numbers;
@@ -343,6 +346,7 @@ public class UserActivity extends BaseActivity {
      *
      * @param u
      */
+    @Subscribe
     public void onEventMainThread(UserSumberFind u) {
         boolean isSelect = false;
         //商品id

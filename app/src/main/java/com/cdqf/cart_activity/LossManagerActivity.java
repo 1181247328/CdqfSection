@@ -45,6 +45,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 
 /**
  * 损耗品(店长)
@@ -262,6 +263,7 @@ public class LossManagerActivity extends BaseActivity {
      *
      * @param r
      */
+    @Subscribe
     public void onEventMainThread(LossManagerOneFind r) {
         LossDilogFragment lossDilogFragment = new LossDilogFragment();
         lossDilogFragment.number(1, r.position);
@@ -273,6 +275,7 @@ public class LossManagerActivity extends BaseActivity {
      *
      * @param l
      */
+    @Subscribe
     public void onEventMainThread(LossManagerNumberFind l) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("s", "TotalGoods.receive");
@@ -313,6 +316,7 @@ public class LossManagerActivity extends BaseActivity {
      *
      * @param l
      */
+    @Subscribe
     public void onEventMainThread(LossManagerReceiveFind l) {
         if (number <= 0) {
             cartState.initToast(context, "请选择领取数量", true, 0);
@@ -328,6 +332,7 @@ public class LossManagerActivity extends BaseActivity {
      *
      * @param l
      */
+    @Subscribe
     public void onEventMainThread(LossReceiveSubmitFind l) {
     }
 }

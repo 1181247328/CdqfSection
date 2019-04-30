@@ -5,25 +5,25 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.text.InputFilter;
-import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.EditText;
+import android.widget.AdapterView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cdqf.cart.R;
-import com.cdqf.cart_find.ThroughFind;
+import com.cdqf.cart_adapter.LossNewsLeftAdapter;
+import com.cdqf.cart_adapter.LossNewsRightAdapter;
+import com.cdqf.cart_find.UserSumberFind;
 import com.cdqf.cart_state.BaseActivity;
 import com.cdqf.cart_state.CartState;
-import com.cdqf.cart_state.CashierInputFilter;
 import com.cdqf.cart_state.StatusBarCompat;
+import com.cdqf.cart_view.ListViewForScrollView;
+import com.cdqf.cart_view.VerticalSwipeRefreshLayout;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.xw.repo.XEditText;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,36 +32,45 @@ import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 
 /**
- * 追加金额
+ * 新损耗品(店长)
  */
-public class AddmountActivity extends BaseActivity {
-    private String TAG = AuditActivity.class.getSimpleName();
+public class LossNewsActivity extends BaseActivity {
+    private String TAG = UserActivity.class.getSimpleName();
 
     private Context context = null;
 
     private ImageLoader imageLoader = ImageLoader.getInstance();
 
-    private EventBus eventBus = EventBus.getDefault();
-
     private CartState cartState = CartState.getCartState();
+
+    private EventBus eventBus = EventBus.getDefault();
 
     private Gson gson = new Gson();
 
+    @BindView(R.id.srl_lossnews_pull)
+    public VerticalSwipeRefreshLayout srlLossnewsPull = null;
+
     //返回
-    @BindView(R.id.rl_addamount_return)
-    public RelativeLayout rlAddamountReturn = null;
+    @BindView(R.id.rl_lossnews_return)
+    public RelativeLayout rlLossnewsReturn = null;
 
-    //输入金额
-    @BindView(R.id.xet_addamount_money)
-    public XEditText xetAddamountMoney = null;
+    //提交订单
+    @BindView(R.id.tv_lossnews_order)
+    public TextView tvLossnewsOrder = null;
 
-    //备注
-    @BindView(R.id.et_addamount_note)
-    public EditText etAddamountNote = null;
+    //服务名称集合
+    @BindView(R.id.lv_lossnews_name)
+    public ListViewForScrollView lvLossnewsName = null;
 
-    //提交
-    @BindView(R.id.tv_addamount_submit)
-    public TextView tvAddamountSubmit = null;
+    private LossNewsLeftAdapter lossNewsLeftAdapter = null;
+
+    //服务内容
+    @BindView(R.id.lv_lossnews_list)
+    public ListViewForScrollView lvLossnewsList = null;
+
+    private LossNewsRightAdapter lossNewsRightAdapter = null;
+
+    private int type = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +84,7 @@ public class AddmountActivity extends BaseActivity {
         }
 
         //加载布局
-        setContentView(R.layout.activity_addamount);
+        setContentView(R.layout.activity_lossnews);
 
         //API>=20以上用于沉侵式菜单栏
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
@@ -107,33 +116,46 @@ public class AddmountActivity extends BaseActivity {
     }
 
     private void initAdapter() {
+        lossNewsLeftAdapter = new LossNewsLeftAdapter(context);
+        lvLossnewsName.setAdapter(lossNewsLeftAdapter);
 
+        lossNewsRightAdapter = new LossNewsRightAdapter(context);
+        lvLossnewsList.setAdapter(lossNewsRightAdapter);
     }
 
     private void initListener() {
-
+        lvLossnewsName.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (position == lossNewsLeftAdapter.getType()) {
+                    return;
+                }
+                lossNewsLeftAdapter.setType(position);
+                type = position;
+                lossNewsRightAdapter.setPosition(position);
+            }
+        });
     }
 
     private void initBack() {
-        InputFilter[] filters={new CashierInputFilter()};
-        xetAddamountMoney.setFilters(filters);
-        xetAddamountMoney.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+
     }
+
 
     private void initIntent(Class<?> activity) {
         Intent intent = new Intent(context, activity);
         startActivity(intent);
     }
 
-    @OnClick({R.id.rl_addamount_return, R.id.tv_addamount_submit})
+    @OnClick({R.id.rl_lossnews_return, R.id.tv_lossnews_order})
     public void onClick(View v) {
         switch (v.getId()) {
             //返回
-            case R.id.rl_addamount_return:
+            case R.id.rl_lossnews_return:
                 finish();
                 break;
-            //提交
-            case R.id.tv_addamount_submit:
+            //提交订单
+            case R.id.tv_lossnews_order:
                 break;
         }
     }
@@ -181,12 +203,12 @@ public class AddmountActivity extends BaseActivity {
     }
 
     /**
-     * 通过
+     * 提交
      *
-     * @param t
+     * @param u
      */
     @Subscribe
-    public void onEventMainThread(ThroughFind t) {
+    public void onEventMainThread(UserSumberFind u) {
 
     }
 }

@@ -29,7 +29,7 @@ public class HomeManagerAdapter extends BaseAdapter {
 
     private String[] name = {
             "损耗品",
-            "店总",
+            "服务",
             "通知",
             "审核",
             "店员管理"
@@ -72,7 +72,7 @@ public class HomeManagerAdapter extends BaseAdapter {
 //            styledText.setSpan(new TextAppearanceSpan(context, R.style.style_two), 2, shop.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 //            viewHolder.tvHomeItemName.setText(styledText, TextView.BufferType.SPANNABLE);
 //        } else {
-            viewHolder.tvHomeItemName.setText(name[position]);
+        viewHolder.tvHomeItemName.setText(name[position]);
 //        }
         return convertView;
     }
