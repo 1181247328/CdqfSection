@@ -19,8 +19,11 @@ import com.cdqf.cart.R;
 import com.cdqf.cart_activity.LoginActivity;
 import com.cdqf.cart_adapter.MyAdapter;
 import com.cdqf.cart_class.MyUser;
+import com.cdqf.cart_dilog.WhyDilogFragment;
+import com.cdqf.cart_find.AccountExitFind;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;
+import com.cdqf.cart_state.ACache;
 import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartPreferences;
 import com.cdqf.cart_state.CartState;
@@ -36,6 +39,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 
 /**
  * 我的
@@ -94,6 +98,9 @@ public class MyFragment extends Fragment {
 
     private void initAgo() {
         ButterKnife.bind(this, view);
+        if (!eventBus.isRegistered(this)) {
+            eventBus.register(this);
+        }
     }
 
     private void initListener() {
@@ -177,10 +184,9 @@ public class MyFragment extends Fragment {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_my_exit:
-                CartPreferences.clearUser(getContext());
-                cartState.setUser(null);
-                forIntent(LoginActivity.class);
-                getActivity().finish();
+                WhyDilogFragment whyDilogFragment = new WhyDilogFragment();
+                whyDilogFragment.setInit(11, "提示", "是否退出当前账户", "否", "是");
+                whyDilogFragment.show(getFragmentManager(), "退出当前账户");
                 break;
         }
     }
@@ -213,5 +219,20 @@ public class MyFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         Log.e(TAG, "---销毁---");
+        eventBus.unregister(this);
+    }
+
+    /**
+     * 退出当前账户
+     *
+     * @param a
+     */
+    @Subscribe
+    public void onEventMainThread(AccountExitFind a) {
+        CartPreferences.clearUser(getContext());
+        cartState.setUser(null);
+        forIntent(LoginActivity.class);
+        ACache.get(getContext()).clear();
+        getActivity().finish();
     }
 }

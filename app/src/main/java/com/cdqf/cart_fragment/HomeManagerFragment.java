@@ -133,7 +133,6 @@ public class HomeManagerFragment extends Fragment {
     private void initBack() {
         tvHomeName.setText(cartState.getUser().getName() + ":");
         tvHomeContext.setText("今天是您加入脱狗车宝第" + cartState.getUser().getDay() + "天!");
-
         initShopPull();
     }
 
@@ -149,7 +148,7 @@ public class HomeManagerFragment extends Fragment {
         okHttpRequestWrap.post(shop, false, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
-                Log.e(TAG, "---onOkHttpResponse服务的粘性事件---" + response);
+                Log.e(TAG, "---onOkHttpResponse服务的粘性事件(店长)---" + response);
                 JSONObject resultJSON = JSON.parseObject(response);
                 int error_code = resultJSON.getInteger("ret");
                 String msg = resultJSON.getString("msg");

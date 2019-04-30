@@ -18,11 +18,12 @@ import android.view.Window;
 import android.widget.TextView;
 
 import com.cdqf.cart.R;
-import com.cdqf.cart_find.ServiceTwoFind;
+import com.cdqf.cart_find.AccountExitFind;
 import com.cdqf.cart_find.DatilsPhoneFind;
 import com.cdqf.cart_find.ExitFind;
 import com.cdqf.cart_find.RefusedTwoFind;
 import com.cdqf.cart_find.ReleaseFind;
+import com.cdqf.cart_find.ServiceTwoFind;
 import com.cdqf.cart_find.ShopServiceTwoFind;
 import com.cdqf.cart_find.ShopTwoFind;
 import com.cdqf.cart_find.ThroughTwoFind;
@@ -221,6 +222,10 @@ public class WhyDilogFragment extends DialogFragment {
                     //UserActivity
                     case 10:
                         eventBus.post(new UserSumberFind());
+                        break;
+                    //MyFragment
+                    case 11:
+                        eventBus.post(new AccountExitFind());
                         break;
                 }
                 break;

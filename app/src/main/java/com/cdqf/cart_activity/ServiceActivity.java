@@ -22,10 +22,12 @@ import com.cdqf.cart.R;
 import com.cdqf.cart_adapter.ServiceAdapter;
 import com.cdqf.cart_class.Shop;
 import com.cdqf.cart_dilog.WhyDilogFragment;
+import com.cdqf.cart_find.AssistantShopFind;
 import com.cdqf.cart_find.ServiceOneFind;
 import com.cdqf.cart_find.ServiceTwoFind;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;
+import com.cdqf.cart_state.ACache;
 import com.cdqf.cart_state.BaseActivity;
 import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
@@ -48,6 +50,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
+import de.greenrobot.event.ThreadMode;
 
 /**
  * 服务(员工)
@@ -79,6 +82,8 @@ public class ServiceActivity extends BaseActivity {
     public TextView tvServiceNo = null;
 
     private ServiceAdapter serviceAdapter = null;
+
+    private ACache aCache = null;
 
     private ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(5);
 
@@ -131,10 +136,8 @@ public class ServiceActivity extends BaseActivity {
 
     private void initAgo() {
         context = this;
+        aCache = ACache.get(context);
         ButterKnife.bind(this);
-        if (!eventBus.isRegistered(this)) {
-            eventBus.register(this);
-        }
     }
 
     private void initView() {
@@ -156,7 +159,28 @@ public class ServiceActivity extends BaseActivity {
     }
 
     private void initBack() {
-        initPull(true);
+        if (!eventBus.isRegistered(this)) {
+            eventBus.register(this);
+        }
+        if (aCache.getAsString("shops") != null) {
+            String data = aCache.getAsString("shops");
+            cartState.getShopList().clear();
+            List<Shop> routeList = gson.fromJson(data, new TypeToken<List<Shop>>() {
+            }.getType());
+            cartState.setShopList(routeList);
+            if (serviceAdapter != null) {
+                serviceAdapter.notifyDataSetChanged();
+            }
+            scheduledThreadPool.scheduleAtFixedRate(new Runnable() {
+
+                @Override
+                public void run() {
+                    initPullData(false);
+                }
+            }, 2, 2, TimeUnit.SECONDS);
+        } else {
+            initPull(true);
+        }
     }
 
     private void initPullData(boolean isToast) {
@@ -182,6 +206,7 @@ public class ServiceActivity extends BaseActivity {
                             return;
                         }
                         handler.sendEmptyMessage(0x001);
+                        aCache.put("shops", data);
                         cartState.getShopList().clear();
                         List<Shop> routeList = gson.fromJson(data, new TypeToken<List<Shop>>() {
                         }.getType());
@@ -227,6 +252,7 @@ public class ServiceActivity extends BaseActivity {
                             return;
                         }
                         handler.sendEmptyMessage(0x001);
+                        aCache.put("shops", data);
                         cartState.getShopList().clear();
                         List<Shop> routeList = gson.fromJson(data, new TypeToken<List<Shop>>() {
                         }.getType());
@@ -328,6 +354,36 @@ public class ServiceActivity extends BaseActivity {
         super.onDestroy();
         Log.e(TAG, "---销毁---");
         eventBus.unregister(this);
+    }
+
+    /**
+     * 预加载得到的数据
+     *
+     * @param s
+     */
+    @Subscribe(threadMode = ThreadMode.MainThread, sticky = true)
+    public void onEvent(AssistantShopFind s) {
+        Log.e(TAG, "---预加载得到的数据---" + s.shop + "---是否加载了---" + s.isShop);
+        if (s.isShop) {
+            aCache.put("shops", s.shop);
+            cartState.getShopList().clear();
+            List<Shop> routeList = gson.fromJson(s.shop, new TypeToken<List<Shop>>() {
+            }.getType());
+            cartState.setShopList(routeList);
+            if (serviceAdapter != null) {
+                serviceAdapter.notifyDataSetChanged();
+            }
+            scheduledThreadPool.scheduleAtFixedRate(new Runnable() {
+
+                @Override
+                public void run() {
+                    Log.e(TAG, "---次---");
+                    initPullData(false);
+                }
+            }, 2, 2, TimeUnit.SECONDS);
+        } else {
+            initPullData(true);
+        }
     }
 
     /**

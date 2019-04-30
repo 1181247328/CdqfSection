@@ -163,8 +163,6 @@ public class LoginActivity extends BaseActivity {
                     return;
                 }
                 Map<String, Object> params = new HashMap<String, Object>();
-//                params.put("", account);
-//                params.put("", passwrod);
                 String accountPasswrod = loginAccPass(account, passwrod);
                 OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
                 okHttpRequestWrap.post(accountPasswrod, true, "登录中", params, new OnHttpRequest() {
