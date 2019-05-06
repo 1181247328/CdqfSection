@@ -15,7 +15,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
 import com.cdqf.cart_activity.AuditActivity;
-import com.cdqf.cart_activity.LossManagerActivity;
+import com.cdqf.cart_activity.EmployeesActivity;
+import com.cdqf.cart_activity.LossNewsActivity;
 import com.cdqf.cart_activity.NoticeManagerActivity;
 import com.cdqf.cart_activity.ShopActivity;
 import com.cdqf.cart_adapter.HomeManagerAdapter;
@@ -106,7 +107,7 @@ public class HomeManagerFragment extends Fragment {
                 switch (position) {
                     //损耗品
                     case 0:
-                        initIntent(LossManagerActivity.class);
+                        initIntent(LossNewsActivity.class);
                         break;
                     //服务
                     case 1:
@@ -119,6 +120,10 @@ public class HomeManagerFragment extends Fragment {
                     //用户
                     case 3:
                         initIntent(AuditActivity.class);
+                        break;
+                    //审核
+                    case 4:
+                        initIntent(EmployeesActivity.class);
                         break;
                 }
             }

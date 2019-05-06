@@ -21,6 +21,7 @@ import com.cdqf.cart.R;
 import com.cdqf.cart_find.AccountExitFind;
 import com.cdqf.cart_find.DatilsPhoneFind;
 import com.cdqf.cart_find.ExitFind;
+import com.cdqf.cart_find.LossNewsFind;
 import com.cdqf.cart_find.RefusedTwoFind;
 import com.cdqf.cart_find.ReleaseFind;
 import com.cdqf.cart_find.ServiceTwoFind;
@@ -226,6 +227,10 @@ public class WhyDilogFragment extends DialogFragment {
                     //MyFragment
                     case 11:
                         eventBus.post(new AccountExitFind());
+                        break;
+                    //LossNewsActivity
+                    case 12:
+                        eventBus.postSticky(new LossNewsFind());
                         break;
                 }
                 break;

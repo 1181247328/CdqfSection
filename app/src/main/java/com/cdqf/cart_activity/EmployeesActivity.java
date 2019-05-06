@@ -9,22 +9,22 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.cdqf.cart.R;
-import com.cdqf.cart_find.DatilsPhoneFind;
-import com.cdqf.cart_hear.HearDilogFragment;
+import com.cdqf.cart_adapter.EmployessAdapter;
+import com.cdqf.cart_find.DatilsPullFind;
 import com.cdqf.cart_state.BaseActivity;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_state.StatusBarCompat;
-import com.gcssloop.widget.RCRelativeLayout;
 import com.google.gson.Gson;
+import com.kelin.scrollablepanel.library.ScrollablePanel;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.xw.repo.XEditText;
 
-import org.angmarch.views.NiceSpinner;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,11 +33,11 @@ import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 
 /**
- * 添加店员
+ * 店员管理
  */
-public class EmployeesAddActivity extends BaseActivity {
+public class EmployeesActivity extends BaseActivity {
 
-    private String TAG = EmployeesAddActivity.class.getSimpleName();
+    private String TAG = EmployeesActivity.class.getSimpleName();
 
     private Context context = null;
 
@@ -50,44 +50,28 @@ public class EmployeesAddActivity extends BaseActivity {
     private Gson gson = new Gson();
 
     //返回
-    @BindView(R.id.rl_addemployees_return)
-    public RelativeLayout rlAddemployeesReturn = null;
+    @BindView(R.id.rl_employees_return)
+    public RelativeLayout rlEmployeesReturn = null;
 
-    //员工姓名
-    @BindView(R.id.xet_addemployees_name)
-    public XEditText xetAddemployeesName = null;
+    //添加店员
+    @BindView(R.id.tv_employess_add)
+    public TextView tvEmployessAdd = null;
 
-    //职位
-    @BindView(R.id.ns_addemployees_position)
-    public NiceSpinner nsAddemployeesPosition = null;
+    @BindView(R.id.sp_employess_data)
+    public ScrollablePanel spEmployessData = null;
 
-    //手机号
-    @BindView(R.id.xet_addemployees_phone)
-    public XEditText xetAddemployeesPhone = null;
+    private EmployessAdapter employessAdapter = null;
 
-    //紧急联系人
-    @BindView(R.id.xet_addemployees_contact)
-    public XEditText xetAddemployeesContact = null;
+    private List<String> title = Arrays.asList("工号", "姓名", "手机号", "职位", "状态");
 
-    //紧急联系人手机号码
-    @BindView(R.id.xet_addemployees_number)
-    public XEditText xetAddemployeesNumber = null;
+    private List<String> shopOneList = Arrays.asList("W0001", "杨显澎", "13551021222", "店长", "上班");
 
-    //身份证号码
-    @BindView(R.id.xet_addemployees_certificate)
-    public XEditText xetAddemployeesCertificate = null;
+    private List<String> shopTwoList = Arrays.asList("W0001", "杨显澎", "13551021222", "店长", "请假");
 
-    //身份证正面
-    @BindView(R.id.rcrl_addemployees_positive)
-    public RCRelativeLayout rcrAddemployeesPositive = null;
-    @BindView(R.id.iv_addemployees_positive)
-    public ImageView ivAddemployeesPositive = null;
+    private List<String> shopThreeList = Arrays.asList("W0001", "杨显澎", "13551021222", "店长", "离职");
 
-    //身份证反面
-    @BindView(R.id.rcrl_addemployees_reverse)
-    public RCRelativeLayout rcrlAddemployeesReverse = null;
-    @BindView(R.id.iv_addemployees_reverse)
-    public ImageView ivAddemployeesReverse = null;
+    private List<String> shopFoueList = Arrays.asList("W0001", "杨显澎", "13551021222", "店长", "审核中");
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +85,7 @@ public class EmployeesAddActivity extends BaseActivity {
         }
 
         //加载布局
-        setContentView(R.layout.activity_addemployees);
+        setContentView(R.layout.activity_employees);
 
         //API>=20以上用于沉侵式菜单栏
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
@@ -123,7 +107,6 @@ public class EmployeesAddActivity extends BaseActivity {
     private void initAgo() {
         context = this;
         ButterKnife.bind(this);
-        imageLoader = cartState.getImageLoader(context);
         if (!eventBus.isRegistered(this)) {
             eventBus.register(this);
         }
@@ -134,21 +117,21 @@ public class EmployeesAddActivity extends BaseActivity {
     }
 
     private void initAdapter() {
-
+        List<List<String>> data = new ArrayList<>();
+        data.add(title);
+        data.add(shopOneList);
+        data.add(shopTwoList);
+        data.add(shopThreeList);
+        data.add(shopFoueList);
+        for (int i = 0; i < 50; i++) {
+            List<String> shopFiveList = Arrays.asList("W0001", "杨显澎", "13551021222", "店长", "休假");
+            data.add(shopFiveList);
+        }
+        employessAdapter = new EmployessAdapter(data, context);
+        spEmployessData.setPanelAdapter(employessAdapter);
     }
 
     private void initListener() {
-        nsAddemployeesPosition.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
     }
 
     private void initBack() {
@@ -160,31 +143,16 @@ public class EmployeesAddActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    private void initIntent(Class<?> activity, int position) {
-        Intent intent = new Intent(context, activity);
-        intent.putExtra("position", position);
-        startActivity(intent);
-    }
-
-    @OnClick({R.id.rl_addemployees_return, R.id.rcrl_addemployees_positive, R.id.tv_addemployees_submit})
+    @OnClick({R.id.rl_employees_return, R.id.tv_employess_add})
     public void onClick(View v) {
         switch (v.getId()) {
             //返回
-            case R.id.rl_addemployees_return:
+            case R.id.rl_employees_return:
                 finish();
                 break;
-            //正面
-            case R.id.rcrl_addemployees_positive:
-                HearDilogFragment hearDilogFragment = new HearDilogFragment();
-                hearDilogFragment.show(getSupportFragmentManager(), "身份证正面");
-                break;
-            //反面
-            case R.id.rcrl_addemployees_reverse:
-                HearDilogFragment hearReverseDilogFragment = new HearDilogFragment();
-                hearReverseDilogFragment.show(getSupportFragmentManager(), "身份证反面");
-                break;
-            //提交
-            case R.id.tv_addemployees_submit:
+            //添加店员
+            case R.id.tv_employess_add:
+                initIntent(EmployeesAddActivity.class);
                 break;
         }
     }
@@ -231,13 +199,9 @@ public class EmployeesAddActivity extends BaseActivity {
         eventBus.unregister(this);
     }
 
-
-    /**
-     * 输入领取数量
-     *
-     * @param r
-     */
     @Subscribe
-    public void onEventMainThread(DatilsPhoneFind r) {
+    public void onEventMainThread(DatilsPullFind r) {
+
     }
+
 }

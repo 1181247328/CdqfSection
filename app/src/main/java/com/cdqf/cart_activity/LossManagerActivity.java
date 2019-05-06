@@ -334,5 +334,6 @@ public class LossManagerActivity extends BaseActivity {
      */
     @Subscribe
     public void onEventMainThread(LossReceiveSubmitFind l) {
+
     }
 }

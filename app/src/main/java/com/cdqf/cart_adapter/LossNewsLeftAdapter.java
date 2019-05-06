@@ -42,7 +42,7 @@ public class LossNewsLeftAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 4;
+        return cartState.getLossNewsList().size();
     }
 
     @Override
@@ -65,6 +65,7 @@ public class LossNewsLeftAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+        viewHolder.tvNameItemContext.setText(cartState.getLossNewsList().get(position).getName());
         if (type == position) {
             viewHolder.tvNameItemContext.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_icon));
             viewHolder.tvNameItemContext.setBackgroundColor(ContextCompat.getColor(context, R.color.white));

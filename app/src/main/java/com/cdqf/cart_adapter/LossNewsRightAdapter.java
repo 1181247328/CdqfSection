@@ -1,15 +1,18 @@
 package com.cdqf.cart_adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cdqf.cart.R;
+import com.cdqf.cart_find.LossNewsAddFind;
 import com.cdqf.cart_state.CartState;
 
 import java.util.HashMap;
@@ -36,20 +39,21 @@ public class LossNewsRightAdapter extends BaseAdapter {
 
     private EventBus eventBus = EventBus.getDefault();
 
-    private static int position = 0;
+    private int type = 0;
 
-    public LossNewsRightAdapter(Context context) {
+    public LossNewsRightAdapter(Context context, int type) {
         this.context = context;
+        this.type = type;
     }
 
-    public void setPosition(int position) {
-        this.position = position;
+    public void setPosition(int type) {
+        this.type = type;
         notifyDataSetChanged();
     }
 
     @Override
     public int getCount() {
-        return 5;
+        return cartState.getLossNewsList().get(type).getData().size();
     }
 
     @Override
@@ -72,18 +76,55 @@ public class LossNewsRightAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-//        viewHolder.tvUserItemName.setText(cartState.getUserGoodsList().get(this.position).getData().get(position).getGoodsname());
-//        viewHolder.tvUserItemPrice.setText("￥" + cartState.getUserGoodsList().get(this.position).getData().get(position).getPrice());
+        //商品名称
+        viewHolder.tvUsersItemName.setText(cartState.getLossNewsList().get(type).getData().get(position).getName());
+        //库存
+        viewHolder.tvUsersItemNumber.setText("库存:" + cartState.getLossNewsList().get(type).getData().get(position).getNumber());
+        //申请的数量有就显示，没有就隐藏
+        boolean isSelete = cartState.getLossNewsList().get(type).getData().get(position).isSelete();
+        int umberSelete = cartState.getLossNewsList().get(type).getData().get(position).getNumberSelete();
+        if (isSelete) {
+            viewHolder.tvUserItemAdd.setVisibility(View.VISIBLE);
+            viewHolder.tvUserItemPrice.setVisibility(View.VISIBLE);
+            viewHolder.llUserItemPrice.setVisibility(View.VISIBLE);
+            viewHolder.tvUserItemPrice.setText(umberSelete + "");
+        } else {
+            viewHolder.tvUserItemAdd.setVisibility(View.GONE);
+            viewHolder.tvUserItemPrice.setVisibility(View.GONE);
+            viewHolder.llUserItemPrice.setVisibility(View.GONE);
+            viewHolder.tvUserItemPrice.setText("0");
+            if (umberSelete > 0) {
+                viewHolder.tvUserItemAdd.setVisibility(View.VISIBLE);
+                viewHolder.tvUserItemPrice.setVisibility(View.VISIBLE);
+                viewHolder.llUserItemPrice.setVisibility(View.VISIBLE);
+                viewHolder.tvUserItemPrice.setText(umberSelete + "");
+            } else {
+                viewHolder.tvUserItemAdd.setVisibility(View.GONE);
+                viewHolder.tvUserItemPrice.setVisibility(View.GONE);
+                viewHolder.llUserItemPrice.setVisibility(View.GONE);
+            }
+        }
+        viewHolder.llUserItemPrice.setOnClickListener(new OnAddNumberListener(position));
+        //是否选择
         lightConnectMap.put(viewHolder.cbUsersItemCheckbox, position);
-//        viewHolder.cbUserItemCheckbox.setChecked(lightCheckMap.get(position) == null ? false : true);
-//        viewHolder.cbUserItemCheckbox.setChecked(cartState.getUserGoodsList().get(this.position).getData().get(position).isSelect());
+        viewHolder.cbUsersItemCheckbox.setChecked(cartState.getLossNewsList().get(type).getData().get(position).isSelete());
         viewHolder.cbUsersItemCheckbox.setOnCheckedChangeListener(new OnCartCheckedChangeListener(position));
-//        if (this.position == cartState.getUserGoodsList().size() - 1) {
-//            viewHolder.cbUsersItemCheckbox.setVisibility(View.GONE);
-//        } else {
-//            viewHolder.cbUsersItemCheckbox.setVisibility(View.VISIBLE);
-//        }
         return convertView;
+    }
+
+    class OnAddNumberListener implements View.OnClickListener {
+
+        private int position;
+
+        public OnAddNumberListener(int position) {
+            this.position = position;
+        }
+
+        @Override
+        public void onClick(View v) {
+            Log.e(TAG, "---选择了申请数量---" + position);
+            eventBus.post(new LossNewsAddFind(position));
+        }
     }
 
     class OnCartCheckedChangeListener implements CompoundButton.OnCheckedChangeListener {
@@ -101,16 +142,15 @@ public class LossNewsRightAdapter extends BaseAdapter {
             }
             if (isChecked) {
                 lightCheckMap.put(lightConnectMap.get(buttonView), isChecked);
-//                cartState.getUserGoodsList().get(LossNewsRightAdapter.position).getData().get(position).setSelect(true);
-//                eventBus.post(new UserAddFind(position));
+                cartState.getLossNewsList().get(type).getData().get(position).setSelete(true);
             } else {
                 lightCheckMap.remove(lightConnectMap.get(buttonView));
-//                cartState.getUserGoodsList().get(LossNewsRightAdapter.position).getData().get(position).setSelect(false);
-//                eventBus.post(new UserAddFind(position));
+                cartState.getLossNewsList().get(type).getData().get(position).setSelete(false);
+                cartState.getLossNewsList().get(type).getData().get(position).setNumberSelete(0);
             }
+            notifyDataSetChanged();
         }
     }
-
 
     class ViewHolder {
 
@@ -126,9 +166,16 @@ public class LossNewsRightAdapter extends BaseAdapter {
         @BindView(R.id.tv_users_item_number)
         public TextView tvUsersItemNumber = null;
 
+        //显示的加强
+        @BindView(R.id.tv_user_item_add)
+        public TextView tvUserItemAdd = null;
+
         //价格
         @BindView(R.id.tv_user_item_price)
         public TextView tvUserItemPrice = null;
+
+        @BindView(R.id.ll_user_item_price)
+        public LinearLayout llUserItemPrice = null;
 
         public ViewHolder(View v) {
             ButterKnife.bind(this, v);

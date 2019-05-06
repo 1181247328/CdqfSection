@@ -30,6 +30,7 @@ import com.cdqf.cart.R;
 import com.cdqf.cart_ble.Ble;
 import com.cdqf.cart_class.Audit;
 import com.cdqf.cart_class.LossMan;
+import com.cdqf.cart_class.LossNews;
 import com.cdqf.cart_class.LossStaff;
 import com.cdqf.cart_class.MyUser;
 import com.cdqf.cart_class.Notice;
@@ -145,6 +146,9 @@ public class CartState {
 
     //追加商品
     private List<UserGoods> userGoodsList = new CopyOnWriteArrayList<>();
+
+    //新损耗品
+    private List<LossNews> lossNewsList = new CopyOnWriteArrayList<>();
 
     /**
      * 提示信息
@@ -913,5 +917,13 @@ public class CartState {
 
     public void setUserGoodsList(List<UserGoods> userGoodsList) {
         this.userGoodsList = userGoodsList;
+    }
+
+    public List<LossNews> getLossNewsList() {
+        return lossNewsList;
+    }
+
+    public void setLossNewsList(List<LossNews> lossNewsList) {
+        this.lossNewsList = lossNewsList;
     }
 }
