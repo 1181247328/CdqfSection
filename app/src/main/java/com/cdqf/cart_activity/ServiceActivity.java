@@ -264,11 +264,13 @@ public class ServiceActivity extends BaseActivity {
 
                             @Override
                             public void run() {
-
                                 Log.e(TAG, "---次---");
                                 initPullData(false);
                             }
                         }, 2, 2, TimeUnit.SECONDS);
+                        break;
+                    case 401:
+                        handler.sendEmptyMessage(0x002);
                         break;
                     default:
                         handler.sendEmptyMessage(0x002);
