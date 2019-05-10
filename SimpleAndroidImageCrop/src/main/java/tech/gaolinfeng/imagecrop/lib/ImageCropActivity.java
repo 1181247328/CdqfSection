@@ -103,6 +103,10 @@ public class ImageCropActivity extends Activity {
         while (screenHeight * inSampleSizeHeight * 2 < imgHeight) {
             inSampleSizeHeight *= 2;
         }
+//        if (isCircle) {
+//            inSampleSizeWidth = dm.widthPixels;
+//            inSampleSizeHeight += inSampleSizeHeight / 3;
+//        }
         inSampleSize = Math.max(inSampleSizeWidth, inSampleSizeHeight);
         options.inJustDecodeBounds = false;
         options.inSampleSize = inSampleSize;

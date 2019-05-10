@@ -70,6 +70,7 @@ dependencies {
     api project(':imgdots')
     api project(':switch')
     api project(':okhttputils')
+    api project(':nicespinner')
     api project(':viewpagerindicator_master')
     api 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
     api 'com.gcssloop.widget:rclayout:1.8.1'
@@ -94,7 +95,7 @@ dependencies {
     api 'com.squareup.okhttp3:okhttp-urlconnection:3.12.1'
     api 'com.github.franmontiel:PersistentCookieJar:v0.9.3'
     implementation 'com.zxy.android:tiny:1.1.0'
-    implementation 'com.github.arcadefire:nice-spinner:1.4'
+//    implementation 'com.github.arcadefire:nice-spinner:1.4'
     implementation 'de.greenrobot:eventbus:3.0.0-beta1'
     implementation 'com.kelin.scrollablepanel:library:1.2.0'
 }

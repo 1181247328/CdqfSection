@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.cdqf.cart.R;
 import com.cdqf.cart_find.AccountExitFind;
 import com.cdqf.cart_find.DatilsPhoneFind;
+import com.cdqf.cart_find.EmployeesIdFind;
 import com.cdqf.cart_find.ExitFind;
 import com.cdqf.cart_find.LossNewsFind;
 import com.cdqf.cart_find.RefusedTwoFind;
@@ -231,6 +232,10 @@ public class WhyDilogFragment extends DialogFragment {
                     //LossNewsActivity
                     case 12:
                         eventBus.postSticky(new LossNewsFind());
+                        break;
+                    //EmployeesAddActivity
+                    case 13:
+                        eventBus.post(new EmployeesIdFind());
                         break;
                 }
                 break;

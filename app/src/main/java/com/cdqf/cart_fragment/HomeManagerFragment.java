@@ -121,7 +121,7 @@ public class HomeManagerFragment extends Fragment {
                     case 3:
                         initIntent(AuditActivity.class);
                         break;
-                    //审核
+                    //店员管理
                     case 4:
                         initIntent(EmployeesActivity.class);
                         break;

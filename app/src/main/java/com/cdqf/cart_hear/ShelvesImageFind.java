@@ -9,7 +9,14 @@ import android.graphics.Bitmap;
 public class ShelvesImageFind {
     public Bitmap bitmap;
 
+    public int type;
+
     public ShelvesImageFind(Bitmap bitmap) {
         this.bitmap = bitmap;
+    }
+
+    public ShelvesImageFind(Bitmap bitmap, int type) {
+        this.bitmap = bitmap;
+        this.type = type;
     }
 }

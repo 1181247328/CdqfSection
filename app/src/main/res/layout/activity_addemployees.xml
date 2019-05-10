@@ -219,11 +219,14 @@
                                 android:background="@android:color/transparent"
                                 android:gravity="center_vertical"
                                 android:hint="请选择职位"
+                                android:paddingLeft="@dimen/dp_12"
+                                android:paddingRight="@dimen/dp_12"
                                 android:singleLine="true"
                                 android:textColor="@color/audit_text"
                                 android:textColorHint="@color/login_text"
                                 android:textCursorDrawable="@drawable/nickname_cursor"
-                                android:textSize="@dimen/sp_13" />
+                                android:textSize="@dimen/sp_13"
+                                app:popupTextAlignment="start" />
 
                         </com.gcssloop.widget.RCRelativeLayout>
 

@@ -50,6 +50,12 @@ public class CartAddaress {
     //店长追加
     public static String SHOP_GOODS = ADDRESS + "/?s=goods.goodsall";
 
+    //店长添加员工
+    public static String SHOP_POSITION = ADDRESS + "/?s=Shopowner.add_position_list";
+
+    //上传身份证
+    public static String SHOP_IDIMAGE = ADDRESS + "/?s=Upload.addImg";
+
     public static String LOSS = ADDRESS + "";
 
     /******员工******/
