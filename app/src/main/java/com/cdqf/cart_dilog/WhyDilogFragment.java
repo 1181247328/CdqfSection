@@ -23,6 +23,7 @@ import com.cdqf.cart_find.DatilsPhoneFind;
 import com.cdqf.cart_find.EmployeesIdFind;
 import com.cdqf.cart_find.ExitFind;
 import com.cdqf.cart_find.LossNewsFind;
+import com.cdqf.cart_find.PreferentialFind;
 import com.cdqf.cart_find.RefusedTwoFind;
 import com.cdqf.cart_find.ReleaseFind;
 import com.cdqf.cart_find.ServiceTwoFind;
@@ -236,6 +237,10 @@ public class WhyDilogFragment extends DialogFragment {
                     //EmployeesAddActivity
                     case 13:
                         eventBus.post(new EmployeesIdFind());
+                        break;
+                    //PreferentialActivity
+                    case 14:
+                        eventBus.post(new PreferentialFind());
                         break;
                 }
                 break;

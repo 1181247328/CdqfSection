@@ -115,7 +115,7 @@ public class AddmountActivity extends BaseActivity {
     }
 
     private void initBack() {
-        InputFilter[] filters={new CashierInputFilter()};
+        InputFilter[] filters = {new CashierInputFilter()};
         xetAddamountMoney.setFilters(filters);
         xetAddamountMoney.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
     }
@@ -134,6 +134,7 @@ public class AddmountActivity extends BaseActivity {
                 break;
             //提交
             case R.id.tv_addamount_submit:
+
                 break;
         }
     }

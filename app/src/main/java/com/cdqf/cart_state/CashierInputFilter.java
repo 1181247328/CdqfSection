@@ -15,13 +15,19 @@ import java.util.regex.Pattern;
 public class CashierInputFilter implements InputFilter {
     Pattern mPattern;
     //输入的最大金额
-    private static final int MAX_VALUE = Integer.MAX_VALUE;
+    private static int MAX_VALUE = Integer.MAX_VALUE;
     //小数点后的位数
     private static final int POINTER_LENGTH = 2;
     private static final String POINTER = ".";
     private static final String ZERO = "0";
     public CashierInputFilter() {
         mPattern = Pattern.compile("([0-9]|\\.)*");
+        MAX_VALUE = Integer.MAX_VALUE;
+    }
+
+    public CashierInputFilter(int max) {
+        mPattern = Pattern.compile("([0-9]|\\.)*");
+        MAX_VALUE = max;
     }
     /**
      * @param source    新输入的字符串

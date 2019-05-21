@@ -2,32 +2,37 @@ package com.cdqf.cart_activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.Editable;
+import android.text.InputFilter;
+import android.text.InputType;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
-import com.cdqf.cart_class.Datils;
 import com.cdqf.cart_dilog.WhyDilogFragment;
-import com.cdqf.cart_find.DatilsPhoneFind;
-import com.cdqf.cart_find.DatilsPullFind;
+import com.cdqf.cart_find.PreferentialFind;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;
 import com.cdqf.cart_state.BaseActivity;
 import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
+import com.cdqf.cart_state.CashierInputFilter;
+import com.cdqf.cart_state.DoubleOperationUtil;
 import com.cdqf.cart_state.StatusBarCompat;
-import com.gcssloop.widget.RCRelativeLayout;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -41,11 +46,11 @@ import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 
 /**
- * 订单详情
+ * 给予优惠
  */
-public class DatilsActivity extends BaseActivity {
+public class PreferentialActivity extends BaseActivity {
 
-    private String TAG = DatilsActivity.class.getSimpleName();
+    private String TAG = PreferentialActivity.class.getSimpleName();
 
     private Context context = null;
 
@@ -57,64 +62,40 @@ public class DatilsActivity extends BaseActivity {
 
     private Gson gson = new Gson();
 
-    @BindView(R.id.srl_datils_pull)
-    public SwipeRefreshLayout srlDatilsPull = null;
+    @BindView(R.id.srl_preferential_pull)
+    public SwipeRefreshLayout srlPreferentialPull = null;
 
     //返回
-    @BindView(R.id.rl_datils_return)
-    public RelativeLayout rlDatilsReturn = null;
+    @BindView(R.id.rl_preferential_return)
+    public RelativeLayout rlPreferentialReturn = null;
 
     //车牌号
-    @BindView(R.id.tv_datils_number)
-    public TextView tvDatilsNumber = null;
+    @BindView(R.id.tv_preferential_number)
+    public TextView tvPreferentialNumber = null;
 
     //金额
-    @BindView(R.id.tv_datils_mount)
-    public TextView tvDatilsMount = null;
+    @BindView(R.id.tv_preferential_mount)
+    public TextView tvPreferentialMount = null;
 
     //优惠折扣
-    @BindView(R.id.tv_datils_preferential)
-    public TextView tvDatilsPreferential = null;
+    @BindView(R.id.et_preferential_discount)
+    public EditText etPreferentialDiscount = null;
 
     //折扣价
-    @BindView(R.id.tv_datils_discount)
-    public TextView tvDatilsDiscount = null;
+    @BindView(R.id.tv_preferential_discount)
+    public TextView tvPreferentialDiscount = null;
 
     //返余额
-    @BindView(R.id.tv_datils_money)
-    public TextView tvDatilsMoney = null;
-
-    //电话
-    @BindView(R.id.tv_datils_phone)
-    public TextView tvDatilsPhone = null;
+    @BindView(R.id.tv_preferential_money)
+    public TextView tvPreferentialMoney = null;
 
     //服务项目
-    @BindView(R.id.tv_datils_add)
-    public TextView tvDatilsAdd = null;
+    @BindView(R.id.tv_preferential_add)
+    public TextView tvPreferentialAdd = null;
 
-    //订单编号
-    @BindView(R.id.tv_datils_serial)
-    public TextView tvDatilsSerial = null;
-
-    //下单时间
-    @BindView(R.id.tv_datils_timer)
-    public TextView tvDatilsTimer = null;
-
-    //电话拨打
-    @BindView(R.id.rcrl_datils_call)
-    public RCRelativeLayout rcrlDatilsCall = null;
-
-    //追加服务
-    @BindView(R.id.rcrl_datils_add)
-    public RCRelativeLayout rcrlDatilsAdd = null;
-
-    //给予优惠
-    @BindView(R.id.rcrl_datils_preferential)
-    public RCRelativeLayout rcrlDatilsPreferential = null;
-
-    private int position = 0;
-
-    private Datils datils = null;
+    //提交
+    @BindView(R.id.ll_preferential_submit)
+    public LinearLayout llPreferentialSubmit = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,7 +109,7 @@ public class DatilsActivity extends BaseActivity {
         }
 
         //加载布局
-        setContentView(R.layout.activity_datils);
+        setContentView(R.layout.activity_preferential);
 
         //API>=20以上用于沉侵式菜单栏
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
@@ -150,9 +131,6 @@ public class DatilsActivity extends BaseActivity {
     private void initAgo() {
         context = this;
         ButterKnife.bind(this);
-        Intent intent = getIntent();
-        position = intent.getIntExtra("position", 0);
-        imageLoader = cartState.getImageLoader(context);
         if (!eventBus.isRegistered(this)) {
             eventBus.register(this);
         }
@@ -167,58 +145,88 @@ public class DatilsActivity extends BaseActivity {
     }
 
     private void initListener() {
-
-        srlDatilsPull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        srlPreferentialPull.setEnabled(false);
+        srlPreferentialPull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 initPull(false);
             }
         });
+
+        etPreferentialDiscount.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String discount = etPreferentialDiscount.getText().toString();
+                int number = discount.length();
+                String point = "";
+                if (number == 2) {
+                    point = discount.substring(1, 2);
+                }
+                if (TextUtils.equals(point, ".")) {
+                    Log.e(TAG, "---点不做处理---");
+                    return;
+                }
+                if (number >= 1) {
+                    Log.e(TAG, "---折扣字符---" + discount);
+                    double discountTurn = Double.parseDouble(discount) / 10;
+                    Log.e(TAG, "---折扣双精度---" + discountTurn);
+                    //商品原价
+                    double price = Double.parseDouble(cartState.getDatils().getZongprice());
+                    //折扣价
+                    double discounts = DoubleOperationUtil.mul(price, discountTurn);
+                    tvPreferentialDiscount.setText("￥" + discounts);
+                    //返余额
+                    double money = DoubleOperationUtil.sub(price, discounts);
+                    tvPreferentialMoney.setText("￥" + money);
+                }
+            }
+        });
     }
 
     private void initBack() {
-        initPull(true);
+        //车牌号
+        tvPreferentialNumber.setText(cartState.getDatils().getCarnum());
+        //金额
+        tvPreferentialMount.setText(cartState.getDatils().getZongprice());
+        //折扣价
+//        tvPreferentialDiscount.setText("");
+        //返余额
+//        tvPreferentialMoney.setText("");
+        //服务项目
+        String goodsNmae = "";
+        for (String name : cartState.getDatils().getGoodsname()) {
+            goodsNmae += name + " ";
+        }
+        tvPreferentialAdd.setText(goodsNmae);
+        InputFilter[] filters = {new CashierInputFilter(10)};
+        etPreferentialDiscount.setFilters(filters);
+        etPreferentialDiscount.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
     }
 
     private void initPull(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        String ordernum = ordernum(cartState.getShopList().get(position).getOrdernum());
-        okHttpRequestWrap.post(ordernum, isToast, "请稍候", params, new OnHttpRequest() {
+        String ordernum = "";
+        okHttpRequestWrap.post(ordernum, isToast, "提交中", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
-                Log.e(TAG, "---onOkHttpResponse详情---" + response);
-                if (srlDatilsPull != null) {
-                    srlDatilsPull.setRefreshing(false);
-                }
+                Log.e(TAG, "---onOkHttpResponse提交---" + response);
                 JSONObject resultJSON = JSON.parseObject(response);
                 int error_code = resultJSON.getInteger("ret");
                 String msg = resultJSON.getString("msg");
                 switch (error_code) {
                     //获取成功
                     case 200:
-                        String data = resultJSON.getString("data");
-                        datils = gson.fromJson(data, Datils.class);
-                        cartState.setDatils(datils);
-                        //车牌号码
-                        tvDatilsNumber.setText(datils.getCarnum());
-                        //金额
-                        tvDatilsMount.setText(datils.getZongprice());
-                        //电话
-                        tvDatilsPhone.setText(datils.getPhone());
-                        //服务项目
-                        String goodsNmae = "";
-                        for (String name : datils.getGoodsname()) {
-                            goodsNmae += name + " ";
-                        }
-                        tvDatilsAdd.setText(goodsNmae);
-                        //订单编号
-                        tvDatilsSerial.setText(datils.getOrdernum());
-                        //下单时间
-                        tvDatilsTimer.setText(datils.getAddtime());
-
-                        //判断是不是有折扣
-                        break;
                     default:
                         cartState.initToast(context, msg, true, 0);
                         break;
@@ -239,15 +247,6 @@ public class DatilsActivity extends BaseActivity {
         return result;
     }
 
-    private void preferential(int state) {
-        //优惠折扣
-        tvDatilsPreferential.setVisibility(state);
-        //折扣价
-        tvDatilsDiscount.setVisibility(View.GONE);
-        //返余额
-        tvDatilsMoney.setVisibility(View.GONE);
-    }
-
     private void initIntent(Class<?> activity) {
         Intent intent = new Intent(context, activity);
         startActivity(intent);
@@ -259,26 +258,18 @@ public class DatilsActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    @OnClick({R.id.rl_datils_return, R.id.rcrl_datils_call, R.id.rcrl_datils_add, R.id.rcrl_datils_preferential})
+    @OnClick({R.id.rl_preferential_return, R.id.ll_preferential_submit})
     public void onClick(View v) {
         switch (v.getId()) {
             //返回
-            case R.id.rl_datils_return:
+            case R.id.rl_preferential_return:
                 finish();
                 break;
-            //电话拨打
-            case R.id.rcrl_datils_call:
-                WhyDilogFragment whyTwoDilogFragment = new WhyDilogFragment();
-                whyTwoDilogFragment.setInit(7, "提示", "是否拨打" + datils.getPhone() + "的电话", "否", "是");
-                whyTwoDilogFragment.show(getSupportFragmentManager(), "联系我们");
-                break;
-            //追加服务
-            case R.id.rcrl_datils_add:
-                initIntent(UserActivity.class, position);
-                break;
-            //给予优惠
-            case R.id.rcrl_datils_preferential:
-                initIntent(PreferentialActivity.class);
+            //提交
+            case R.id.ll_preferential_submit:
+                WhyDilogFragment whyDilogFragment = new WhyDilogFragment();
+                whyDilogFragment.setInit(14, "提交", "您正在进行提交操作", "否", "是");
+                whyDilogFragment.show(getSupportFragmentManager(), "提交操作");
                 break;
         }
     }
@@ -326,18 +317,7 @@ public class DatilsActivity extends BaseActivity {
     }
 
     @Subscribe
-    public void onEventMainThread(DatilsPullFind r) {
-        initPull(true);
-    }
+    public void onEventMainThread(PreferentialFind r) {
 
-    /**
-     * 输入领取数量
-     *
-     * @param r
-     */
-    @Subscribe
-    public void onEventMainThread(DatilsPhoneFind r) {
-        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + datils.getPhone()));
-        startActivity(intent);
     }
 }
