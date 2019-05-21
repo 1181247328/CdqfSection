@@ -6,162 +6,164 @@
     android:background="@color/black"
     android:fitsSystemWindows="true">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:background="@color/white"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <RelativeLayout
+        <LinearLayout
+            android:id="@+id/ll_datils_additional"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/tab_main_text_icon">
+            android:layout_alignParentBottom="true"
+            android:background="@color/white"
+            android:gravity="right|center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/dp_8"
+            android:paddingTop="@dimen/dp_8"
+            android:paddingRight="@dimen/dp_8"
+            android:paddingBottom="@dimen/dp_8">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:background="@android:color/transparent"
-                android:gravity="center_horizontal"
-                android:text="订单详情"
-                android:textColor="@color/white"
-                android:textSize="@dimen/sp_16" />
-
-            <RelativeLayout
-                android:id="@+id/rl_datils_return"
+            <com.gcssloop.widget.RCRelativeLayout
+                android:id="@+id/rcrl_datils_call"
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/dp_40"
-                android:background="@drawable/notice_click"
-                android:paddingLeft="@dimen/dp_6"
-                android:paddingRight="@dimen/dp_8">
-
-                <ImageView
-                    android:id="@+id/iv_notice_return"
-                    android:layout_width="@dimen/dp_17"
-                    android:layout_height="@dimen/dp_17"
-                    android:layout_centerVertical="true"
-                    android:background="@android:color/transparent"
-                    android:src="@mipmap/pldetails_return" />
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/dp_8"
+                android:background="@android:color/transparent"
+                app:clip_background="true"
+                app:round_corner="30dp"
+                app:stroke_color="@color/datils_text"
+                app:stroke_width="@dimen/dp_1">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toRightOf="@id/iv_notice_return"
-                    android:paddingLeft="@dimen/dp_5"
-                    android:text="返回"
-                    android:textColor="@color/white"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/dp_12"
+                    android:paddingTop="@dimen/dp_5"
+                    android:paddingRight="@dimen/dp_12"
+                    android:paddingBottom="@dimen/dp_5"
+                    android:text="电话拨打"
+                    android:textColor="@color/audit_text"
                     android:textSize="@dimen/sp_14" />
 
-            </RelativeLayout>
+            </com.gcssloop.widget.RCRelativeLayout>
 
-        </RelativeLayout>
+            <com.gcssloop.widget.RCRelativeLayout
+                android:id="@+id/rcrl_datils_add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/dp_8"
+                android:background="@android:color/transparent"
+                app:clip_background="true"
+                app:round_corner="30dp"
+                app:stroke_color="@color/datils_text"
+                app:stroke_width="@dimen/dp_1">
 
-        <RelativeLayout
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/dp_12"
+                    android:paddingTop="@dimen/dp_5"
+                    android:paddingRight="@dimen/dp_12"
+                    android:paddingBottom="@dimen/dp_5"
+                    android:text="追加金额"
+
+                    android:textColor="@color/audit_text"
+                    android:textSize="@dimen/sp_14" />
+
+            </com.gcssloop.widget.RCRelativeLayout>
+
+            <com.gcssloop.widget.RCRelativeLayout
+                android:id="@+id/rcrl_datils_preferential"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                app:clip_background="true"
+                app:round_corner="30dp"
+                app:stroke_color="@color/datils_text"
+                app:stroke_width="@dimen/dp_1">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/dp_12"
+                    android:paddingTop="@dimen/dp_5"
+                    android:paddingRight="@dimen/dp_12"
+                    android:paddingBottom="@dimen/dp_5"
+                    android:text="给予优惠"
+                    android:textColor="@color/audit_text"
+                    android:textSize="@dimen/sp_14" />
+
+            </com.gcssloop.widget.RCRelativeLayout>
+
+        </LinearLayout>
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/srl_datils_pull"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_above="@id/ll_datils_additional"
             android:background="@color/service_bak">
 
             <LinearLayout
-                android:id="@+id/ll_datils_additional"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:background="@color/white"
-                android:gravity="right|center_vertical"
-                android:orientation="horizontal"
-                android:paddingLeft="@dimen/dp_8"
-                android:paddingTop="@dimen/dp_8"
-                android:paddingRight="@dimen/dp_8"
-                android:paddingBottom="@dimen/dp_8">
-
-                <com.gcssloop.widget.RCRelativeLayout
-                    android:id="@+id/rcrl_datils_call"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="@dimen/dp_8"
-                    android:background="@android:color/transparent"
-                    app:clip_background="true"
-                    app:round_corner="30dp"
-                    app:stroke_color="@color/datils_text"
-                    app:stroke_width="@dimen/dp_1">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:paddingLeft="@dimen/dp_12"
-                        android:paddingTop="@dimen/dp_5"
-                        android:paddingRight="@dimen/dp_12"
-                        android:paddingBottom="@dimen/dp_5"
-                        android:text="电话拨打"
-                        android:textColor="@color/audit_text"
-                        android:textSize="@dimen/sp_14" />
-
-                </com.gcssloop.widget.RCRelativeLayout>
-
-                <com.gcssloop.widget.RCRelativeLayout
-                    android:id="@+id/rcrl_datils_add"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="@dimen/dp_8"
-                    android:background="@android:color/transparent"
-                    app:clip_background="true"
-                    app:round_corner="30dp"
-                    app:stroke_color="@color/datils_text"
-                    app:stroke_width="@dimen/dp_1">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:paddingLeft="@dimen/dp_12"
-                        android:paddingTop="@dimen/dp_5"
-                        android:paddingRight="@dimen/dp_12"
-                        android:paddingBottom="@dimen/dp_5"
-                        android:text="追加金额"
-
-                        android:textColor="@color/audit_text"
-                        android:textSize="@dimen/sp_14" />
-
-                </com.gcssloop.widget.RCRelativeLayout>
-
-                <com.gcssloop.widget.RCRelativeLayout
-                    android:id="@+id/rcrl_datils_preferential"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    app:clip_background="true"
-                    app:round_corner="30dp"
-                    app:stroke_color="@color/datils_text"
-                    app:stroke_width="@dimen/dp_1">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:paddingLeft="@dimen/dp_12"
-                        android:paddingTop="@dimen/dp_5"
-                        android:paddingRight="@dimen/dp_12"
-                        android:paddingBottom="@dimen/dp_5"
-                        android:text="给予优惠"
-                        android:textColor="@color/audit_text"
-                        android:textSize="@dimen/sp_14" />
-
-                </com.gcssloop.widget.RCRelativeLayout>
-
-            </LinearLayout>
-
-            <com.cdqf.cart_view.VerticalSwipeRefreshLayout
-                android:id="@+id/srl_datils_pull"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_above="@id/ll_datils_additional"
-                android:background="@color/service_bak">
+                android:background="@color/white"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/tab_main_text_icon">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:background="@android:color/transparent"
+                        android:gravity="center_horizontal"
+                        android:text="订单详情"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp_16" />
+
+                    <RelativeLayout
+                        android:id="@+id/rl_datils_return"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/dp_40"
+                        android:background="@drawable/notice_click"
+                        android:paddingLeft="@dimen/dp_6"
+                        android:paddingRight="@dimen/dp_8">
+
+                        <ImageView
+                            android:id="@+id/iv_notice_return"
+                            android:layout_width="@dimen/dp_17"
+                            android:layout_height="@dimen/dp_17"
+                            android:layout_centerVertical="true"
+                            android:background="@android:color/transparent"
+                            android:src="@mipmap/pldetails_return" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toRightOf="@id/iv_notice_return"
+                            android:paddingLeft="@dimen/dp_5"
+                            android:text="返回"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/sp_14" />
+
+                    </RelativeLayout>
+
+                </RelativeLayout>
 
                 <ScrollView
+                    android:id="@+id/sv_datils_sc"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_above="@id/ll_datils_additional"
                     android:background="@color/service_bak"
                     android:scrollbars="none">
 
@@ -174,7 +176,7 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_marginTop="@dimen/dp_8"
+                            android:layout_marginTop="@dimen/dp_5"
                             android:background="@color/service_bak"
                             android:orientation="vertical"
                             android:scrollbars="none">
@@ -485,14 +487,10 @@
                                     android:textSize="@dimen/sp_14" />
 
                             </LinearLayout>
-
                         </LinearLayout>
                     </LinearLayout>
                 </ScrollView>
-
-            </com.cdqf.cart_view.VerticalSwipeRefreshLayout>
-
-        </RelativeLayout>
-    </LinearLayout>
-
+            </LinearLayout>
+        </android.support.v4.widget.SwipeRefreshLayout>
+    </RelativeLayout>
 </LinearLayout>

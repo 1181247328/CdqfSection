@@ -9,9 +9,11 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
@@ -59,6 +61,9 @@ public class DatilsActivity extends BaseActivity {
 
     @BindView(R.id.srl_datils_pull)
     public SwipeRefreshLayout srlDatilsPull = null;
+
+    @BindView(R.id.sv_datils_sc)
+    public ScrollView svDatilsSc = null;
 
     //返回
     @BindView(R.id.rl_datils_return)
@@ -167,11 +172,17 @@ public class DatilsActivity extends BaseActivity {
     }
 
     private void initListener() {
-
         srlDatilsPull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 initPull(false);
+            }
+        });
+
+        svDatilsSc.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged() {
+                srlDatilsPull.setEnabled(svDatilsSc.getScrollY() == 0);
             }
         });
     }

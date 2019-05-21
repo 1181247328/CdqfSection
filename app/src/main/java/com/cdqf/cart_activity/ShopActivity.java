@@ -13,7 +13,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -35,8 +37,6 @@ import com.cdqf.cart_state.BaseActivity;
 import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_state.StatusBarCompat;
-import com.cdqf.cart_view.ListViewForScrollView;
-import com.cdqf.cart_view.VerticalSwipeRefreshLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -72,14 +72,14 @@ public class ShopActivity extends BaseActivity {
     private Gson gson = new Gson();
 
     @BindView(R.id.srl_shop_pull)
-    public VerticalSwipeRefreshLayout srlShopPull = null;
+    public SwipeRefreshLayout srlShopPull = null;
 
     //帐户
     @BindView(R.id.rl_shop_return)
     public RelativeLayout rlShopReturn = null;
 
     @BindView(R.id.lv_shop_list)
-    public ListViewForScrollView lvShopList = null;
+    public ListView lvShopList = null;
 
     @BindView(R.id.tv_shop_no)
     public TextView tvShopNo = null;
@@ -163,6 +163,17 @@ public class ShopActivity extends BaseActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 initIntent(DatilsActivity.class, position);
+            }
+        });
+        lvShopList.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                srlShopPull.setEnabled(firstVisibleItem == 0);
             }
         });
     }
