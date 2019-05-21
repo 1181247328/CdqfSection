@@ -43,6 +43,8 @@ public class OKHttpRequestWrap {
                 postFormBuilder.addParams(key, String.valueOf(value));
             } else if (value.getClass() == Boolean.class) {
                 postFormBuilder.addParams(key, String.valueOf(value));
+            } else if(value.getClass() == Double.class){
+                postFormBuilder.addParams(key, String.valueOf(value));
             } else {
                 //TODO
             }

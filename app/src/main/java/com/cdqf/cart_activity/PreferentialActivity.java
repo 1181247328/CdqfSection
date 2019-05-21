@@ -24,6 +24,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
 import com.cdqf.cart_dilog.WhyDilogFragment;
+import com.cdqf.cart_find.DatilsPullFind;
 import com.cdqf.cart_find.PreferentialFind;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;
@@ -96,6 +97,14 @@ public class PreferentialActivity extends BaseActivity {
     //提交
     @BindView(R.id.ll_preferential_submit)
     public LinearLayout llPreferentialSubmit = null;
+
+    private double price = 0;
+
+    private double discounts = 0;
+
+    private double discountTurn = 0;
+
+    private double money = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -178,16 +187,20 @@ public class PreferentialActivity extends BaseActivity {
                 }
                 if (number >= 1) {
                     Log.e(TAG, "---折扣字符---" + discount);
-                    double discountTurn = Double.parseDouble(discount) / 10;
+                    //折扣扣数
+                    discountTurn = Double.parseDouble(discount) / 10;
                     Log.e(TAG, "---折扣双精度---" + discountTurn);
                     //商品原价
-                    double price = Double.parseDouble(cartState.getDatils().getZongprice());
+                    price = Double.parseDouble(cartState.getDatils().getZongprice());
                     //折扣价
-                    double discounts = DoubleOperationUtil.mul(price, discountTurn);
+                    discounts = DoubleOperationUtil.mul(price, discountTurn);
                     tvPreferentialDiscount.setText("￥" + discounts);
                     //返余额
-                    double money = DoubleOperationUtil.sub(price, discounts);
+                    money = DoubleOperationUtil.sub(price, discounts);
                     tvPreferentialMoney.setText("￥" + money);
+                } else {
+                    tvPreferentialDiscount.setText("");
+                    tvPreferentialMoney.setText("");
                 }
             }
         });
@@ -215,18 +228,40 @@ public class PreferentialActivity extends BaseActivity {
 
     private void initPull(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
+        //订单号
+        String order_num = cartState.getDatils().getOrdernum();
+        params.put("order_num", order_num);
+        //用户id
+        int user_id = Integer.parseInt(cartState.getDatils().getUserid());
+        params.put("user_id", user_id);
+        //金额
+        params.put("money", price+"");
+        //折扣扣数
+        params.put("discount_num", discountTurn+"");
+        //折扣价
+        params.put("discount_money", discounts+"");
+        //返余额
+        params.put("balance", money+"");
+        //服务项目
+        String goodsNmae = "";
+        for (String name : cartState.getDatils().getGoodsname()) {
+            goodsNmae += name + " ";
+        }
+        params.put("info", goodsNmae);
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        String ordernum = "";
-        okHttpRequestWrap.post(ordernum, isToast, "提交中", params, new OnHttpRequest() {
+        okHttpRequestWrap.post(CartAddaress.SHOP_PREFERENT, isToast, "提交中", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
-                Log.e(TAG, "---onOkHttpResponse提交---" + response);
+                Log.e(TAG, "---onOkHttpResponse给予优惠---" + response);
                 JSONObject resultJSON = JSON.parseObject(response);
                 int error_code = resultJSON.getInteger("ret");
                 String msg = resultJSON.getString("msg");
                 switch (error_code) {
                     //获取成功
                     case 200:
+                        cartState.initToast(context, "提交成功", true, 0);
+                        eventBus.post(new DatilsPullFind());
+                        finish();
                     default:
                         cartState.initToast(context, msg, true, 0);
                         break;
@@ -267,6 +302,11 @@ public class PreferentialActivity extends BaseActivity {
                 break;
             //提交
             case R.id.ll_preferential_submit:
+                String dis = etPreferentialDiscount.getText().toString();
+                if (dis.length() <= 0) {
+                    cartState.initToast(context, "请输入折扣", true, 0);
+                    return;
+                }
                 WhyDilogFragment whyDilogFragment = new WhyDilogFragment();
                 whyDilogFragment.setInit(14, "提交", "您正在进行提交操作", "否", "是");
                 whyDilogFragment.show(getSupportFragmentManager(), "提交操作");
@@ -318,6 +358,6 @@ public class PreferentialActivity extends BaseActivity {
 
     @Subscribe
     public void onEventMainThread(PreferentialFind r) {
-
+        initPull(true);
     }
 }

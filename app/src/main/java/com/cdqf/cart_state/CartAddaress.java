@@ -3,7 +3,7 @@ package com.cdqf.cart_state;
 public class CartAddaress {
 
     //线下(宋工)
-    //public static final String ADDRESS = "http://192.168.31.131";
+    //public static final String ADDRESS = "http://192.168.31.177";
 
     //线下(李工)
     //public static final String ADDRESS = "http://192.168.31.9";
@@ -55,6 +55,10 @@ public class CartAddaress {
 
     //上传身份证
     public static String SHOP_IDIMAGE = ADDRESS + "/?s=Upload.addImg";
+
+    //给予优惠
+//    public static String SHOP_PREFERENT = ADDRESS + "/?s=oreder.discount_list";
+    public static String SHOP_PREFERENT = "http://192.168.31.177/tuogou/car_api/public/?s=order.discount_list";
 
     public static String LOSS = ADDRESS + "";
 
