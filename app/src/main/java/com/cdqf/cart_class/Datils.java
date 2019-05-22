@@ -1,5 +1,6 @@
 package com.cdqf.cart_class;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Datils {
@@ -19,9 +20,11 @@ public class Datils {
     private String addtime;
     private String updtime;
     private String dealtime;
+    private String discount;
     private List<String> goodsname;
-//    private String class;
+    //    private String class;
     private String shopname;
+    private List<DiscountList> discount_list = new ArrayList<>();
 
     public String getId() {
         return id;
@@ -151,6 +154,14 @@ public class Datils {
         this.dealtime = dealtime;
     }
 
+    public String getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(String discount) {
+        this.discount = discount;
+    }
+
     public List<String> getGoodsname() {
         return goodsname;
     }
@@ -165,5 +176,97 @@ public class Datils {
 
     public void setShopname(String shopname) {
         this.shopname = shopname;
+    }
+
+    public List<DiscountList> getDiscount_list() {
+        return discount_list;
+    }
+
+    public void setDiscount_list(List<DiscountList> discount_list) {
+        this.discount_list = discount_list;
+    }
+
+    public class DiscountList {
+        private String id;
+        private String order_num;
+        private String user_id;
+        private String money;
+        private String discount_num;
+        private String discount_money;
+        private String balance;
+        private String info;
+        private String add_time;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getOrder_num() {
+            return order_num;
+        }
+
+        public void setOrder_num(String order_num) {
+            this.order_num = order_num;
+        }
+
+        public String getUser_id() {
+            return user_id;
+        }
+
+        public void setUser_id(String user_id) {
+            this.user_id = user_id;
+        }
+
+        public String getMoney() {
+            return money;
+        }
+
+        public void setMoney(String money) {
+            this.money = money;
+        }
+
+        public String getDiscount_num() {
+            return discount_num;
+        }
+
+        public void setDiscount_num(String discount_num) {
+            this.discount_num = discount_num;
+        }
+
+        public String getDiscount_money() {
+            return discount_money;
+        }
+
+        public void setDiscount_money(String discount_money) {
+            this.discount_money = discount_money;
+        }
+
+        public String getBalance() {
+            return balance;
+        }
+
+        public void setBalance(String balance) {
+            this.balance = balance;
+        }
+
+        public String getInfo() {
+            return info;
+        }
+
+        public void setInfo(String info) {
+            this.info = info;
+        }
+
+        public String getAdd_time() {
+            return add_time;
+        }
+
+        public void setAdd_time(String add_time) {
+            this.add_time = add_time;
+        }
     }
 }

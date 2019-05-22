@@ -30,6 +30,7 @@ import com.cdqf.cart.R;
 import com.cdqf.cart_ble.Ble;
 import com.cdqf.cart_class.Audit;
 import com.cdqf.cart_class.Datils;
+import com.cdqf.cart_class.Employees;
 import com.cdqf.cart_class.LossMan;
 import com.cdqf.cart_class.LossNews;
 import com.cdqf.cart_class.LossStaff;
@@ -157,6 +158,9 @@ public class CartState {
 
     //订单详情
     private Datils datils = new Datils();
+
+    //员工列表
+    private List<Employees> employeesList = new CopyOnWriteArrayList<>();
 
     /**
      * 提示信息
@@ -949,5 +953,13 @@ public class CartState {
 
     public void setDatils(Datils datils) {
         this.datils = datils;
+    }
+
+    public List<Employees> getEmployeesList() {
+        return employeesList;
+    }
+
+    public void setEmployeesList(List<Employees> employeesList) {
+        this.employeesList = employeesList;
     }
 }

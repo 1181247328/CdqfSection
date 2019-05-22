@@ -3,13 +3,16 @@ package com.cdqf.cart_state;
 public class CartAddaress {
 
     //线下(宋工)
-    //public static final String ADDRESS = "http://192.168.31.177";
+//    public static final String ADDRESS = "http://192.168.31.177";
 
     //线下(李工)
     //public static final String ADDRESS = "http://192.168.31.9";
 
     //线上
-    public static final String ADDRESS = "https://tgapi.baodi520.com";
+    public static final String ADDRESS = "http://testapi.baodi520.com";
+
+    //线上
+//    public static final String ADDRESS = "https://tgapi.baodi520.com";
 
     //店总
     public static String SHOP = ADDRESS + "/?s=order.shopowenr&shopid=SHOPID";
@@ -57,8 +60,10 @@ public class CartAddaress {
     public static String SHOP_IDIMAGE = ADDRESS + "/?s=Upload.addImg";
 
     //给予优惠
-//    public static String SHOP_PREFERENT = ADDRESS + "/?s=oreder.discount_list";
-    public static String SHOP_PREFERENT = "http://192.168.31.177/tuogou/car_api/public/?s=order.discount_list";
+    public static String SHOP_PREFERENT = ADDRESS + "/?s=order.discount_list";
+
+    //员工管理列表
+    public static String SHOP_EMPLOYEES = ADDRESS + "/?s=Shopowner.shop_user_list";
 
     public static String LOSS = ADDRESS + "";
 

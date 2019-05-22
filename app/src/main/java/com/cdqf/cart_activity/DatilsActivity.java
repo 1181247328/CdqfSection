@@ -7,11 +7,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -116,6 +118,15 @@ public class DatilsActivity extends BaseActivity {
     //给予优惠
     @BindView(R.id.rcrl_datils_preferential)
     public RCRelativeLayout rcrlDatilsPreferential = null;
+
+    @BindView(R.id.ll_datils_preferential)
+    public LinearLayout llDatilsPreferential = null;
+
+    @BindView(R.id.ll_datils_discount)
+    public LinearLayout llDatilsDiscount = null;
+
+    @BindView(R.id.ll_datils_money)
+    public LinearLayout llDatilsMoney = null;
 
     private int position = 0;
 
@@ -229,6 +240,19 @@ public class DatilsActivity extends BaseActivity {
                         tvDatilsTimer.setText(datils.getAddtime());
 
                         //判断是不是有折扣
+                        if (TextUtils.equals(datils.getDiscount(), "1")) {
+                            //有折扣
+                            preferential(View.VISIBLE);
+                            tvDatilsPreferential.setText(datils.getDiscount_list().get(0).getDiscount_num());
+                            tvDatilsDiscount.setText(datils.getDiscount_list().get(0).getDiscount_money());
+                            tvDatilsMoney.setText(datils.getDiscount_list().get(0).getBalance());
+                        } else {
+                            //无折扣
+                            preferential(View.GONE);
+                            tvDatilsPreferential.setText("");
+                            tvDatilsDiscount.setText("");
+                            tvDatilsMoney.setText("");
+                        }
                         break;
                     default:
                         cartState.initToast(context, msg, true, 0);
@@ -252,11 +276,11 @@ public class DatilsActivity extends BaseActivity {
 
     private void preferential(int state) {
         //优惠折扣
-        tvDatilsPreferential.setVisibility(state);
+        llDatilsPreferential.setVisibility(state);
         //折扣价
-        tvDatilsDiscount.setVisibility(View.GONE);
+        llDatilsDiscount.setVisibility(state);
         //返余额
-        tvDatilsMoney.setVisibility(View.GONE);
+        llDatilsMoney.setVisibility(state);
     }
 
     private void initIntent(Class<?> activity) {

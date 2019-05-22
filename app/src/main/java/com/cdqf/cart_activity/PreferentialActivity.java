@@ -249,6 +249,7 @@ public class PreferentialActivity extends BaseActivity {
         }
         params.put("info", goodsNmae);
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
+        Log.e(TAG, "---"+CartAddaress.SHOP_PREFERENT);
         okHttpRequestWrap.post(CartAddaress.SHOP_PREFERENT, isToast, "提交中", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {

@@ -208,7 +208,6 @@
                                     android:paddingTop="@dimen/dp_8"
                                     android:paddingBottom="@dimen/dp_8"
                                     android:singleLine="true"
-                                    android:text="川A123456"
                                     android:textColor="@color/audit_text"
                                     android:textSize="@dimen/sp_14" />
 
@@ -242,13 +241,13 @@
                                     android:paddingTop="@dimen/dp_8"
                                     android:paddingBottom="@dimen/dp_8"
                                     android:singleLine="true"
-                                    android:text="￥100.00"
                                     android:textColor="@color/audit_text"
                                     android:textSize="@dimen/sp_14" />
 
                             </LinearLayout>
 
                             <LinearLayout
+                                android:id="@+id/ll_datils_preferential"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/dp_1"
@@ -276,13 +275,13 @@
                                     android:paddingTop="@dimen/dp_8"
                                     android:paddingBottom="@dimen/dp_8"
                                     android:singleLine="true"
-                                    android:text="八折"
                                     android:textColor="@color/audit_text"
                                     android:textSize="@dimen/sp_14" />
 
                             </LinearLayout>
 
                             <LinearLayout
+                                android:id="@+id/ll_datils_discount"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/dp_1"
@@ -310,13 +309,13 @@
                                     android:paddingTop="@dimen/dp_8"
                                     android:paddingBottom="@dimen/dp_8"
                                     android:singleLine="true"
-                                    android:text="￥80.00"
                                     android:textColor="@color/audit_text"
                                     android:textSize="@dimen/sp_14" />
 
                             </LinearLayout>
 
                             <LinearLayout
+                                android:id="@+id/ll_datils_money"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/dp_1"
@@ -344,7 +343,6 @@
                                     android:paddingTop="@dimen/dp_8"
                                     android:paddingBottom="@dimen/dp_8"
                                     android:singleLine="true"
-                                    android:text="￥20.00"
                                     android:textColor="@color/audit_text"
                                     android:textSize="@dimen/sp_14" />
 
@@ -376,7 +374,6 @@
                                     android:paddingLeft="@dimen/dp_8"
                                     android:paddingTop="@dimen/dp_8"
                                     android:paddingBottom="@dimen/dp_8"
-                                    android:text="标洗全车"
                                     android:textColor="@color/audit_text"
                                     android:textSize="@dimen/sp_14" />
 
