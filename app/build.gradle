@@ -5,7 +5,7 @@ android {
         config {
             keyAlias 'WashCart'
             keyPassword '123456'
-            storeFile file('C:/Android Studio/WashCart/app/WashCart.jks')
+            storeFile file('C:/AndroidStudio/WashCart/app/WashCart.jks')
             storePassword '123456'
         }
     }
