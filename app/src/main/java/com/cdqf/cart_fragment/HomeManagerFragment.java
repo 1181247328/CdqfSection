@@ -15,6 +15,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
 import com.cdqf.cart_activity.AuditActivity;
+import com.cdqf.cart_activity.ClockActivity;
 import com.cdqf.cart_activity.EmployeesActivity;
 import com.cdqf.cart_activity.LossNewsActivity;
 import com.cdqf.cart_activity.NoticeManagerActivity;
@@ -124,6 +125,10 @@ public class HomeManagerFragment extends Fragment {
                     //店员管理
                     case 4:
                         initIntent(EmployeesActivity.class);
+                        break;
+                    //考勤打卡
+                    case 5:
+                        initIntent(ClockActivity.class);
                         break;
                 }
             }

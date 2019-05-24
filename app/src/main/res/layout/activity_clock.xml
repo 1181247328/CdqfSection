@@ -1,0 +1,569 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/srl_clock_pull"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:background="@android:color/transparent"
+                android:gravity="center_horizontal"
+                android:text="脱狗车宝"
+                android:textColor="@color/audit_text"
+                android:textSize="@dimen/sp_16" />
+
+            <RelativeLayout
+                android:id="@+id/rl_clock_return"
+                android:layout_width="@dimen/dp_40"
+                android:layout_height="@dimen/dp_40"
+                android:background="@drawable/loss_click"
+                android:paddingLeft="@dimen/dp_6"
+                android:paddingRight="@dimen/dp_8">
+
+                <ImageView
+                    android:id="@+id/iv_service_return"
+                    android:layout_width="@dimen/dp_17"
+                    android:layout_height="@dimen/dp_17"
+                    android:layout_centerVertical="true"
+                    android:background="@android:color/transparent"
+                    android:src="@mipmap/plantscience_return" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <ScrollView
+            android:id="@+id/sv_clock_sc"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:paddingLeft="@dimen/dp_10"
+                    android:paddingTop="@dimen/dp_10"
+                    android:paddingRight="@dimen/dp_10"
+                    android:paddingBottom="@dimen/dp_10">
+
+                    <com.gcssloop.widget.RCRelativeLayout
+                        android:id="@+id/rcrl_clock_hear"
+                        android:layout_width="@dimen/dp_50"
+                        android:layout_height="@dimen/dp_50"
+                        app:clip_background="true"
+                        app:round_as_circle="true">
+
+                        <ImageView
+                            android:id="@+id/iv_clock_hear"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:scaleType="fitXY"
+                            android:src="@mipmap/test5" />
+
+                    </com.gcssloop.widget.RCRelativeLayout>
+
+                    <TextView
+                        android:id="@+id/tv_clock_timer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:background="@color/white"
+                        android:text="2019.05.24"
+                        android:textColor="@color/clock_one"
+                        android:textSize="@dimen/sp_14" />
+
+                    <TextView
+                        android:id="@+id/tv_clock_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignTop="@id/rcrl_clock_hear"
+                        android:layout_toRightOf="@id/rcrl_clock_hear"
+                        android:background="@color/white"
+                        android:paddingLeft="8dp"
+                        android:text="杨显澎"
+                        android:textColor="@color/audit_text"
+                        android:textSize="@dimen/sp_15" />
+
+                    <TextView
+                        android:id="@+id/tv_clock_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBottom="@id/rcrl_clock_hear"
+                        android:layout_toRightOf="@id/rcrl_clock_hear"
+                        android:background="@color/white"
+                        android:paddingLeft="8dp"
+                        android:text="脱狗车宝(浅水半岛店)"
+                        android:textColor="@color/clock_one"
+                        android:textSize="@dimen/sp_13" />
+
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/service_bak" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingTop="@dimen/dp_10"
+                    android:paddingBottom="@dimen/dp_10">
+
+                    <com.gcssloop.widget.RCRelativeLayout
+                        android:id="@+id/rcrl_clock_state"
+                        android:layout_width="@dimen/dp_100"
+                        android:layout_height="@dimen/dp_100"
+                        android:background="@color/tab_main_text_icon"
+                        app:clip_background="true"
+                        app:round_as_circle="true">
+
+                        <LinearLayout
+                            android:layout_width="@dimen/dp_100"
+                            android:layout_height="@dimen/dp_100"
+                            android:background="@android:color/transparent"
+                            android:gravity="center|center_horizontal|center_vertical"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tv_clock_state"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@android:color/transparent"
+                                android:text="下班打卡"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/sp_16" />
+
+                            <TextView
+                                android:id="@+id/tv_clock_statetimer"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@android:color/transparent"
+                                android:paddingTop="@dimen/dp_3"
+                                android:text="14:10:22"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/sp_13" />
+
+                        </LinearLayout>
+
+                    </com.gcssloop.widget.RCRelativeLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:orientation="horizontal"
+                        android:paddingTop="@dimen/dp_10"
+                        android:paddingBottom="@dimen/dp_10">
+
+                        <ImageView
+                            android:layout_width="@dimen/dp_16"
+                            android:layout_height="@dimen/dp_16"
+                            android:layout_marginLeft="@dimen/dp_4"
+                            android:src="@mipmap/clock_sumit" />
+
+                        <ImageView
+                            android:layout_width="@dimen/dp_16"
+                            android:layout_height="@dimen/dp_16"
+                            android:layout_marginLeft="@dimen/dp_4"
+                            android:src="@mipmap/clock_position" />
+
+                        <TextView
+                            android:id="@+id/tv_clock_scope"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="@dimen/dp_4"
+                            android:text="已进入考勤范围脱狗车宝(浅水半岛店)"
+                            android:textColor="@color/clock_one"
+                            android:textSize="@dimen/sp_13" />
+
+                        <TextView
+                            android:id="@+id/tv_clock_positioning"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="@dimen/dp_8"
+                            android:paddingRight="@dimen/dp_8"
+                            android:text="重新定位"
+                            android:textColor="@color/tab_main_text_icon"
+                            android:textSize="@dimen/sp_13" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:orientation="vertical"
+                    android:paddingLeft="@dimen/dp_26"
+                    android:paddingRight="@dimen/dp_15">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/white"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <com.gcssloop.widget.RCRelativeLayout
+                                android:layout_width="@dimen/dp_12"
+                                android:layout_height="@dimen/dp_12"
+                                android:background="@android:color/transparent"
+                                app:clip_background="true"
+                                app:round_as_circle="true">
+
+                                <TextView
+                                    android:layout_width="@dimen/dp_12"
+                                    android:layout_height="@dimen/dp_12"
+                                    android:background="@color/clock_one" />
+
+                            </com.gcssloop.widget.RCRelativeLayout>
+
+                            <TextView
+                                android:id="@+id/tv_clock_fixed"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingLeft="@dimen/dp_10"
+                                android:text="上班时间09:00"
+                                android:textColor="@color/clock_one"
+                                android:textSize="@dimen/sp_15" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/white"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@color/white"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:paddingTop="@dimen/dp_10">
+
+                                <com.gcssloop.widget.RCRelativeLayout
+                                    android:layout_width="@dimen/dp_12"
+                                    android:layout_height="@dimen/dp_12"
+                                    android:background="@android:color/transparent"
+                                    app:clip_background="true"
+                                    app:round_as_circle="true">
+
+                                    <TextView
+                                        android:layout_width="@dimen/dp_12"
+                                        android:layout_height="@dimen/dp_12" />
+
+                                </com.gcssloop.widget.RCRelativeLayout>
+
+                                <TextView
+                                    android:id="@+id/tv_clock_workon"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingLeft="@dimen/dp_10"
+                                    android:text="打卡时间08:53"
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/sp_18" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@color/white"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:paddingTop="@dimen/dp_10">
+
+                                <com.gcssloop.widget.RCRelativeLayout
+                                    android:layout_width="@dimen/dp_12"
+                                    android:layout_height="@dimen/dp_12"
+                                    android:background="@android:color/transparent"
+                                    app:clip_background="true"
+                                    app:round_as_circle="true">
+
+                                    <TextView
+                                        android:layout_width="@dimen/dp_12"
+                                        android:layout_height="@dimen/dp_12" />
+
+                                </com.gcssloop.widget.RCRelativeLayout>
+
+                                <ImageView
+                                    android:layout_width="@dimen/dp_16"
+                                    android:layout_height="@dimen/dp_16"
+                                    android:layout_marginLeft="@dimen/dp_10"
+                                    android:src="@mipmap/clock_address" />
+
+                                <ImageView
+                                    android:layout_width="@dimen/dp_16"
+                                    android:layout_height="@dimen/dp_16"
+                                    android:layout_marginLeft="@dimen/dp_4"
+                                    android:src="@mipmap/clock_sumit" />
+
+                                <TextView
+                                    android:id="@+id/tv_clock_addresson"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingLeft="@dimen/dp_8"
+                                    android:text="脱狗车宝(浅水半岛店)"
+                                    android:textColor="@color/clock_one"
+                                    android:textSize="@dimen/sp_15" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dp_10"
+                            android:background="@color/white"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <com.gcssloop.widget.RCRelativeLayout
+                                android:id="@+id/rcrl_clock_imageon"
+                                android:layout_width="@dimen/dp_200"
+                                android:layout_height="@dimen/dp_100"
+                                android:background="@color/white"
+                                app:round_corner="@dimen/dp_5"
+                                app:stroke_color="@color/clock_one"
+                                app:stroke_width="@dimen/dp_0_5">
+
+                                <ImageView
+                                    android:id="@+id/iv_clock_imageon"
+                                    android:layout_width="@dimen/dp_200"
+                                    android:layout_height="@dimen/dp_100"
+                                    android:background="@android:color/transparent"
+                                    android:scaleType="center"
+                                    android:src="@mipmap/clock_add" />
+
+                            </com.gcssloop.widget.RCRelativeLayout>
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_horizontal"
+                                android:paddingTop="@dimen/dp_5"
+                                android:text="请拍摄门头照片"
+                                android:textColor="@color/clock_one"
+                                android:textSize="@dimen/sp_13" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_10"
+                        android:background="@color/white"
+                        android:orientation="vertical"
+                        android:paddingBottom="@dimen/dp_10">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/white"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <com.gcssloop.widget.RCRelativeLayout
+                                android:layout_width="@dimen/dp_12"
+                                android:layout_height="@dimen/dp_12"
+                                android:background="@android:color/transparent"
+                                app:clip_background="true"
+                                app:round_as_circle="true">
+
+                                <TextView
+                                    android:layout_width="@dimen/dp_12"
+                                    android:layout_height="@dimen/dp_12"
+                                    android:background="@color/clock_one" />
+
+                            </com.gcssloop.widget.RCRelativeLayout>
+
+                            <TextView
+                                android:id="@+id/tv_clock_after"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@android:color/transparent"
+                                android:paddingLeft="@dimen/dp_10"
+                                android:text="下班时间06:00"
+                                android:textColor="@color/clock_one"
+                                android:textSize="@dimen/sp_15" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/white"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@color/white"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:paddingTop="@dimen/dp_10">
+
+                                <com.gcssloop.widget.RCRelativeLayout
+                                    android:layout_width="@dimen/dp_12"
+                                    android:layout_height="@dimen/dp_12"
+                                    android:background="@android:color/transparent"
+                                    app:clip_background="true"
+                                    app:round_as_circle="true">
+
+                                    <TextView
+                                        android:layout_width="@dimen/dp_12"
+                                        android:layout_height="@dimen/dp_12"
+                                        android:background="@android:color/transparent" />
+
+                                </com.gcssloop.widget.RCRelativeLayout>
+
+                                <TextView
+                                    android:id="@+id/tv_clock_fixedafterafter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:background="@android:color/transparent"
+                                    android:paddingLeft="@dimen/dp_10"
+                                    android:text="打卡时间06:02"
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/sp_18" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@color/white"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:paddingTop="@dimen/dp_10">
+
+                                <com.gcssloop.widget.RCRelativeLayout
+                                    android:layout_width="@dimen/dp_12"
+                                    android:layout_height="@dimen/dp_12"
+                                    android:background="@android:color/transparent"
+                                    app:clip_background="true"
+                                    app:round_as_circle="true">
+
+                                    <TextView
+                                        android:layout_width="@dimen/dp_12"
+                                        android:layout_height="@dimen/dp_12"
+                                        android:background="@android:color/transparent" />
+
+                                </com.gcssloop.widget.RCRelativeLayout>
+
+                                <ImageView
+                                    android:layout_width="@dimen/dp_16"
+                                    android:layout_height="@dimen/dp_16"
+                                    android:layout_marginLeft="@dimen/dp_10"
+                                    android:background="@android:color/transparent"
+                                    android:src="@mipmap/clock_address" />
+
+                                <ImageView
+                                    android:layout_width="@dimen/dp_16"
+                                    android:layout_height="@dimen/dp_16"
+                                    android:layout_marginLeft="@dimen/dp_4"
+                                    android:background="@android:color/transparent"
+                                    android:src="@mipmap/clock_sumit" />
+
+                                <TextView
+                                    android:id="@+id/tv_clock_addressafter"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:background="@android:color/transparent"
+                                    android:paddingLeft="@dimen/dp_8"
+                                    android:text="脱狗车宝(浅水半岛店)"
+                                    android:textColor="@color/clock_one"
+                                    android:textSize="@dimen/sp_15" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dp_10"
+                            android:background="@color/white"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <com.gcssloop.widget.RCRelativeLayout
+                                android:id="@+id/rcrl_clock_imageafter"
+                                android:layout_width="@dimen/dp_200"
+                                android:layout_height="@dimen/dp_100"
+                                android:background="@color/white"
+                                app:round_corner="@dimen/dp_5"
+                                app:stroke_color="@color/clock_one"
+                                app:stroke_width="@dimen/dp_0_5">
+
+                                <ImageView
+                                    android:id="@+id/iv_clock_imageafter"
+                                    android:layout_width="@dimen/dp_200"
+                                    android:layout_height="@dimen/dp_100"
+                                    android:background="@android:color/transparent"
+                                    android:scaleType="center"
+                                    android:src="@mipmap/clock_add" />
+
+                            </com.gcssloop.widget.RCRelativeLayout>
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_horizontal"
+                                android:paddingTop="@dimen/dp_5"
+                                android:text="请拍摄门头照片"
+                                android:textColor="@color/clock_one"
+                                android:textSize="@dimen/sp_13" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+</android.support.v4.widget.SwipeRefreshLayout>

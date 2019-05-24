@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:background="@android:color/transparent"
+                android:gravity="center_horizontal"
+                android:text="考勤打卡"
+                android:textColor="@color/audit_text"
+                android:textSize="@dimen/sp_16" />
+
+            <RelativeLayout
+                android:id="@+id/rl_again_return"
+                android:layout_width="@dimen/dp_40"
+                android:layout_height="@dimen/dp_40"
+                android:background="@drawable/loss_click"
+                android:paddingLeft="@dimen/dp_6"
+                android:paddingRight="@dimen/dp_8">
+
+                <ImageView
+                    android:id="@+id/iv_service_return"
+                    android:layout_width="@dimen/dp_17"
+                    android:layout_height="@dimen/dp_17"
+                    android:layout_centerVertical="true"
+                    android:background="@android:color/transparent"
+                    android:src="@mipmap/plantscience_return" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white">
+
+            <LinearLayout
+                android:id="@+id/ll_again_one"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/dp_15"
+                android:paddingBottom="@dimen/dp_10">
+
+                <TextView
+                    android:id="@+id/tv_again_current"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/dp_10"
+                    android:text="我的位置(在考勤范围内)"
+                    android:textColor="@color/tab_main_text_default"
+                    android:textSize="@dimen/sp_14" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/white"
+                    android:orientation="horizontal"
+                    android:paddingLeft="@dimen/dp_10"
+                    android:paddingTop="@dimen/dp_10"
+                    android:paddingBottom="@dimen/dp_10">
+
+                    <com.gcssloop.widget.RCRelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@color/tab_main_text_icon"
+                        app:clip_background="true"
+                        app:round_corner="@dimen/dp_20">
+
+                        <TextView
+                            android:id="@+id/tv_again_state"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="@dimen/dp_14"
+                            android:paddingTop="@dimen/dp_4"
+                            android:paddingRight="@dimen/dp_14"
+                            android:paddingBottom="@dimen/dp_4"
+                            android:text="正常"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/sp_12" />
+
+                    </com.gcssloop.widget.RCRelativeLayout>
+
+                    <TextView
+                        android:id="@+id/tv_again_address"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:paddingLeft="@dimen/dp_10"
+                        android:text="太升大厦2103"
+                        android:textColor="@color/clock_one"
+                        android:textSize="@dimen/sp_12" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/service_bak" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:paddingLeft="@dimen/dp_10"
+                    android:paddingTop="@dimen/dp_8"
+                    android:paddingRight="@dimen/dp_25"
+                    android:paddingBottom="@dimen/dp_8">
+
+                    <com.gcssloop.widget.RCRelativeLayout
+                        android:id="@+id/rcrl_again_raphic"
+                        android:layout_width="@dimen/dp_50"
+                        android:layout_height="@dimen/dp_50"
+                        android:layout_alignParentRight="true"
+                        android:background="@color/white"
+                        app:clip_background="true"
+                        app:round_corner="@dimen/dp_4"
+                        app:stroke_color="@color/clock_one"
+                        app:stroke_width="@dimen/dp_0_5">
+
+                        <ImageView
+                            android:layout_width="@dimen/dp_25"
+                            android:layout_height="@dimen/dp_25"
+                            android:layout_centerInParent="true"
+                            android:background="@android:color/transparent"
+                            android:src="@mipmap/agin_raphic" />
+
+                    </com.gcssloop.widget.RCRelativeLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignTop="@id/rcrl_again_raphic"
+                        android:layout_toLeftOf="@id/rcrl_again_raphic"
+                        android:background="@color/white"
+                        android:paddingRight="@dimen/dp_8"
+                        android:text="备注"
+                        android:textColor="@color/tab_main_text_default"
+                        android:textSize="@dimen/sp_14" />
+
+                    <EditText
+                        android:id="@+id/et_again_fill"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBottom="@id/rcrl_again_raphic"
+                        android:layout_toLeftOf="@id/rcrl_again_raphic"
+                        android:background="@color/white"
+                        android:hint="选填"
+                        android:paddingTop="@dimen/dp_8"
+                        android:paddingRight="@dimen/dp_8"
+                        android:textColor="@color/tab_main_text_default"
+                        android:textColorHint="@color/clock_one"
+                        android:textCursorDrawable="@drawable/nickname_cursor"
+                        android:textSize="@dimen/sp_14" />
+
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/service_bak" />
+
+                <com.gcssloop.widget.RCRelativeLayout
+                    android:id="@+id/rcrl_again_clock"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/dp_15"
+                    android:layout_marginTop="@dimen/dp_15"
+                    android:layout_marginRight="@dimen/dp_15"
+                    android:background="@drawable/notice_click"
+                    app:clip_background="true"
+                    app:round_corner="@dimen/dp_5">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:gravity="center"
+                        android:paddingLeft="@dimen/dp_10"
+                        android:paddingTop="@dimen/dp_10"
+                        android:paddingBottom="@dimen/dp_10"
+                        android:text="15:44:33 正常打卡"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp_16" />
+
+                </com.gcssloop.widget.RCRelativeLayout>
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/ll_again_one"
+                android:background="@color/white">
+
+                <com.amap.api.maps.MapView
+                    android:id="@+id/mv_again_map"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true" />
+
+                <com.gcssloop.widget.RCRelativeLayout
+                    android:id="@+id/rcrl_again_position"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/white"
+                    android:paddingLeft="10dp"
+                    android:paddingBottom="20dp"
+                    app:clip_background="true"
+                    app:round_corner="@dimen/dp_20">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingLeft="@dimen/dp_10"
+                        android:paddingTop="@dimen/dp_5"
+                        android:paddingRight="@dimen/dp_14"
+                        android:paddingBottom="@dimen/dp_5">
+
+                        <ImageView
+                            android:layout_width="@dimen/dp_14"
+                            android:layout_height="@dimen/dp_14"
+                            android:layout_marginLeft="@dimen/dp_4"
+                            android:src="@mipmap/clock_position" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="@dimen/dp_4"
+                            android:text="重新定位"
+                            android:textColor="@color/tab_main_text_default"
+                            android:textSize="@dimen/sp_12" />
+
+                    </LinearLayout>
+
+                </com.gcssloop.widget.RCRelativeLayout>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>

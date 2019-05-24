@@ -37,6 +37,7 @@ public class CauchExceptionHandler implements Thread.UncaughtExceptionHandler {
 
     @Override //应用没有捕抓的异常会到这里来,如果我们设置了应用的默认全局捕抓异常为CauchExceptionHandler的话
     public void uncaughtException(Thread thread, Throwable throwable) {
+        android.os.Process.killProcess(android.os.Process.myPid());
         Log.e(TAG, throwable.getMessage()); //异常信息
         String exception = throwable.getMessage();
         LogToFile.e(TAG, exception);

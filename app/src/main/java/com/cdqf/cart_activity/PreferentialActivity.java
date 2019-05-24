@@ -87,8 +87,8 @@ public class PreferentialActivity extends BaseActivity {
     public TextView tvPreferentialDiscount = null;
 
     //返余额
-    @BindView(R.id.tv_preferential_money)
-    public TextView tvPreferentialMoney = null;
+    @BindView(R.id.et_preferential_money)
+    public EditText etPreferentialMoney = null;
 
     //服务项目
     @BindView(R.id.tv_preferential_add)
@@ -105,6 +105,10 @@ public class PreferentialActivity extends BaseActivity {
     private double discountTurn = 0;
 
     private double money = 0;
+
+    private boolean discountFocus = false;
+
+    private boolean moneyFocus = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,6 +166,19 @@ public class PreferentialActivity extends BaseActivity {
             }
         });
 
+        etPreferentialDiscount.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                discountFocus = hasFocus;
+                if (hasFocus) {
+                    String discount = etPreferentialDiscount.getText().toString();
+                    discount(discount);
+                } else {
+
+                }
+            }
+        });
+
         etPreferentialDiscount.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -175,33 +192,46 @@ public class PreferentialActivity extends BaseActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                String discount = etPreferentialDiscount.getText().toString();
-                int number = discount.length();
-                String point = "";
-                if (number == 2) {
-                    point = discount.substring(1, 2);
-                }
-                if (TextUtils.equals(point, ".")) {
-                    Log.e(TAG, "---点不做处理---");
+                if (!discountFocus) {
                     return;
                 }
-                if (number >= 1) {
-                    Log.e(TAG, "---折扣字符---" + discount);
-                    //折扣扣数
-                    discountTurn = Double.parseDouble(discount) / 10;
-                    Log.e(TAG, "---折扣双精度---" + discountTurn);
-                    //商品原价
-                    price = Double.parseDouble(cartState.getDatils().getZongprice());
-                    //折扣价
-                    discounts = DoubleOperationUtil.mul(price, discountTurn);
-                    tvPreferentialDiscount.setText("￥" + discounts);
-                    //返余额
-                    money = DoubleOperationUtil.sub(price, discounts);
-                    tvPreferentialMoney.setText("￥" + money);
+                String discount = etPreferentialDiscount.getText().toString();
+                discount(discount);
+            }
+        });
+        etPreferentialMoney.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                moneyFocus = hasFocus;
+                if (hasFocus) {
+//                    etPreferentialMoney.setText("");
+//                    etPreferentialDiscount.setText("");
+                    String moneys = etPreferentialMoney.getText().toString();
+                    moneys(moneys);
                 } else {
-                    tvPreferentialDiscount.setText("");
-                    tvPreferentialMoney.setText("");
+
                 }
+            }
+        });
+        etPreferentialMoney.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (!moneyFocus) {
+                    return;
+                }
+//                //获得字符串的返余额
+                String moneys = etPreferentialMoney.getText().toString();
+                moneys(moneys);
             }
         });
     }
@@ -235,13 +265,17 @@ public class PreferentialActivity extends BaseActivity {
         int user_id = Integer.parseInt(cartState.getDatils().getUserid());
         params.put("user_id", user_id);
         //金额
-        params.put("money", price+"");
+        params.put("money", price + "");
         //折扣扣数
-        params.put("discount_num", discountTurn+"");
+        String discountTurn = etPreferentialDiscount.getText().toString();
+        params.put("discount_num", discountTurn + "");
         //折扣价
-        params.put("discount_money", discounts+"");
+        String discounts = tvPreferentialDiscount.getText().toString();
+        params.put("discount_money", discounts + "");
         //返余额
-        params.put("balance", money+"");
+        String money = etPreferentialMoney.getText().toString();
+        params.put("balance", money + "");
+        Log.e(TAG, "---返余额---" + money);
         //服务项目
         String goodsNmae = "";
         for (String name : cartState.getDatils().getGoodsname()) {
@@ -249,7 +283,7 @@ public class PreferentialActivity extends BaseActivity {
         }
         params.put("info", goodsNmae);
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        Log.e(TAG, "---"+CartAddaress.SHOP_PREFERENT);
+        Log.e(TAG, "---" + CartAddaress.SHOP_PREFERENT);
         okHttpRequestWrap.post(CartAddaress.SHOP_PREFERENT, isToast, "提交中", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
@@ -294,6 +328,58 @@ public class PreferentialActivity extends BaseActivity {
         startActivity(intent);
     }
 
+    private void discount(String discount) {
+        int number = discount.length();
+        String point = "";
+        if (number == 2) {
+            point = discount.substring(1, 2);
+        }
+        if (TextUtils.equals(point, ".")) {
+            Log.e(TAG, "---点不做处理---");
+            return;
+        }
+        if (number >= 1) {
+            Log.e(TAG, "---折扣字符---" + discount);
+            //折扣扣数
+            discountTurn = Double.parseDouble(discount) / 10;
+            Log.e(TAG, "---折扣双精度---" + discountTurn);
+            //商品原价
+            price = Double.parseDouble(cartState.getDatils().getZongprice());
+            //折扣价
+            discounts = DoubleOperationUtil.mul(price, discountTurn);
+            tvPreferentialDiscount.setText(discounts + "");
+            //返余额
+            money = DoubleOperationUtil.sub(price, discounts);
+            etPreferentialMoney.setText(money + "");
+        } else {
+            tvPreferentialDiscount.setText("");
+            etPreferentialMoney.setText("");
+        }
+    }
+
+    private void moneys(String moneys) {
+        if (moneys.length() <= 0) {
+            return;
+        }
+        if (TextUtils.equals(moneys.substring(moneys.length() - 1), ".")) {
+            return;
+        }
+        //返的余额
+        double money = Double.parseDouble(moneys);
+        //商品原价
+        price = Double.parseDouble(cartState.getDatils().getZongprice());
+        if (money > price) {
+            return;
+        }
+        //折扣扣数
+//        discountTurn = DoubleOperationUtil.sub(1.0, DoubleOperationUtil.div(money, price)) * 10;
+//        etPreferentialDiscount.setText(DoubleOperationUtil.round(discountTurn, 2) + "");
+        etPreferentialDiscount.setText("");
+        //折扣价
+        discounts = DoubleOperationUtil.sub(price, money);
+        tvPreferentialDiscount.setText(discounts + "");
+    }
+
     @OnClick({R.id.rl_preferential_return, R.id.ll_preferential_submit})
     public void onClick(View v) {
         switch (v.getId()) {
@@ -304,8 +390,9 @@ public class PreferentialActivity extends BaseActivity {
             //提交
             case R.id.ll_preferential_submit:
                 String dis = etPreferentialDiscount.getText().toString();
-                if (dis.length() <= 0) {
-                    cartState.initToast(context, "请输入折扣", true, 0);
+                String disMoney = etPreferentialMoney.getText().toString();
+                if (dis.length() <= 0 && disMoney.length() <= 0) {
+                    cartState.initToast(context, "请输入返余额或折扣", true, 0);
                     return;
                 }
                 WhyDilogFragment whyDilogFragment = new WhyDilogFragment();

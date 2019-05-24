@@ -362,9 +362,13 @@ public class UserActivity extends BaseActivity {
         Log.e(TAG, "---商品id---" + goodsid);
         if (numbers >= 1) {
             isSelect = true;
-            goodsid = goodsid + cartState.getUserGoodsList().get(cartState.getUserGoodsList().size() - 1).getData().get(0).getId();
+            if (cartState.getUserGoodsList().get(cartState.getUserGoodsList().size() - 1).getData().size() <= 0) {
+                //TODO
+            } else {
+                goodsid = goodsid + cartState.getUserGoodsList().get(cartState.getUserGoodsList().size() - 1).getData().get(0).getId();
+            }
         }
-
+        Log.e(TAG, "---获得的数量---"+goodsid);
         if (!isSelect) {
             cartState.initToast(context, "请选择追加的商品", true, 0);
             return;

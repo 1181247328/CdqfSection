@@ -50,6 +50,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="528e1981ad5d5a60180f89f48ca89dc6"></meta-data>
+
+        <!-- 定位需要的服务 使用2.0的定位需要加上这个 -->
+        <service android:name="com.amap.api.location.APSService" />
+
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
@@ -291,7 +298,19 @@
         <activity
             android:name="com.cdqf.cart_activity.PreferentialActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
+
+        <!--考勤打卡-->
+        <activity
+            android:name="com.cdqf.cart_activity.ClockActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
+        <!--重新定位-->
+        <activity
+            android:name="com.cdqf.cart_activity.AgainActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
 
     </application>
 </manifest>

@@ -246,6 +246,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/dp_1"
                                 android:background="@color/white"
+                                android:gravity="center_vertical"
                                 android:orientation="horizontal"
                                 android:paddingLeft="@dimen/dp_8"
                                 android:paddingRight="@dimen/dp_8">
@@ -259,19 +260,59 @@
                                     android:textColor="@color/datils_text"
                                     android:textSize="@dimen/sp_13" />
 
-                                <TextView
-                                    android:id="@+id/tv_preferential_money"
+                                <!--<TextView-->
+                                <!--android:id="@+id/tv_preferential_money"-->
+                                <!--android:layout_width="match_parent"-->
+                                <!--android:layout_height="wrap_content"-->
+                                <!--android:gravity="right|center_vertical"-->
+                                <!--android:lines="1"-->
+                                <!--android:paddingLeft="@dimen/dp_8"-->
+                                <!--android:paddingTop="@dimen/dp_8"-->
+                                <!--android:paddingBottom="@dimen/dp_8"-->
+                                <!--android:singleLine="true"-->
+
+                                <!--android:textColor="@color/audit_text"-->
+                                <!--android:textSize="@dimen/sp_14" />-->
+
+                                <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:background="@color/white"
                                     android:gravity="right|center_vertical"
-                                    android:lines="1"
-                                    android:paddingLeft="@dimen/dp_8"
-                                    android:paddingTop="@dimen/dp_8"
-                                    android:paddingBottom="@dimen/dp_8"
-                                    android:singleLine="true"
+                                    android:paddingTop="@dimen/dp_3"
+                                    android:paddingBottom="@dimen/dp_3">
 
-                                    android:textColor="@color/audit_text"
-                                    android:textSize="@dimen/sp_14" />
+                                    <com.gcssloop.widget.RCRelativeLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:background="@android:color/transparent"
+                                        app:clip_background="true"
+                                        app:round_corner="30dp"
+                                        app:stroke_color="@color/datils_text"
+                                        app:stroke_width="@dimen/dp_1">
+
+                                        <EditText
+                                            android:id="@+id/et_preferential_money"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:background="@android:color/transparent"
+                                            android:gravity="center"
+                                            android:hint="请输入返余额"
+                                            android:inputType="numberDecimal"
+                                            android:lines="1"
+                                            android:paddingLeft="@dimen/dp_12"
+                                            android:paddingTop="@dimen/dp_7"
+                                            android:paddingRight="@dimen/dp_12"
+                                            android:paddingBottom="@dimen/dp_7"
+                                            android:singleLine="true"
+                                            android:textColor="@color/audit_text"
+                                            android:textColorHint="@color/datils_text"
+                                            android:textCursorDrawable="@drawable/nickname_cursor"
+                                            android:textSize="@dimen/sp_13" />
+
+                                    </com.gcssloop.widget.RCRelativeLayout>
+
+                                </LinearLayout>
 
                             </LinearLayout>
 

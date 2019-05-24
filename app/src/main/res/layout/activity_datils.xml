@@ -20,16 +20,16 @@
             android:gravity="right|center_vertical"
             android:orientation="horizontal"
             android:paddingLeft="@dimen/dp_8"
-            android:paddingTop="@dimen/dp_8"
+            android:paddingTop="@dimen/dp_12"
             android:paddingRight="@dimen/dp_8"
-            android:paddingBottom="@dimen/dp_8">
+            android:paddingBottom="@dimen/dp_12">
 
             <com.gcssloop.widget.RCRelativeLayout
                 android:id="@+id/rcrl_datils_call"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/dp_8"
-                android:background="@android:color/transparent"
+                android:background="@drawable/datils_click"
                 app:clip_background="true"
                 app:round_corner="30dp"
                 app:stroke_color="@color/datils_text"
@@ -54,7 +54,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/dp_8"
-                android:background="@android:color/transparent"
+                android:background="@drawable/datils_click"
                 app:clip_background="true"
                 app:round_corner="30dp"
                 app:stroke_color="@color/datils_text"
@@ -79,7 +79,7 @@
                 android:id="@+id/rcrl_datils_preferential"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
+                android:background="@drawable/datils_click"
                 app:clip_background="true"
                 app:round_corner="30dp"
                 app:stroke_color="@color/datils_text"

@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -175,6 +176,11 @@ public class NoticeManagerActivity extends BaseActivity {
                     case 200:
                         handler.sendEmptyMessage(0x001);
                         String data = resultJSON.getString("data");
+                        Log.e(TAG, "---通知---"+data);
+                        if(TextUtils.equals(data, "{}")){
+                            handler.sendEmptyMessage(0x002);
+                            return;
+                        }
                         cartState.getNoticeList().clear();
                         List<Notice> noticeList = gson.fromJson(data, new TypeToken<List<Notice>>() {
                         }.getType());

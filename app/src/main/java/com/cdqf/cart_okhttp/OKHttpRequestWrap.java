@@ -2,8 +2,11 @@ package com.cdqf.cart_okhttp;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.cdqf.cart_hear.FileUtil;
+import com.cdqf.cart_state.WIFIGpRs;
+import com.cdqf.cart_utils.JSONValidator;
 import com.zhy.http.okhttp.builder.PostFormBuilder;
 
 import java.io.File;
@@ -18,10 +21,13 @@ public class OKHttpRequestWrap {
 
     private Context context = null;
 
+    private JSONValidator jsonValidator = null;
+
     private OnHttpRequest http = null;
 
     public OKHttpRequestWrap(Context context) {
         this.context = context;
+        jsonValidator = new JSONValidator();
     }
 
     /**
@@ -52,6 +58,19 @@ public class OKHttpRequestWrap {
         postFormBuilder.build().execute(new OKHttpStringCallback(context, isDialog, them, new OnOkHttpResponseHandler() {
             @Override
             public void onOkHttpResponse(String response, int id) {
+                if (!WIFIGpRs.isNetworkConnected(context)) {
+                    Log.e(TAG, "---无网---");
+                    Toast.makeText(context, "请检查网络", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (response == null) {
+                    Toast.makeText(context, "数据请求失败,请重新请求", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (!jsonValidator.validate(response)) {
+                    Toast.makeText(context, "JSON格式不正确", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 if (http != null) {
                     http.onOkHttpResponse(response, id);
                 }

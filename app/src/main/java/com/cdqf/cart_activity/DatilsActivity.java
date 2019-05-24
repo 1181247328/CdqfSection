@@ -243,12 +243,19 @@ public class DatilsActivity extends BaseActivity {
                         if (TextUtils.equals(datils.getDiscount(), "1")) {
                             //有折扣
                             preferential(View.VISIBLE);
+                            rcrlDatilsPreferential.setVisibility(View.GONE);
+                            if(datils.getDiscount_list().size()<=0){
+                                preferential(View.GONE);
+                                rcrlDatilsPreferential.setVisibility(View.VISIBLE);
+                                return;
+                            }
                             tvDatilsPreferential.setText(datils.getDiscount_list().get(0).getDiscount_num());
                             tvDatilsDiscount.setText(datils.getDiscount_list().get(0).getDiscount_money());
                             tvDatilsMoney.setText(datils.getDiscount_list().get(0).getBalance());
                         } else {
                             //无折扣
                             preferential(View.GONE);
+                            rcrlDatilsPreferential.setVisibility(View.VISIBLE);
                             tvDatilsPreferential.setText("");
                             tvDatilsDiscount.setText("");
                             tvDatilsMoney.setText("");

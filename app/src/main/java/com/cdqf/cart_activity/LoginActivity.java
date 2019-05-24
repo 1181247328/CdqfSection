@@ -1,9 +1,11 @@
 package com.cdqf.cart_activity;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
@@ -104,6 +106,16 @@ public class LoginActivity extends BaseActivity {
         ButterKnife.bind(this);
         Log.e(TAG, "---宽度---" + ScreenUtils.getScreenWidth(context) + "---高度---" + ScreenUtils.getScreenHeight(context));
 //        cartState.permission(this);
+        //请求权限
+        ActivityCompat.requestPermissions(this,
+                new String[]{
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_PHONE_STATE,
+                },
+                1);
     }
 
     private void initView() {
@@ -123,15 +135,25 @@ public class LoginActivity extends BaseActivity {
         if (CartPreferences.getUser(context) != null) {
             cartState.setUser(CartPreferences.getUser(context));
             etLoginAccount.setText(cartState.getUser().getLogin_account());
-            if (TextUtils.equals(cartState.getUser().getType(), "1")) {
-                //员工
-                initIntent(MainActivity.class);
-            } else if (TextUtils.equals(cartState.getUser().getType(), "2")) {
-                //店长
-                initIntent(MainManagerActivity.class);
-            } else {
-                //TODO
+            xetLoginPasswrod.setText(cartState.getUser().getPassword());
+            String account = etLoginAccount.getText().toString();
+            if (account.length() <= 0) {
+                return;
             }
+            final String passwrod = xetLoginPasswrod.getText().toString();
+            if (passwrod.length() <= 0) {
+                return;
+            }
+            loing(account, passwrod);
+//            if (TextUtils.equals(cartState.getUser().getType(), "1")) {
+//                //员工
+//                initIntent(MainActivity.class);
+//            } else if (TextUtils.equals(cartState.getUser().getType(), "2")) {
+//                //店长
+//                initIntent(MainManagerActivity.class);
+//            } else {
+//                //TODO
+//            }
         }
     }
 
@@ -140,6 +162,58 @@ public class LoginActivity extends BaseActivity {
         result = CartAddaress.ADDRESS + "/?s=Staff.login&account=" + account + "&password=" + password;
         Log.e(TAG, "---登录---" + result);
         return result;
+    }
+
+    private void loing(String account, final String password) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        String accountPasswrod = loginAccPass(account, password);
+        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
+        okHttpRequestWrap.post(accountPasswrod, true, "登录中", params, new OnHttpRequest() {
+            @Override
+            public void onOkHttpResponse(String response, int id) {
+                Log.e(TAG, "---onOkHttpResponse登录---" + response);
+
+                JSONObject resultJSON = JSON.parseObject(response);
+                int error_code = resultJSON.getInteger("ret");
+                String msg = resultJSON.getString("msg");
+                switch (error_code) {
+                    //获取成功
+                    case 200:
+                        String data = resultJSON.getString("data");
+                        User user = gson.fromJson(data, User.class);
+                        user.setPassword(password);
+                        cartState.setUser(user);
+                        CartPreferences.setUser(context, user);
+                        if (TextUtils.equals(user.getState(), "1")) {
+                            //审核通过
+                            if (TextUtils.equals(user.getType(), "1")) {
+                                //员工
+                                initIntent(MainActivity.class);
+                            } else if (TextUtils.equals(user.getType(), "2")) {
+                                //店长
+                                initIntent(MainManagerActivity.class);
+                            } else {
+                                //TODO
+                            }
+                        } else if (TextUtils.equals(user.getState(), "0")) {
+                            //审核未通过
+                            cartState.initToast(context, "审核未通过", true, 0);
+                        } else {
+                            //TODO
+                        }
+                        finish();
+                        break;
+                    default:
+                        cartState.initToast(context, msg, true, 0);
+                        break;
+                }
+            }
+
+            @Override
+            public void onOkHttpError(String error) {
+                Log.e(TAG, "---onOkHttpError---" + error);
+            }
+        });
     }
 
     private void initIntent(Class<?> activity) {
@@ -157,58 +231,12 @@ public class LoginActivity extends BaseActivity {
                     cartState.initToast(context, "请输入帐户", true, 0);
                     return;
                 }
-                String passwrod = xetLoginPasswrod.getText().toString();
+                final String passwrod = xetLoginPasswrod.getText().toString();
                 if (passwrod.length() <= 0) {
                     cartState.initToast(context, "请输入密码", true, 0);
                     return;
                 }
-                Map<String, Object> params = new HashMap<String, Object>();
-                String accountPasswrod = loginAccPass(account, passwrod);
-                OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-                okHttpRequestWrap.post(accountPasswrod, true, "登录中", params, new OnHttpRequest() {
-                    @Override
-                    public void onOkHttpResponse(String response, int id) {
-                        Log.e(TAG, "---onOkHttpResponse登录---" + response);
-                        JSONObject resultJSON = JSON.parseObject(response);
-                        int error_code = resultJSON.getInteger("ret");
-                        String msg = resultJSON.getString("msg");
-                        switch (error_code) {
-                            //获取成功
-                            case 200:
-                                String data = resultJSON.getString("data");
-                                User user = gson.fromJson(data, User.class);
-                                cartState.setUser(user);
-                                CartPreferences.setUser(context, user);
-                                if (TextUtils.equals(user.getState(), "1")) {
-                                    //审核通过
-                                    if (TextUtils.equals(user.getType(), "1")) {
-                                        //员工
-                                        initIntent(MainActivity.class);
-                                    } else if (TextUtils.equals(user.getType(), "2")) {
-                                        //店长
-                                        initIntent(MainManagerActivity.class);
-                                    } else {
-                                        //TODO
-                                    }
-                                } else if (TextUtils.equals(user.getState(), "0")) {
-                                    //审核未通过
-                                    cartState.initToast(context, "审核未通过", true, 0);
-                                } else {
-                                    //TODO
-                                }
-                                finish();
-                                break;
-                            default:
-                                cartState.initToast(context, msg, true, 0);
-                                break;
-                        }
-                    }
-
-                    @Override
-                    public void onOkHttpError(String error) {
-                        Log.e(TAG, "---onOkHttpError---" + error);
-                    }
-                });
+                loing(account, passwrod);
                 break;
         }
     }

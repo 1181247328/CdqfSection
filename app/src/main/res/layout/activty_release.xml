@@ -87,8 +87,8 @@
                 android:gravity="top"
                 android:hint="输入需要发布的内容"
                 android:padding="@dimen/dp_14"
-                android:textColor="#dcdcdc"
-                android:textColorHint="#dcdcdc"
+                android:textColor="@color/audit_text"
+                android:textColorHint="@color/release_one"
                 android:textCursorDrawable="@drawable/nickname_cursor"
                 android:textSize="@dimen/sp_14" />
 

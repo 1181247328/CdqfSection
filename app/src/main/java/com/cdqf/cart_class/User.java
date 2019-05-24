@@ -14,6 +14,7 @@ public class User {
     private String update_time;
     private int day;
     private String notice;
+    private String password;
 
     private ServiceAll serviceAll;
 
@@ -119,6 +120,14 @@ public class User {
 
     public void setNotice(String notice) {
         this.notice = notice;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public class ServiceAll {
