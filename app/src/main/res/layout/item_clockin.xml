@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/service_bak"
+        android:paddingLeft="@dimen/dp_10"
+        android:paddingTop="@dimen/dp_13"
+        android:paddingRight="@dimen/dp_10"
+        android:paddingBottom="@dimen/dp_13">
+
+        <TextView
+            android:id="@+id/tv_clockin_item_timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:text="2019.05.15   (星期三)"
+            android:textColor="@color/tab_main_text_default"
+            android:textSize="@dimen/sp_14" />
+
+        <TextView
+            android:id="@+id/tv_clockin_item_state"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:gravity="right"
+            android:text="1天"
+            android:textColor="@color/clock_one"
+            android:textSize="@dimen/sp_14" />
+
+    </LinearLayout>
+
+</LinearLayout>

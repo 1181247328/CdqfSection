@@ -128,6 +128,9 @@ public class ClockActivity extends BaseActivity {
     @BindView(R.id.iv_clock_imageafter)
     public ImageView ivClockImageafter = null;
 
+    @BindView(R.id.tv_clock_id)
+    public TextView tvClockId = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -203,7 +206,7 @@ public class ClockActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    @OnClick({R.id.rl_clock_return, R.id.rcrl_clock_state, R.id.tv_clock_positioning, R.id.rcrl_clock_imageon})
+    @OnClick({R.id.rl_clock_return, R.id.rcrl_clock_state, R.id.tv_clock_positioning, R.id.rcrl_clock_imageon, R.id.tv_clock_id})
     public void onClick(View v) {
         switch (v.getId()) {
             //返回
@@ -218,6 +221,9 @@ public class ClockActivity extends BaseActivity {
                 break;
             //上班打卡图片
             case R.id.rcrl_clock_imageon:
+                break;
+            case R.id.tv_clock_id:
+                initIntent(ClockinActivity.class);
                 break;
         }
     }

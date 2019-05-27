@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:background="@android:color/transparent"
+                android:gravity="center_horizontal"
+                android:text="打卡记录"
+                android:textColor="@color/audit_text"
+                android:textSize="@dimen/sp_16" />
+
+            <RelativeLayout
+                android:id="@+id/rl_clockin_return"
+                android:layout_width="@dimen/dp_40"
+                android:layout_height="@dimen/dp_40"
+                android:background="@drawable/loss_click"
+                android:paddingLeft="@dimen/dp_6"
+                android:paddingRight="@dimen/dp_8">
+
+                <ImageView
+                    android:id="@+id/iv_service_return"
+                    android:layout_width="@dimen/dp_17"
+                    android:layout_height="@dimen/dp_17"
+                    android:layout_centerVertical="true"
+                    android:background="@android:color/transparent"
+                    android:src="@mipmap/plantscience_return" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/service_bak" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:paddingLeft="@dimen/dp_10"
+            android:paddingTop="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10"
+            android:paddingBottom="@dimen/dp_10">
+
+            <com.gcssloop.widget.RCRelativeLayout
+                android:id="@+id/rcrl_clock_hear"
+                android:layout_width="@dimen/dp_50"
+                android:layout_height="@dimen/dp_50"
+                app:clip_background="true"
+                app:round_as_circle="true">
+
+                <ImageView
+                    android:id="@+id/iv_clockin_hear"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:scaleType="fitXY"
+                    android:src="@mipmap/test5" />
+
+            </com.gcssloop.widget.RCRelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_colockin_next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@color/white"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingLeft="@dimen/dp_8"
+                android:paddingTop="@dimen/dp_8"
+                android:paddingBottom="@dimen/dp_8">
+
+                <TextView
+                    android:id="@+id/tv_colockin_timer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:paddingRight="@dimen/dp_10"
+                    android:text="2019.05"
+                    android:textColor="@color/tab_main_text_default"
+                    android:textSize="@dimen/sp_14" />
+
+                <ImageView
+                    android:layout_width="@dimen/dp_15"
+                    android:layout_height="@dimen/dp_15"
+                    android:layout_centerVertical="true"
+                    android:background="@android:color/transparent"
+                    android:src="@mipmap/plantscience_next" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_clockin_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/rcrl_clock_hear"
+                android:layout_toRightOf="@id/rcrl_clock_hear"
+                android:background="@color/white"
+                android:paddingLeft="@dimen/dp_8"
+                android:paddingTop="@dimen/dp_4"
+                android:text="杨显澎"
+                android:textColor="@color/audit_text"
+                android:textSize="@dimen/sp_15" />
+
+            <TextView
+                android:id="@+id/tv_clockin_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/rcrl_clock_hear"
+                android:layout_toRightOf="@id/rcrl_clock_hear"
+                android:background="@color/white"
+                android:paddingLeft="@dimen/dp_8"
+                android:paddingBottom="@dimen/dp_4"
+                android:text="脱狗车宝(浅水半岛店)"
+                android:textColor="@color/clock_one"
+                android:textSize="@dimen/sp_13" />
+
+        </RelativeLayout>
+
+        <ListView
+            android:id="@+id/lv_clockin_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/back_my"
+            android:divider="@color/clockin_one"
+            android:dividerHeight="@dimen/dp_1"
+            android:scrollbars="none" />
+    </LinearLayout>
+
+</LinearLayout>

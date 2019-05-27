@@ -46,6 +46,20 @@
 
             </RelativeLayout>
 
+            <TextView
+                android:id="@+id/tv_clock_id"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/dp_40"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/component_click"
+                android:gravity="center"
+                android:paddingLeft="@dimen/dp_10"
+                android:paddingRight="@dimen/dp_10"
+                android:text="打卡"
+                android:textColor="@color/audit_text"
+                android:textSize="@dimen/sp_16" />
+
         </RelativeLayout>
 
         <ScrollView
@@ -105,7 +119,7 @@
                         android:layout_alignTop="@id/rcrl_clock_hear"
                         android:layout_toRightOf="@id/rcrl_clock_hear"
                         android:background="@color/white"
-                        android:paddingLeft="8dp"
+                        android:paddingLeft="@dimen/dp_8"
                         android:text="杨显澎"
                         android:textColor="@color/audit_text"
                         android:textSize="@dimen/sp_15" />
@@ -117,7 +131,7 @@
                         android:layout_alignBottom="@id/rcrl_clock_hear"
                         android:layout_toRightOf="@id/rcrl_clock_hear"
                         android:background="@color/white"
-                        android:paddingLeft="8dp"
+                        android:paddingLeft="@dimen/dp_8"
                         android:text="脱狗车宝(浅水半岛店)"
                         android:textColor="@color/clock_one"
                         android:textSize="@dimen/sp_13" />
