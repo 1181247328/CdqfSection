@@ -108,7 +108,7 @@ public class MyAdapter extends BaseAdapter {
                 break;
             //服务总数
             case 4:
-                viewHolder.tvMyItemName.setText(cartState.getMyUser().getServiceAll());
+                viewHolder.tvMyItemName.setText(cartState.getMyUser().getCount() + "");
                 break;
         }
         return convertView;

@@ -286,6 +286,8 @@ public class LossActivity extends BaseActivity {
         params.put("number", s.number);
         params.put("goods_id", cartState.getLossStaffList().get(s.position).getGoods_id());
         params.put("s", "TotalGoods.staff_receiving");
+        Log.e(TAG, "---shop_id---"+cartState.getUser().getShopid()+"---user_id---"+cartState.getUser().getId()+"---number---"
+                +s.number+"---goods_id---"+cartState.getLossStaffList().get(s.position).getGoods_id());
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
         okHttpRequestWrap.post(CartAddaress.STAFF_RECEIVE, true, "请稍候", params, new OnHttpRequest() {
             @Override

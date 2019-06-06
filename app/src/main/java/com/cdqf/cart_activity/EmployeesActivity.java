@@ -299,7 +299,7 @@ public class EmployeesActivity extends BaseActivity {
 
     @Subscribe
     public void onEventMainThread(DatilsPullFind r) {
-
+        initPull(true);
     }
 
 }

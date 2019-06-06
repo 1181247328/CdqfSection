@@ -173,7 +173,18 @@ public class ShopActivity extends BaseActivity {
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                srlShopPull.setEnabled(firstVisibleItem == 0);
+                View firstView = view.getChildAt(firstVisibleItem);
+
+                // 当firstVisibleItem是第0位。如果firstView==null说明列表为空，需要刷新;或者top==0说明已经到达列表顶部, 也需要刷新
+                if (firstVisibleItem == 0 && (firstView == null || firstView.getTop() == view.getPaddingTop())) {
+                    srlShopPull.setEnabled(true);
+                } else {
+                    //不加这个if判断会引起其它问题，大家自行尝试
+                    if(srlShopPull.isRefreshing()){
+                        srlShopPull.setRefreshing(false);
+                    }
+                    srlShopPull.setEnabled(false);
+                }
             }
         });
     }

@@ -9,10 +9,10 @@ public class CartAddaress {
     //public static final String ADDRESS = "http://192.168.31.9";
 
     //线上
-    public static final String ADDRESS = "https://testapi.baodi520.com";
+    //public static final String ADDRESS = "https://testapi.baodi520.com";
 
     //线上
-//    public static final String ADDRESS = "https://tgapi.baodi520.com";
+    public static final String ADDRESS = "https://tgapi.baodi520.com";
 
     //店总
     public static String SHOP = ADDRESS + "/?s=order.shopowenr&shopid=SHOPID";

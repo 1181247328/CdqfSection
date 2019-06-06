@@ -20,6 +20,7 @@ import com.cdqf.cart.R;
 import com.cdqf.cart_class.Position;
 import com.cdqf.cart_dilog.EmployeesDilogFragment;
 import com.cdqf.cart_dilog.WhyDilogFragment;
+import com.cdqf.cart_find.DatilsPullFind;
 import com.cdqf.cart_find.EmployeesIdFind;
 import com.cdqf.cart_hear.FileUtil;
 import com.cdqf.cart_hear.ShelvesImageFind;
@@ -178,8 +179,10 @@ public class EmployeesAddActivity extends BaseActivity {
         nsAddemployeesPosition.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.e(TAG, "---position职位---" + position);
                 positions = cartState.getPositionList().get(position).getName();
                 position_id = cartState.getPositionList().get(position).getId();
+                Log.e(TAG, "---当前职位id---" + position_id);
             }
 
             @Override
@@ -208,6 +211,7 @@ public class EmployeesAddActivity extends BaseActivity {
         }
         positions = cartState.getPositionList().get(0).getName();
         position_id = cartState.getPositionList().get(0).getId();
+//        List<String> dataset = new LinkedList<>(Arrays.asList("One", "Two", "Three", "Four", "Five"));
         nsAddemployeesPosition.attachDataSource(posiList);
     }
 
@@ -427,10 +431,11 @@ public class EmployeesAddActivity extends BaseActivity {
         String shopowner =
                 CartAddaress.ADDRESS +
                         "/?s=Shopowner.add_staff&" +
-                        "name=" + name +
+                        "shopowenrid=" + cartState.getUser().getId() +
+                        "&name=" + name +
                         "&phone=" + phone +
-                        "&shop_id=" + position_id +
-                        "&position_id=" + cartState.getUser().getShopid() +
+                        "&shop_id=" + cartState.getUser().getShopid() +
+                        "&position_id=" + position_id +
                         "&urgent_phone=" + contactPhone +
                         "&urgent_name=" + contact +
                         "&id_card=" + certificate +
@@ -477,10 +482,27 @@ public class EmployeesAddActivity extends BaseActivity {
                     @Override
                     public void onResponse(String response, int id) {
                         Log.e(TAG, "---onResponse---" + response);
+
                         if (xProgressDialog != null) {
                             xProgressDialog.dismiss();
                         }
-
+                        if (response == null) {
+                            return;
+                        }
+                        JSONObject resultJSON = JSON.parseObject(response);
+                        int error_code = resultJSON.getInteger("ret");
+                        String msg = resultJSON.getString("msg");
+                        switch (error_code) {
+                            //获取成功
+                            case 200:
+                                cartState.initToast(context, "提交成功", true, 0);
+                                eventBus.post(new DatilsPullFind());
+                                finish();
+                                break;
+                            default:
+                                cartState.initToast(context, msg, true, 0);
+                                break;
+                        }
                     }
                 });
     }

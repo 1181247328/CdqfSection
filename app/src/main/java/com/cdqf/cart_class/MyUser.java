@@ -15,7 +15,9 @@ public class MyUser {
     private String state;
     private String add_time;
     private String update_time;
-    private String serviceAll;
+    private int count;
+    private int months;
+//    private List<Serviceall> serviceAll = new ArrayList<>();
 
     public String getId() {
         return id;
@@ -129,12 +131,20 @@ public class MyUser {
         this.update_time = update_time;
     }
 
-    public String getServiceAll() {
-        return serviceAll;
+    public int getCount() {
+        return count;
     }
 
-    public void setServiceAll(String serviceAll) {
-        this.serviceAll = serviceAll;
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public int getMonths() {
+        return months;
+    }
+
+    public void setMonths(int months) {
+        this.months = months;
     }
 
     public class Serviceall {

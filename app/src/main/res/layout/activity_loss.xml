@@ -33,7 +33,7 @@
                 android:layout_height="@dimen/dp_40"
                 android:background="@drawable/notice_click"
                 android:paddingLeft="@dimen/dp_6"
-                android:paddingRight="@dimen/dp_108">
+                android:paddingRight="@dimen/dp_10">
 
                 <ImageView
                     android:id="@+id/iv_notice_return"
