@@ -324,5 +324,30 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 
+        <!--会员管理-->
+        <activity
+            android:name="com.cdqf.cart_activity.MembersActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
+        <!--下单数和会员数-->
+        <activity
+            android:name="com.cdqf.cart_activity.MemebershipActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
+        <!--会员详情-->
+        <activity
+            android:name="com.cdqf.cart_activity.MembersDatilsActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
+        <!--加订单-->
+        <activity
+            android:name="com.cdqf.cart_activity.AddOrderActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
+
     </application>
 </manifest>

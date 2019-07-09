@@ -22,6 +22,7 @@ import com.cdqf.cart_activity.AuditActivity;
 import com.cdqf.cart_activity.ClockActivity;
 import com.cdqf.cart_activity.EmployeesActivity;
 import com.cdqf.cart_activity.LossNewsActivity;
+import com.cdqf.cart_activity.MembersActivity;
 import com.cdqf.cart_activity.NoticeManagerActivity;
 import com.cdqf.cart_activity.ShopActivity;
 import com.cdqf.cart_adapter.HomeManagerAdapter;
@@ -146,6 +147,7 @@ public class HomeManagerFragment extends Fragment {
                         break;
                     //会员
                     case 4:
+                        initIntent(MembersActivity.class);
                         break;
                     //任务
                     case 5:

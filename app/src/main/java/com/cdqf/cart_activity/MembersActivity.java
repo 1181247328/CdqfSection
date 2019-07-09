@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -28,10 +29,10 @@ import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 
 /**
- * 添加备注
+ * 会员管理
  */
-public class NoteActivity extends BaseActivity {
-    private String TAG = ClockActivity.class.getSimpleName();
+public class MembersActivity extends BaseActivity {
+    private String TAG = MembersActivity.class.getSimpleName();
 
     private Context context = null;
 
@@ -44,24 +45,46 @@ public class NoteActivity extends BaseActivity {
     private Gson gson = new Gson();
 
     //返回
-    @BindView(R.id.rl_note_return)
-    public RelativeLayout rlNoteReturn = null;
+    @BindView(R.id.rl_members_return)
+    public RelativeLayout rlMembersReturn = null;
 
-    //本单
-    @BindView(R.id.tv_note_single)
-    public TextView tvNoteSingle = null;
+    //店名
+    @BindView(R.id.ll_members_shop)
+    public LinearLayout llMembersShop = null;
+    @BindView(R.id.tv_members_shop)
+    public TextView tvMembersShop = null;
 
-    //本会员
-    @BindView(R.id.tv_note_members)
-    public TextView tvNoteMembers = null;
+    //手机号
+    @BindView(R.id.et_members_phone)
+    public EditText etMembersPhone = null;
 
-    //添加备注
-    @BindView(R.id.et_note_context)
-    public EditText etNoteContext = null;
+    //会员总数
+    @BindView(R.id.tv_members_number)
+    public TextView tvMembersNumber = null;
 
-    //提交
-    @BindView(R.id.tv_note_submit)
-    public TextView tvNoteSubmit = null;
+    //下单会员
+    @BindView(R.id.tv_members_numbers)
+    public EditText tvMembersNumbers = null;
+
+    //总下单金额
+    @BindView(R.id.tv_members_price)
+    public TextView tvMembersprice = null;
+
+    //已用
+    @BindView(R.id.tv_members_with)
+    public TextView tvMembersWith = null;
+
+    //剩余
+    @BindView(R.id.tv_members_left)
+    public TextView tvMembersLeft = null;
+
+    //会员总数
+    @BindView(R.id.ll_members_number)
+    public LinearLayout llMembersNumber = null;
+
+    //下单总数
+    @BindView(R.id.ll_members_numbers)
+    public LinearLayout llMembersNumbers = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +98,7 @@ public class NoteActivity extends BaseActivity {
         }
 
         //加载布局
-        setContentView(R.layout.activity_note);
+        setContentView(R.layout.activity_members);
 
         //API>=20以上用于沉侵式菜单栏
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
@@ -125,15 +148,27 @@ public class NoteActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    @OnClick({R.id.rl_note_return, R.id.tv_note_submit})
+    private void initIntent(Class<?> activity,int type) {
+        Intent intent = new Intent(context, activity);
+        intent.putExtra("type", type);
+        startActivity(intent);
+    }
+
+    @OnClick({R.id.rl_members_return, R.id.ll_members_shop, R.id.ll_members_number, R.id.ll_members_numbers})
     public void onClick(View v) {
         switch (v.getId()) {
             //返回
-            case R.id.rl_note_return:
+            case R.id.rl_members_return:
                 finish();
                 break;
-            //提交
-            case R.id.tv_note_submit:
+            //店名
+            case R.id.ll_members_shop:
+                break;
+            //会员总数
+            case R.id.ll_members_number:
+                break;
+            //下单总数
+            case R.id.ll_members_numbers:
                 break;
         }
     }

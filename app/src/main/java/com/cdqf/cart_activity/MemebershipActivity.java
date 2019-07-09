@@ -9,16 +9,19 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.EditText;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cdqf.cart.R;
+import com.cdqf.cart_adapter.MembershipAdapter;
 import com.cdqf.cart_find.ThroughFind;
 import com.cdqf.cart_state.BaseActivity;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_state.StatusBarCompat;
 import com.google.gson.Gson;
+import com.jingchen.pulltorefresh.PullToRefreshLayout;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import butterknife.BindView;
@@ -28,10 +31,11 @@ import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 
 /**
- * 添加备注
+ * 会员总数和下单会员
  */
-public class NoteActivity extends BaseActivity {
-    private String TAG = ClockActivity.class.getSimpleName();
+public class MemebershipActivity extends BaseActivity {
+
+    private String TAG = MemebershipActivity.class.getSimpleName();
 
     private Context context = null;
 
@@ -44,24 +48,19 @@ public class NoteActivity extends BaseActivity {
     private Gson gson = new Gson();
 
     //返回
-    @BindView(R.id.rl_note_return)
-    public RelativeLayout rlNoteReturn = null;
+    @BindView(R.id.rl_membersship_return)
+    public RelativeLayout rlMembersshipReturn = null;
 
-    //本单
-    @BindView(R.id.tv_note_single)
-    public TextView tvNoteSingle = null;
+    //标题
+    @BindView(R.id.tv_membership_title)
+    public TextView tvMembershipTitle = null;
 
-    //本会员
-    @BindView(R.id.tv_note_members)
-    public TextView tvNoteMembers = null;
+    @BindView(R.id.ptrl_membership_pull)
+    public PullToRefreshLayout ptrlMembershipPull = null;
 
-    //添加备注
-    @BindView(R.id.et_note_context)
-    public EditText etNoteContext = null;
+    private ListView lvMembershipList = null;
 
-    //提交
-    @BindView(R.id.tv_note_submit)
-    public TextView tvNoteSubmit = null;
+    private MembershipAdapter membershipAdapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +74,7 @@ public class NoteActivity extends BaseActivity {
         }
 
         //加载布局
-        setContentView(R.layout.activity_note);
+        setContentView(R.layout.activity_membership);
 
         //API>=20以上用于沉侵式菜单栏
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
@@ -108,32 +107,40 @@ public class NoteActivity extends BaseActivity {
     }
 
     private void initAdapter() {
-
+        membershipAdapter = new MembershipAdapter(context);
+        lvMembershipList.setAdapter(membershipAdapter);
     }
 
     private void initListener() {
-
+        lvMembershipList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                initIntent(MembersDatilsActivity.class);
+            }
+        });
     }
 
     private void initBack() {
 
     }
 
-
     private void initIntent(Class<?> activity) {
         Intent intent = new Intent(context, activity);
         startActivity(intent);
     }
 
-    @OnClick({R.id.rl_note_return, R.id.tv_note_submit})
+    private void initIntent(Class<?> activity, int type) {
+        Intent intent = new Intent(context, activity);
+        intent.putExtra("type", type);
+        startActivity(intent);
+    }
+
+    @OnClick({R.id.rl_membersship_return})
     public void onClick(View v) {
         switch (v.getId()) {
             //返回
-            case R.id.rl_note_return:
+            case R.id.rl_membersship_return:
                 finish();
-                break;
-            //提交
-            case R.id.tv_note_submit:
                 break;
         }
     }
@@ -189,3 +196,4 @@ public class NoteActivity extends BaseActivity {
     }
 
 }
+
