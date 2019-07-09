@@ -318,5 +318,11 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 
+        <!--添加备注-->
+        <activity
+            android:name="com.cdqf.cart_activity.NoteActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
     </application>
 </manifest>

@@ -1,16 +1,13 @@
 package com.cdqf.cart_activity;
 
-import android.Manifest;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -71,15 +68,15 @@ public class MainManagerActivity extends BaseActivity {
     @BindView(R.id.tv_main_home)
     public TextView tvMainHome = null;
 
-    //扫一扫
-    @BindView(R.id.ll_main_scan)
-    public LinearLayout llMainScan = null;
-
-    @BindView(R.id.iv_main_scan)
-    public ImageView ivMainScan = null;
-
-    @BindView(R.id.tv_main_scan)
-    public TextView tvMainScane = null;
+//    //扫一扫
+//    @BindView(R.id.ll_main_scan)
+//    public LinearLayout llMainScan = null;
+//
+//    @BindView(R.id.iv_main_scan)
+//    public ImageView ivMainScan = null;
+//
+//    @BindView(R.id.tv_main_scan)
+//    public TextView tvMainScane = null;
 
     //我的
     @BindView(R.id.ll_main_my)
@@ -235,7 +232,7 @@ public class MainManagerActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    @OnClick({R.id.ll_main_home, R.id.ll_main_scan, R.id.ll_main_my})
+    @OnClick({R.id.ll_main_home, R.id.ll_main_my})
     public void onClick(View v) {
         switch (v.getId()) {
             //首页
@@ -246,18 +243,18 @@ public class MainManagerActivity extends BaseActivity {
             case R.id.ll_main_my:
                 tabImage(1);
                 break;
-            //扫一扫
-            case R.id.ll_main_scan:
-                if (Build.VERSION.SDK_INT >= 23) {
-                    if (ContextCompat.checkSelfPermission(MainManagerActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(MainManagerActivity.this, new String[]{Manifest.permission.CAMERA}, 8);
-                    } else {
-                        camera();
-                    }
-                } else {
-                    camera();
-                }
-                break;
+//            //扫一扫
+//            case R.id.ll_main_scan:
+//                if (Build.VERSION.SDK_INT >= 23) {
+//                    if (ContextCompat.checkSelfPermission(MainManagerActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+//                        ActivityCompat.requestPermissions(MainManagerActivity.this, new String[]{Manifest.permission.CAMERA}, 8);
+//                    } else {
+//                        camera();
+//                    }
+//                } else {
+//                    camera();
+//                }
+//                break;
         }
     }
 

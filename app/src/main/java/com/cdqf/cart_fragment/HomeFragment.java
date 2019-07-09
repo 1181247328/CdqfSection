@@ -14,7 +14,6 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
-import com.cdqf.cart_activity.LossActivity;
 import com.cdqf.cart_activity.NoticeActivity;
 import com.cdqf.cart_activity.ServiceActivity;
 import com.cdqf.cart_adapter.HomeAdapter;
@@ -97,7 +96,8 @@ public class HomeFragment extends Fragment {
                 switch (position) {
                     //损耗品
                     case 0:
-                        initIntent(LossActivity.class);
+//                        initIntent(LossActivity.class);
+                        cartState.initToast(getContext(), "暂未开通", true, 0);
                         break;
                     //服务
                     case 1:

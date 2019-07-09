@@ -121,6 +121,8 @@ dependencies {
     implementation 'com.amap.api:location:latest.integration'
     //搜索功能
     implementation 'com.amap.api:search:latest.integration'
+    implementation 'com.github.addappcn:android-pickers:1.0.3'
+    implementation 'com.contrarywind:Android-PickerView:4.1.8'
 }
 
 

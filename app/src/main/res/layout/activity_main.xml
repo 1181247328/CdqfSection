@@ -21,7 +21,7 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_1"
+            android:layout_height="@dimen/dp_0_5"
             android:background="@color/general_one" />
 
         <LinearLayout
@@ -39,13 +39,13 @@
                 android:background="@android:color/transparent"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:paddingTop="@dimen/dp_10"
-                android:paddingBottom="@dimen/dp_10">
+                android:paddingTop="@dimen/dp_5"
+                android:paddingBottom="@dimen/dp_5">
 
                 <ImageView
                     android:id="@+id/iv_main_home"
-                    android:layout_width="@dimen/dp_30"
-                    android:layout_height="@dimen/dp_30"
+                    android:layout_width="@dimen/dp_20"
+                    android:layout_height="@dimen/dp_20"
                     android:background="@android:color/transparent"
                     android:src="@mipmap/main_tab_home_icn" />
 
@@ -58,38 +58,38 @@
                     android:paddingTop="@dimen/dp_2"
                     android:text="首页"
                     android:textColor="@color/tab_main_text_icon"
-                    android:textSize="@dimen/sp_14" />
+                    android:textSize="@dimen/sp_12" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/ll_main_scan"
+                android:id="@+id/ll_main_report"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@drawable/loss_click"
+                android:background="@android:color/transparent"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:paddingTop="@dimen/dp_10"
-                android:paddingBottom="@dimen/dp_10">
+                android:paddingTop="@dimen/dp_5"
+                android:paddingBottom="@dimen/dp_5">
 
                 <ImageView
-                    android:id="@+id/iv_main_scan"
-                    android:layout_width="@dimen/dp_30"
-                    android:layout_height="@dimen/dp_30"
+                    android:id="@+id/iv_main_report"
+                    android:layout_width="@dimen/dp_20"
+                    android:layout_height="@dimen/dp_20"
                     android:background="@android:color/transparent"
-                    android:src="@mipmap/main_tab_scan_default" />
+                    android:src="@mipmap/main_tab_report_default" />
 
                 <TextView
-                    android:id="@+id/tv_main_scan"
+                    android:id="@+id/tv_main_report"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
                     android:gravity="center_horizontal"
                     android:paddingTop="@dimen/dp_2"
-                    android:text="扫一扫"
+                    android:text="报表"
                     android:textColor="@color/tab_main_text_default"
-                    android:textSize="@dimen/sp_14" />
+                    android:textSize="@dimen/sp_12" />
 
             </LinearLayout>
 
@@ -101,13 +101,13 @@
                 android:background="@android:color/transparent"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:paddingTop="@dimen/dp_10"
-                android:paddingBottom="@dimen/dp_10">
+                android:paddingTop="@dimen/dp_5"
+                android:paddingBottom="@dimen/dp_5">
 
                 <ImageView
                     android:id="@+id/iv_main_my"
-                    android:layout_width="@dimen/dp_30"
-                    android:layout_height="@dimen/dp_30"
+                    android:layout_width="@dimen/dp_20"
+                    android:layout_height="@dimen/dp_20"
                     android:background="@android:color/transparent"
                     android:src="@mipmap/main_tab_my_default" />
 
@@ -120,7 +120,7 @@
                     android:paddingTop="@dimen/dp_2"
                     android:text="我的"
                     android:textColor="@color/tab_main_text_default"
-                    android:textSize="@dimen/sp_14" />
+                    android:textSize="@dimen/sp_12" />
 
             </LinearLayout>
 

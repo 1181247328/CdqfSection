@@ -7,7 +7,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -79,25 +78,21 @@ public class DatilsActivity extends BaseActivity {
     @BindView(R.id.tv_datils_mount)
     public TextView tvDatilsMount = null;
 
-    //优惠折扣
-    @BindView(R.id.tv_datils_preferential)
-    public TextView tvDatilsPreferential = null;
-
-    //折扣价
-    @BindView(R.id.tv_datils_discount)
-    public TextView tvDatilsDiscount = null;
-
-    //返余额
-    @BindView(R.id.tv_datils_money)
-    public TextView tvDatilsMoney = null;
-
-    //电话
-    @BindView(R.id.tv_datils_phone)
-    public TextView tvDatilsPhone = null;
+    //耗材成本
+    @BindView(R.id.tv_datils_eliminatecost)
+    public TextView tvDatilsEliminatecost = null;
 
     //服务项目
     @BindView(R.id.tv_datils_add)
     public TextView tvDatilsAdd = null;
+
+    //服务人员
+    @BindView(R.id.tv_datils_people)
+    public TextView tvDatilsPeople = null;
+
+    //手机号码
+    @BindView(R.id.tv_datils_phone)
+    public TextView tvDatilsPhone = null;
 
     //订单编号
     @BindView(R.id.tv_datils_serial)
@@ -106,6 +101,10 @@ public class DatilsActivity extends BaseActivity {
     //下单时间
     @BindView(R.id.tv_datils_timer)
     public TextView tvDatilsTimer = null;
+
+    //备注
+    @BindView(R.id.tv_datils_note)
+    public TextView tvDatilsNote = null;
 
     //电话拨打
     @BindView(R.id.rcrl_datils_call)
@@ -119,6 +118,10 @@ public class DatilsActivity extends BaseActivity {
     @BindView(R.id.rcrl_datils_preferential)
     public RCRelativeLayout rcrlDatilsPreferential = null;
 
+    //添加备注
+    @BindView(R.id.rcrl_datils_note)
+    public RCRelativeLayout rcrlDatilsNote = null;
+
     @BindView(R.id.ll_datils_preferential)
     public LinearLayout llDatilsPreferential = null;
 
@@ -127,6 +130,7 @@ public class DatilsActivity extends BaseActivity {
 
     @BindView(R.id.ll_datils_money)
     public LinearLayout llDatilsMoney = null;
+
 
     private int position = 0;
 
@@ -199,7 +203,7 @@ public class DatilsActivity extends BaseActivity {
     }
 
     private void initBack() {
-        initPull(true);
+//        initPull(true);
     }
 
     private void initPull(boolean isToast) {
@@ -238,28 +242,6 @@ public class DatilsActivity extends BaseActivity {
                         tvDatilsSerial.setText(datils.getOrdernum());
                         //下单时间
                         tvDatilsTimer.setText(datils.getAddtime());
-
-                        //判断是不是有折扣
-                        if (TextUtils.equals(datils.getDiscount(), "1")) {
-                            //有折扣
-                            preferential(View.VISIBLE);
-                            rcrlDatilsPreferential.setVisibility(View.GONE);
-                            if(datils.getDiscount_list().size()<=0){
-                                preferential(View.GONE);
-                                rcrlDatilsPreferential.setVisibility(View.VISIBLE);
-                                return;
-                            }
-                            tvDatilsPreferential.setText(datils.getDiscount_list().get(0).getDiscount_num());
-                            tvDatilsDiscount.setText(datils.getDiscount_list().get(0).getDiscount_money());
-                            tvDatilsMoney.setText(datils.getDiscount_list().get(0).getBalance());
-                        } else {
-                            //无折扣
-                            preferential(View.GONE);
-                            rcrlDatilsPreferential.setVisibility(View.VISIBLE);
-                            tvDatilsPreferential.setText("");
-                            tvDatilsDiscount.setText("");
-                            tvDatilsMoney.setText("");
-                        }
                         break;
                     default:
                         cartState.initToast(context, msg, true, 0);
@@ -301,7 +283,7 @@ public class DatilsActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    @OnClick({R.id.rl_datils_return, R.id.rcrl_datils_call, R.id.rcrl_datils_add, R.id.rcrl_datils_preferential})
+    @OnClick({R.id.rl_datils_return, R.id.rcrl_datils_call, R.id.rcrl_datils_add, R.id.rcrl_datils_preferential, R.id.rcrl_datils_note})
     public void onClick(View v) {
         switch (v.getId()) {
             //返回
@@ -321,6 +303,10 @@ public class DatilsActivity extends BaseActivity {
             //给予优惠
             case R.id.rcrl_datils_preferential:
                 initIntent(PreferentialActivity.class);
+                break;
+            //添加备注
+            case R.id.rcrl_datils_note:
+                initIntent(NoteActivity.class);
                 break;
         }
     }

@@ -52,4 +52,10 @@
     <color name="clock_one">#999999</color>
 
     <color name="clockin_one">#d2d2d2</color>
+
+    <color name="addstore_one">#bababa</color>
+
+    <color name="house_eight">#333333</color>
+
+    <color name="shop_one">#e6e6e6</color>
 </resources>

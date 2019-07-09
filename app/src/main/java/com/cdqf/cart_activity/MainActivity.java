@@ -24,8 +24,10 @@ import android.widget.TextView;
 import com.cdqf.cart.R;
 import com.cdqf.cart_dilog.WhyDilogFragment;
 import com.cdqf.cart_find.ExitFind;
+import com.cdqf.cart_find.ScanFind;
 import com.cdqf.cart_fragment.HomeFragment;
 import com.cdqf.cart_fragment.MyFragment;
+import com.cdqf.cart_fragment.ReoprtFragment;
 import com.cdqf.cart_state.BaseActivity;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_state.StatusBarCompat;
@@ -70,15 +72,25 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.tv_main_home)
     public TextView tvMainHome = null;
 
-    //扫一扫
-    @BindView(R.id.ll_main_scan)
-    public LinearLayout llMainScan = null;
+    //报表
+    @BindView(R.id.ll_main_report)
+    public LinearLayout llMainReport = null;
 
-    @BindView(R.id.iv_main_scan)
-    public ImageView ivMainScan = null;
+    @BindView(R.id.iv_main_report)
+    public ImageView ivMainReport = null;
 
-    @BindView(R.id.tv_main_scan)
-    public TextView tvMainScane = null;
+    @BindView(R.id.tv_main_report)
+    public TextView tvMainReport = null;
+
+//    //扫一扫
+//    @BindView(R.id.ll_main_scan)
+//    public LinearLayout llMainScan = null;
+//
+//    @BindView(R.id.iv_main_scan)
+//    public ImageView ivMainScan = null;
+//
+//    @BindView(R.id.tv_main_scan)
+//    public TextView tvMainScane = null;
 
     //我的
     @BindView(R.id.ll_main_my)
@@ -95,6 +107,7 @@ public class MainActivity extends BaseActivity {
 
     //首页的fragment
     private HomeFragment homeFragment = null;
+    private ReoprtFragment reoprtFragment = null;
     private MyFragment myFragment = null;
 
     //相机
@@ -168,10 +181,30 @@ public class MainActivity extends BaseActivity {
                 //首页
                 ivMainHome.setImageResource(R.mipmap.main_tab_home_icn);
                 tvMainHome.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_icon));
+                //报表
+                ivMainReport.setImageResource(R.mipmap.main_tab_report_default);
+                tvMainReport.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_default));
                 //我的
                 ivMainMy.setImageResource(R.mipmap.main_tab_my_default);
                 tvMainMy.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_default));
-
+                if (homeFragment == null) {
+                    homeFragment = new HomeFragment();
+                    transaction.add(R.id.fl_main_fragment, homeFragment);
+                } else {
+                    transaction.show(homeFragment);
+                }
+                break;
+            //报表
+            case 1:
+                //首页
+                ivMainHome.setImageResource(R.mipmap.main_tab_home_default);
+                tvMainHome.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_default));
+                //报表
+                ivMainReport.setImageResource(R.mipmap.main_tab_report_icon);
+                tvMainReport.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_icon));
+                //我的
+                ivMainMy.setImageResource(R.mipmap.main_tab_my_default);
+                tvMainMy.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_default));
                 if (homeFragment == null) {
                     homeFragment = new HomeFragment();
                     transaction.add(R.id.fl_main_fragment, homeFragment);
@@ -180,14 +213,16 @@ public class MainActivity extends BaseActivity {
                 }
                 break;
             //我的
-            case 1:
+            case 2:
                 //首页
                 ivMainHome.setImageResource(R.mipmap.main_tab_home_default);
                 tvMainHome.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_default));
+                //报表
+                ivMainReport.setImageResource(R.mipmap.main_tab_report_default);
+                tvMainReport.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_default));
                 //我的
                 ivMainMy.setImageResource(R.mipmap.main_tab_my_icn);
                 tvMainMy.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_icon));
-
                 if (myFragment == null) {
                     myFragment = new MyFragment();
                     transaction.add(R.id.fl_main_fragment, myFragment);
@@ -234,29 +269,32 @@ public class MainActivity extends BaseActivity {
 
     private Uri photoUri = null;
 
-    @OnClick({R.id.ll_main_home, R.id.ll_main_scan, R.id.ll_main_my})
+    @OnClick({R.id.ll_main_home, R.id.ll_main_report, R.id.ll_main_my})
     public void onClick(View v) {
         switch (v.getId()) {
             //首页
             case R.id.ll_main_home:
                 tabImage(0);
                 break;
+            //报表
+            case R.id.ll_main_report:
+                break;
             //我的
             case R.id.ll_main_my:
-                tabImage(1);
+                tabImage(2);
                 break;
-            //扫一扫
-            case R.id.ll_main_scan:
-                if (Build.VERSION.SDK_INT >= 23) {
-                    if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA}, 8);
-                    } else {
-                        camera();
-                    }
-                } else {
-                    camera();
-                }
-                break;
+//            //扫一扫
+//            case R.id.ll_main_scan:
+//                if (Build.VERSION.SDK_INT >= 23) {
+//                    if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+//                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA}, 8);
+//                    } else {
+//                        camera();
+//                    }
+//                } else {
+//                    camera();
+//                }
+//                break;
         }
     }
 
@@ -337,5 +375,23 @@ public class MainActivity extends BaseActivity {
     @Subscribe
     public void onEventMainThread(ExitFind r) {
         exit();
+    }
+
+    /**
+     * 扫一扫
+     *
+     * @param s
+     */
+    @Subscribe
+    public void onEventMainThread(ScanFind s) {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA}, 8);
+            } else {
+                camera();
+            }
+        } else {
+            camera();
+        }
     }
 }
