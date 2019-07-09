@@ -24,6 +24,7 @@ import com.cdqf.cart_dilog.WhyDilogFragment;
 import com.cdqf.cart_find.ExitFind;
 import com.cdqf.cart_fragment.HomeManagerFragment;
 import com.cdqf.cart_fragment.MyFragment;
+import com.cdqf.cart_fragment.ReoprtFragment;
 import com.cdqf.cart_state.BaseActivity;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_state.StatusBarCompat;
@@ -68,15 +69,15 @@ public class MainManagerActivity extends BaseActivity {
     @BindView(R.id.tv_main_home)
     public TextView tvMainHome = null;
 
-//    //扫一扫
-//    @BindView(R.id.ll_main_scan)
-//    public LinearLayout llMainScan = null;
-//
-//    @BindView(R.id.iv_main_scan)
-//    public ImageView ivMainScan = null;
-//
-//    @BindView(R.id.tv_main_scan)
-//    public TextView tvMainScane = null;
+    //报表
+    @BindView(R.id.ll_main_report)
+    public LinearLayout llMainReport = null;
+
+    @BindView(R.id.iv_main_report)
+    public ImageView ivMainReport = null;
+
+    @BindView(R.id.tv_main_report)
+    public TextView tvMainReport = null;
 
     //我的
     @BindView(R.id.ll_main_my)
@@ -93,6 +94,7 @@ public class MainManagerActivity extends BaseActivity {
 
     //首页的fragment
     private HomeManagerFragment homeManagerFragment = null;
+    private ReoprtFragment reoprtFragment = null;
     private MyFragment myFragment = null;
 
     private Uri photoUri = null;
@@ -168,6 +170,9 @@ public class MainManagerActivity extends BaseActivity {
                 //首页
                 ivMainHome.setImageResource(R.mipmap.main_tab_home_icn);
                 tvMainHome.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_icon));
+                //报表
+                ivMainReport.setImageResource(R.mipmap.main_tab_report_default);
+                tvMainHome.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_default));
                 //我的
                 ivMainMy.setImageResource(R.mipmap.main_tab_my_default);
                 tvMainMy.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_default));
@@ -179,10 +184,31 @@ public class MainManagerActivity extends BaseActivity {
                     transaction.show(homeManagerFragment);
                 }
                 break;
-            //我的
             case 1:
                 //首页
                 ivMainHome.setImageResource(R.mipmap.main_tab_home_default);
+                tvMainHome.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_default));
+                //报表
+                ivMainReport.setImageResource(R.mipmap.main_tab_report_icon);
+                tvMainHome.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_icon));
+                //我的
+                ivMainMy.setImageResource(R.mipmap.main_tab_my_default);
+                tvMainMy.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_default));
+
+                if (reoprtFragment == null) {
+                    reoprtFragment = new ReoprtFragment();
+                    transaction.add(R.id.fl_main_fragment, reoprtFragment);
+                } else {
+                    transaction.show(reoprtFragment);
+                }
+                break;
+            //我的
+            case 2:
+                //首页
+                ivMainHome.setImageResource(R.mipmap.main_tab_home_default);
+                tvMainHome.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_default));
+                //报表
+                ivMainReport.setImageResource(R.mipmap.main_tab_report_default);
                 tvMainHome.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_default));
                 //我的
                 ivMainMy.setImageResource(R.mipmap.main_tab_my_icn);
@@ -232,16 +258,20 @@ public class MainManagerActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    @OnClick({R.id.ll_main_home, R.id.ll_main_my})
+    @OnClick({R.id.ll_main_home, R.id.ll_main_report, R.id.ll_main_my})
     public void onClick(View v) {
         switch (v.getId()) {
             //首页
             case R.id.ll_main_home:
                 tabImage(0);
                 break;
+            //报表
+            case R.id.ll_main_report:
+                tabImage(1);
+                break;
             //我的
             case R.id.ll_main_my:
-                tabImage(1);
+                tabImage(2);
                 break;
 //            //扫一扫
 //            case R.id.ll_main_scan:

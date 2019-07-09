@@ -4,35 +4,28 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.cdqf.cart.R;
-import com.cdqf.cart_adapter.ShopFragmentAdapter;
 import com.cdqf.cart_find.AccountExitFind;
 import com.cdqf.cart_state.CartState;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.zhengsr.viewpagerlib.indicator.TabIndicator;
 
-import java.util.Arrays;
-import java.util.List;
-
-import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 
 /**
- * 报表
+ * 日报
  */
-public class ReoprtFragment extends Fragment {
+public class DailyFragment extends Fragment {
 
-    private String TAG = ReoprtFragment.class.getSimpleName();
+    private String TAG = DailyFragment.class.getSimpleName();
 
     private CartState cartState = CartState.getCartState();
 
@@ -44,31 +37,17 @@ public class ReoprtFragment extends Fragment {
 
     private View view = null;
 
-    private Fragment[] orderList = new Fragment[]{
-            new DailyFragment(),
-            new DailyFragment(),
-            new DailyFragment(),
-    };
-
-    private List<String> orderName = Arrays.asList("日报", "周报", "月报");
-
-    @BindView(R.id.ti_report_dicatior)
-    public TabIndicator tiReportDicatior = null;
-
-    @BindView(R.id.vp_report_screen)
-    public ViewPager vpReportScreen = null;
-
-    private ShopFragmentAdapter shopFragmentAdapter = null;
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         Log.e(TAG, "---创建---");
 
-        view = inflater.inflate(R.layout.fragment_report, null);
+        view = inflater.inflate(R.layout.fragment_service, null);
 
         initAgo();
+
+        initView();
 
         initAdapter();
 
@@ -86,28 +65,23 @@ public class ReoprtFragment extends Fragment {
         }
     }
 
+    private void initView() {
+
+    }
+
     private void initListener() {
-        tiReportDicatior.setViewPagerSwitchSpeed(vpReportScreen, 600);
-        tiReportDicatior.setTabData(vpReportScreen, orderName, new TabIndicator.TabClickListener() {
-            @Override
-            public void onClick(int i) {
-                vpReportScreen.setCurrentItem(i);
-            }
-        });
+
     }
 
     private void initAdapter() {
-        shopFragmentAdapter = new ShopFragmentAdapter(getChildFragmentManager(), orderList);
-        vpReportScreen.setAdapter(shopFragmentAdapter);
-        vpReportScreen.setOffscreenPageLimit(3);
+
     }
 
     private void initBack() {
 
     }
 
-
-    private void forIntent(Class<?> activity) {
+    private void initIntent(Class<?> activity) {
         Intent intent = new Intent(getContext(), activity);
         startActivity(intent);
     }
@@ -150,11 +124,6 @@ public class ReoprtFragment extends Fragment {
         eventBus.unregister(this);
     }
 
-    /**
-     * 退出当前账户
-     *
-     * @param a
-     */
     @Subscribe
     public void onEventMainThread(AccountExitFind a) {
 
