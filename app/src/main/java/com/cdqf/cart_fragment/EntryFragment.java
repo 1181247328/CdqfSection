@@ -8,15 +8,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ListView;
 
 import com.cdqf.cart.R;
 import com.cdqf.cart_adapter.EntryAdapter;
-import com.cdqf.cart_find.AccountExitFind;
+import com.cdqf.cart_find.EntryPullFind;
+import com.cdqf.cart_find.SwipePullFind;
+import com.cdqf.cart_okhttp.OKHttpRequestWrap;
+import com.cdqf.cart_okhttp.OnHttpRequest;
 import com.cdqf.cart_state.CartState;
 import com.google.gson.Gson;
 import com.jingchen.pulltorefresh.PullToRefreshLayout;
 import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -92,6 +99,24 @@ public class EntryFragment extends Fragment {
                 //上拉加载
             }
         });
+
+        lvServiceList.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                View firstView = view.getChildAt(firstVisibleItem);
+                // 当firstVisibleItem是第0位。如果firstView==null说明列表为空，需要刷新;或者top==0说明已经到达列表顶部, 也需要刷新
+                if (firstVisibleItem == 0 && (firstView == null || firstView.getTop() == view.getPaddingTop())) {
+                    eventBus.post(new SwipePullFind(false, true));
+                } else {
+                    eventBus.post(new SwipePullFind(false, false));
+                }
+            }
+        });
     }
 
     private void initAdapter() {
@@ -101,6 +126,25 @@ public class EntryFragment extends Fragment {
 
     private void initBack() {
         ptrlServicePull.setPullDownEnable(false);
+    }
+
+    private void initPull() {
+        Map<String, Object> params = new HashMap<String, Object>();
+        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
+        params.put("", "");
+        okHttpRequestWrap.post("", true, "请稍候", params, new OnHttpRequest() {
+            @Override
+            public void onOkHttpResponse(String response, int id) {
+                Log.e(TAG, "---onOkHttpResponse---待服务---" + response);
+                eventBus.post(new SwipePullFind(false, false));
+            }
+
+            @Override
+            public void onOkHttpError(String error) {
+                Log.e(TAG, "---onOkHttpError---" + error);
+                eventBus.post(new SwipePullFind(false, false));
+            }
+        });
     }
 
     private void forIntent(Class<?> activity) {
@@ -146,8 +190,14 @@ public class EntryFragment extends Fragment {
         eventBus.unregister(this);
     }
 
+    /**
+     * 刷新
+     *
+     * @param s
+     */
     @Subscribe
-    public void onEventMainThread(AccountExitFind a) {
+    public void onEventMainThread(EntryPullFind s) {
 
     }
+
 }

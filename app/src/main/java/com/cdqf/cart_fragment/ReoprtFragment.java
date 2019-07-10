@@ -46,8 +46,8 @@ public class ReoprtFragment extends Fragment {
 
     private Fragment[] orderList = new Fragment[]{
             new DailyFragment(),
-            new DailyFragment(),
-            new DailyFragment(),
+            new WeekFragment(),
+            new MothFragment(),
     };
 
     private List<String> orderName = Arrays.asList("日报", "周报", "月报");

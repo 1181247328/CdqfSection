@@ -9,34 +9,31 @@ import android.widget.TextView;
 
 import com.cdqf.cart.R;
 import com.cdqf.cart_state.CartState;
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 
 /**
- * 会员下单适配器
+ * 下单明细适配器
  */
-public class MembershipAdapter extends BaseAdapter {
+public class DatilsAdapter extends BaseAdapter {
 
-    private String TAG = MembershipAdapter.class.getSimpleName();
+    private String TAG = DatilsAdapter.class.getSimpleName();
 
     private CartState cartState = CartState.getCartState();
-
-    private ImageLoader imageLoader = ImageLoader.getInstance();
 
     private EventBus eventBus = EventBus.getDefault();
 
     private Context context = null;
 
-    public MembershipAdapter(Context context) {
+    public DatilsAdapter(Context context) {
         this.context = context;
     }
 
     @Override
     public int getCount() {
-        return 30;
+        return 5;
     }
 
     @Override
@@ -53,7 +50,7 @@ public class MembershipAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder = null;
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_membership, null);
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_datils, null);
             viewHolder = new ViewHolder(convertView);
             convertView.setTag(viewHolder);
         } else {
@@ -62,15 +59,16 @@ public class MembershipAdapter extends BaseAdapter {
         return convertView;
     }
 
+
     class ViewHolder {
 
-        //图片
-        @BindView(R.id.tv_membership_item_name)
-        public TextView tvMembershipItemName = null;
+        //车牌号
+        @BindView(R.id.tv_datils_item_number)
+        public TextView tvDatilsItemNumber = null;
 
-        //昵称
-        @BindView(R.id.tv_membership_item_phone)
-        public TextView tvMembershipItemPhone = null;
+        //支付方式
+        @BindView(R.id.tv_datils_item_pay)
+        public TextView tvDatilsItemPay = null;
 
         public ViewHolder(View v) {
             ButterKnife.bind(this, v);

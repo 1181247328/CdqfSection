@@ -49,7 +49,7 @@ public class CompleteAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 5;
+        return 20;
     }
 
     @Override

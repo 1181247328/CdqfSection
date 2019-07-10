@@ -242,7 +242,7 @@ public class HomeManagerFragment extends Fragment {
                 pickerSource.setLineVisible(true);
                 pickerSource.setTopLineColor(Color.TRANSPARENT);
                 pickerSource.setTextSize(14);
-                pickerSource.setTitleText("订单来源");
+                pickerSource.setTitleText("店名");
                 pickerSource.setSelectedIndex(0);
                 pickerSource.setWheelModeEnable(true);
                 pickerSource.setWeightEnable(true);

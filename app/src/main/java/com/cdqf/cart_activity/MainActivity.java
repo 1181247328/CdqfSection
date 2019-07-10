@@ -278,6 +278,7 @@ public class MainActivity extends BaseActivity {
                 break;
             //报表
             case R.id.ll_main_report:
+                tabImage(1);
                 break;
             //我的
             case R.id.ll_main_my:

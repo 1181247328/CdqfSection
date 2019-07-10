@@ -2,31 +2,34 @@ package com.cdqf.cart_activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 
 import com.cdqf.cart.R;
 import com.cdqf.cart_adapter.ShopFragmentAdapter;
 import com.cdqf.cart_dilog.WhyDilogFragment;
+import com.cdqf.cart_find.CompletePullFind;
+import com.cdqf.cart_find.EntryPullFind;
+import com.cdqf.cart_find.ServicePullFind;
 import com.cdqf.cart_find.ShopOneFind;
 import com.cdqf.cart_find.ShopServiceOneFind;
 import com.cdqf.cart_find.ShopServiceTwoFind;
 import com.cdqf.cart_find.ShopTwoFind;
 import com.cdqf.cart_find.ShopViscousFind;
+import com.cdqf.cart_find.SwipePullFind;
 import com.cdqf.cart_fragment.CompleteFragment;
 import com.cdqf.cart_fragment.EntryFragment;
 import com.cdqf.cart_fragment.ServiceFragment;
 import com.cdqf.cart_state.BaseActivity;
 import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
-import com.cdqf.cart_state.StatusBarCompat;
+import com.cdqf.cart_state.StaturBar;
+import com.cdqf.cart_view.ViewPageSwipeRefreshLayout;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.zhengsr.viewpagerlib.indicator.TabIndicator;
@@ -65,6 +68,10 @@ public class ShopActivity extends BaseActivity {
 
     private List<String> orderName = Arrays.asList("待服务", "已完成", "录入");
 
+    //刷新器
+    @BindView(R.id.srl_shop_pull)
+    public ViewPageSwipeRefreshLayout srlShopPull = null;
+
     @BindView(R.id.ti_shop_dicatior)
     public TabIndicator tiShopDicatior = null;
 
@@ -73,25 +80,18 @@ public class ShopActivity extends BaseActivity {
 
     private ShopFragmentAdapter shopFragmentAdapter = null;
 
+    //哪个碎片要刷新
+    private int position = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        //API19以下用于沉侵式菜单栏
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        }
-
         //加载布局
         setContentView(R.layout.activity_shop);
 
-        //API>=20以上用于沉侵式菜单栏
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-            //沉侵
-            StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.black));
-        }
+        StaturBar.setStatusBar(this, R.color.tab_main_text_icon);
 
         initAgo();
 
@@ -127,9 +127,32 @@ public class ShopActivity extends BaseActivity {
         tiShopDicatior.setTabData(vpShopScreen, orderName, new TabIndicator.TabClickListener() {
             @Override
             public void onClick(int i) {
+                position = i;
                 vpShopScreen.setCurrentItem(i);
             }
         });
+
+        srlShopPull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                switch (position) {
+                    case 0:
+                        //待服务
+                        eventBus.post(new ServicePullFind());
+                        break;
+                    case 1:
+                        //已完成
+                        eventBus.post(new CompletePullFind());
+                        break;
+                    case 2:
+                        //录入
+                        eventBus.post(new EntryPullFind());
+                        break;
+                }
+                srlShopPull.setRefreshing(false);
+            }
+        });
+
 //        lvShopList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 //            @Override
 //            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -492,6 +515,17 @@ public class ShopActivity extends BaseActivity {
 //                Log.e(TAG, "---onOkHttpError---" + error);
 //            }
 //        });
+    }
+
+    /**
+     * 是否刷新和禁用
+     *
+     * @param s
+     */
+    @Subscribe
+    public void onEventMainThread(SwipePullFind s) {
+        srlShopPull.setRefreshing(s.isRefreshing);
+        srlShopPull.setEnabled(s.isEnabled);
     }
 }
 

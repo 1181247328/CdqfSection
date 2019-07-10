@@ -94,7 +94,7 @@
                 android:paddingBottom="@dimen/dp_8"
                 android:text="2019-07"
                 android:textColor="@color/tab_main_text_default"
-                android:textSize="@dimen/sp_12" />
+                android:textSize="@dimen/sp_14" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -124,7 +124,7 @@
                         android:gravity="center"
                         android:text="本月任务(台)"
                         android:textColor="@color/loss_manager_number"
-                        android:textSize="@dimen/sp_12" />
+                        android:textSize="@dimen/sp_14" />
 
                     <TextView
                         android:id="@+id/tv_other_total"
@@ -153,7 +153,7 @@
                         android:gravity="center"
                         android:text="本月完成(台)"
                         android:textColor="@color/loss_manager_number"
-                        android:textSize="@dimen/sp_12" />
+                        android:textSize="@dimen/sp_14" />
 
                     <TextView
                         android:id="@+id/tv_other_has"
@@ -198,7 +198,7 @@
                         android:gravity="center"
                         android:text="本月上班(天)"
                         android:textColor="@color/loss_manager_number"
-                        android:textSize="@dimen/sp_12" />
+                        android:textSize="@dimen/sp_14" />
 
                     <TextView
                         android:id="@+id/tv_other_on"
@@ -227,7 +227,7 @@
                         android:gravity="center"
                         android:text="本月休假(天)"
                         android:textColor="@color/loss_manager_number"
-                        android:textSize="@dimen/sp_12" />
+                        android:textSize="@dimen/sp_14" />
 
                     <TextView
                         android:id="@+id/tv_other_hugh"
@@ -280,7 +280,7 @@
                     android:paddingBottom="@dimen/dp_5"
                     android:text="明细"
                     android:textColor="@color/loss_manager_number"
-                    android:textSize="@dimen/sp_12" />
+                    android:textSize="@dimen/sp_14" />
 
                 <TextView
                     android:id="@+id/tv_other_detail"
@@ -292,7 +292,7 @@
                     android:paddingTop="@dimen/dp_8"
                     android:text="2800"
                     android:textColor="@color/tab_main_text_default"
-                    android:textSize="@dimen/sp_12" />
+                    android:textSize="@dimen/sp_14" />
 
             </LinearLayout>
 
@@ -321,7 +321,7 @@
                     android:paddingBottom="@dimen/dp_5"
                     android:text="确认签字"
                     android:textColor="@color/loss_manager_number"
-                    android:textSize="@dimen/sp_12" />
+                    android:textSize="@dimen/sp_14" />
 
                 <TextView
                     android:id="@+id/tv_other_name"
@@ -333,7 +333,7 @@
                     android:paddingTop="@dimen/dp_8"
                     android:text="杨显澎"
                     android:textColor="@color/tab_main_text_default"
-                    android:textSize="@dimen/sp_12" />
+                    android:textSize="@dimen/sp_14" />
 
             </LinearLayout>
 
@@ -360,7 +360,7 @@
                     android:paddingBottom="@dimen/dp_5"
                     android:text="提现"
                     android:textColor="@color/loss_manager_number"
-                    android:textSize="@dimen/sp_12" />
+                    android:textSize="@dimen/sp_14" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -380,7 +380,7 @@
                         android:paddingBottom="@dimen/dp_6"
                         android:text="立即提现"
                         android:textColor="@color/tab_main_text_default"
-                        android:textSize="@dimen/sp_12" />
+                        android:textSize="@dimen/sp_14" />
 
                 </LinearLayout>
 

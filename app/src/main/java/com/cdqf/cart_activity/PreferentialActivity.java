@@ -7,8 +7,6 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
-import android.text.InputFilter;
-import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -31,7 +29,6 @@ import com.cdqf.cart_okhttp.OnHttpRequest;
 import com.cdqf.cart_state.BaseActivity;
 import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
-import com.cdqf.cart_state.CashierInputFilter;
 import com.cdqf.cart_state.DoubleOperationUtil;
 import com.cdqf.cart_state.StatusBarCompat;
 import com.google.gson.Gson;
@@ -237,23 +234,23 @@ public class PreferentialActivity extends BaseActivity {
     }
 
     private void initBack() {
-        //车牌号
-        tvPreferentialNumber.setText(cartState.getDatils().getCarnum());
-        //金额
-        tvPreferentialMount.setText(cartState.getDatils().getZongprice());
-        //折扣价
-//        tvPreferentialDiscount.setText("");
-        //返余额
-//        tvPreferentialMoney.setText("");
-        //服务项目
-        String goodsNmae = "";
-        for (String name : cartState.getDatils().getGoodsname()) {
-            goodsNmae += name + " ";
-        }
-        tvPreferentialAdd.setText(goodsNmae);
-        InputFilter[] filters = {new CashierInputFilter(10)};
-        etPreferentialDiscount.setFilters(filters);
-        etPreferentialDiscount.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+//        //车牌号
+//        tvPreferentialNumber.setText(cartState.getDatils().getCarnum());
+//        //金额
+//        tvPreferentialMount.setText(cartState.getDatils().getZongprice());
+//        //折扣价
+////        tvPreferentialDiscount.setText("");
+//        //返余额
+////        tvPreferentialMoney.setText("");
+//        //服务项目
+//        String goodsNmae = "";
+//        for (String name : cartState.getDatils().getGoodsname()) {
+//            goodsNmae += name + " ";
+//        }
+//        tvPreferentialAdd.setText(goodsNmae);
+//        InputFilter[] filters = {new CashierInputFilter(10)};
+//        etPreferentialDiscount.setFilters(filters);
+//        etPreferentialDiscount.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
     }
 
     private void initPull(boolean isToast) {

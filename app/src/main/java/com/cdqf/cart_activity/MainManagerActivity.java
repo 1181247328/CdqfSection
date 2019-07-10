@@ -1,20 +1,22 @@
 package com.cdqf.cart_activity;
 
+import android.Manifest;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -22,12 +24,13 @@ import android.widget.TextView;
 import com.cdqf.cart.R;
 import com.cdqf.cart_dilog.WhyDilogFragment;
 import com.cdqf.cart_find.ExitFind;
+import com.cdqf.cart_find.ScanFind;
 import com.cdqf.cart_fragment.HomeManagerFragment;
 import com.cdqf.cart_fragment.MyFragment;
 import com.cdqf.cart_fragment.ReoprtFragment;
 import com.cdqf.cart_state.BaseActivity;
 import com.cdqf.cart_state.CartState;
-import com.cdqf.cart_state.StatusBarCompat;
+import com.cdqf.cart_state.StaturBar;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.zxy.tiny.Tiny;
 import com.zxy.tiny.callback.FileCallback;
@@ -107,20 +110,10 @@ public class MainManagerActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        //API19以下用于沉侵式菜单栏
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        }
-
         //加载布局
         setContentView(R.layout.activity_main);
 
-        //API>=20以上用于沉侵式菜单栏
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-            //沉侵
-            StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.black));
-        }
+        StaturBar.setStatusBar(this, R.color.tab_main_text_icon);
 
         initAgo();
 
@@ -172,7 +165,7 @@ public class MainManagerActivity extends BaseActivity {
                 tvMainHome.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_icon));
                 //报表
                 ivMainReport.setImageResource(R.mipmap.main_tab_report_default);
-                tvMainHome.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_default));
+                tvMainReport.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_default));
                 //我的
                 ivMainMy.setImageResource(R.mipmap.main_tab_my_default);
                 tvMainMy.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_default));
@@ -190,7 +183,7 @@ public class MainManagerActivity extends BaseActivity {
                 tvMainHome.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_default));
                 //报表
                 ivMainReport.setImageResource(R.mipmap.main_tab_report_icon);
-                tvMainHome.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_icon));
+                tvMainReport.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_icon));
                 //我的
                 ivMainMy.setImageResource(R.mipmap.main_tab_my_default);
                 tvMainMy.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_default));
@@ -209,7 +202,7 @@ public class MainManagerActivity extends BaseActivity {
                 tvMainHome.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_default));
                 //报表
                 ivMainReport.setImageResource(R.mipmap.main_tab_report_default);
-                tvMainHome.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_default));
+                tvMainReport.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_default));
                 //我的
                 ivMainMy.setImageResource(R.mipmap.main_tab_my_icn);
                 tvMainMy.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_icon));
@@ -234,6 +227,9 @@ public class MainManagerActivity extends BaseActivity {
         if (homeManagerFragment != null) {
             transaction.hide(homeManagerFragment);
         }
+        if (reoprtFragment != null) {
+            transaction.hide(reoprtFragment);
+        }
         if (myFragment != null) {
             transaction.hide(myFragment);
         }
@@ -250,6 +246,7 @@ public class MainManagerActivity extends BaseActivity {
         values.put(MediaStore.Images.Media.TITLE, filename);
         photoUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+        intent.putExtra("android.intent.extras.CAMERA_FACING", 2);
         startActivityForResult(intent, REQUEST_CODE_TAKE_PICTURE);
     }
 
@@ -375,5 +372,23 @@ public class MainManagerActivity extends BaseActivity {
     @Subscribe
     public void onEventMainThread(ExitFind r) {
         exit();
+    }
+
+    /**
+     * 扫一扫
+     *
+     * @param s
+     */
+    @Subscribe
+    public void onEventMainThread(ScanFind s) {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (ContextCompat.checkSelfPermission(MainManagerActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(MainManagerActivity.this, new String[]{Manifest.permission.CAMERA}, 8);
+            } else {
+                camera();
+            }
+        } else {
+            camera();
+        }
     }
 }

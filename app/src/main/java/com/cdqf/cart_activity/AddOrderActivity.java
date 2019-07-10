@@ -2,6 +2,7 @@ package com.cdqf.cart_activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -23,9 +24,18 @@ import com.cdqf.cart_state.StatusBarCompat;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.addapp.pickers.common.LineConfig;
+import cn.addapp.pickers.listeners.OnItemPickListener;
+import cn.addapp.pickers.listeners.OnMoreItemPickListener;
+import cn.addapp.pickers.listeners.OnSingleWheelListener;
+import cn.addapp.pickers.picker.LinkagePicker;
+import cn.addapp.pickers.picker.SinglePicker;
+import cn.addapp.pickers.util.ConvertUtils;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 
@@ -178,7 +188,7 @@ public class AddOrderActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    @OnClick({R.id.rl_order_return, R.id.ll_order_type, R.id.ll_order_color, R.id.ll_order_service, R.id.tv_order_submit})
+    @OnClick({R.id.rl_order_return, R.id.ll_order_type, R.id.ll_order_color, R.id.ll_order_service, R.id.ll_order_other, R.id.tv_order_submit})
     public void onClick(View v) {
         switch (v.getId()) {
             //返回
@@ -187,12 +197,142 @@ public class AddOrderActivity extends BaseActivity {
                 break;
             //车辆车型
             case R.id.ll_order_type:
+                SinglePicker<String> pickerSource = new SinglePicker<String>(AddOrderActivity.this, new String[]{
+                        "USA"
+                });
+                LineConfig configSource = new LineConfig();
+                configSource.setColor(ContextCompat.getColor(context, R.color.addstore_one));//线颜色
+                configSource.setThick(ConvertUtils.toPx(context, 1));//线粗
+                configSource.setItemHeight(20);
+                pickerSource.setLineConfig(configSource);
+                pickerSource.setCanLoop(false);//不禁用循环
+                pickerSource.setLineVisible(true);
+                pickerSource.setTopLineColor(Color.TRANSPARENT);
+                pickerSource.setTextSize(14);
+                pickerSource.setTitleText("店名");
+                pickerSource.setSelectedIndex(0);
+                pickerSource.setWheelModeEnable(true);
+                pickerSource.setWeightEnable(true);
+                pickerSource.setWeightWidth(1);
+                pickerSource.setCancelTextColor(ContextCompat.getColor(context, R.color.house_eight));//顶部取消按钮文字颜色
+                pickerSource.setCancelTextSize(14);
+                pickerSource.setSubmitTextColor(ContextCompat.getColor(context, R.color.house_eight));//顶部确定按钮文字颜色
+                pickerSource.setSubmitTextSize(14);
+                pickerSource.setBackgroundColor(ContextCompat.getColor(context, R.color.white));//背景色
+                pickerSource.setSelectedTextColor(ContextCompat.getColor(context, R.color.house_eight));//前四位值是透明度
+                pickerSource.setUnSelectedTextColor(ContextCompat.getColor(context, R.color.addstore_one));
+                pickerSource.setOnSingleWheelListener(new OnSingleWheelListener() {
+                    @Override
+                    public void onWheeled(int index, String item) {
+
+                    }
+                });
+                pickerSource.setOnItemPickListener(new OnItemPickListener<String>() {
+                    @Override
+                    public void onItemPicked(int index, String item) {
+                    }
+                });
+                pickerSource.show();
                 break;
             //车辆颜色
             case R.id.ll_order_color:
+                SinglePicker<String> pickerSourcecolor = new SinglePicker<String>(AddOrderActivity.this, new String[]{
+                        "黄色"
+                });
+                LineConfig configSourcecolor = new LineConfig();
+                configSourcecolor.setColor(ContextCompat.getColor(context, R.color.addstore_one));//线颜色
+                configSourcecolor.setThick(ConvertUtils.toPx(context, 1));//线粗
+                configSourcecolor.setItemHeight(20);
+                pickerSourcecolor.setLineConfig(configSourcecolor);
+                pickerSourcecolor.setCanLoop(false);//不禁用循环
+                pickerSourcecolor.setLineVisible(true);
+                pickerSourcecolor.setTopLineColor(Color.TRANSPARENT);
+                pickerSourcecolor.setTextSize(14);
+                pickerSourcecolor.setTitleText("店名");
+                pickerSourcecolor.setSelectedIndex(0);
+                pickerSourcecolor.setWheelModeEnable(true);
+                pickerSourcecolor.setWeightEnable(true);
+                pickerSourcecolor.setWeightWidth(1);
+                pickerSourcecolor.setCancelTextColor(ContextCompat.getColor(context, R.color.house_eight));//顶部取消按钮文字颜色
+                pickerSourcecolor.setCancelTextSize(14);
+                pickerSourcecolor.setSubmitTextColor(ContextCompat.getColor(context, R.color.house_eight));//顶部确定按钮文字颜色
+                pickerSourcecolor.setSubmitTextSize(14);
+                pickerSourcecolor.setBackgroundColor(ContextCompat.getColor(context, R.color.white));//背景色
+                pickerSourcecolor.setSelectedTextColor(ContextCompat.getColor(context, R.color.house_eight));//前四位值是透明度
+                pickerSourcecolor.setUnSelectedTextColor(ContextCompat.getColor(context, R.color.addstore_one));
+                pickerSourcecolor.setOnSingleWheelListener(new OnSingleWheelListener() {
+                    @Override
+                    public void onWheeled(int index, String item) {
+
+                    }
+                });
+                pickerSourcecolor.setOnItemPickListener(new OnItemPickListener<String>() {
+                    @Override
+                    public void onItemPicked(int index, String item) {
+                    }
+                });
+                pickerSourcecolor.show();
                 break;
             //服务项目
             case R.id.ll_order_service:
+                LinkagePicker.DataProvider provider = new LinkagePicker.DataProvider() {
+
+                    @Override
+                    public boolean isOnlyTwo() {
+                        return true;
+                    }
+
+                    @Override
+                    public List<String> provideFirstData() {
+
+                        return null;
+                    }
+
+                    @Override
+                    public List<String> provideSecondData(int firstIndex) {
+                        return null;
+                    }
+
+                    @Override
+                    public List<String> provideThirdData(int firstIndex, int secondIndex) {
+                        return null;
+                    }
+
+                };
+                LinkagePicker picker = new LinkagePicker(this, provider);
+                picker.setCanLoop(false);
+                LineConfig config = new LineConfig(1);
+                config.setColor(ContextCompat.getColor(context, R.color.addstore_one));//线颜色
+                config.setThick(ConvertUtils.toPx(this, 1));//线粗
+                picker.setLineConfig(config);
+                //是不是有线
+                picker.setLineVisible(true);
+                picker.setTopLineColor(Color.TRANSPARENT);
+                picker.setTextSize(14);
+//                picker.setWheelModeEnable(true);
+                picker.setWeightEnable(true);
+                picker.setCancelTextColor(ContextCompat.getColor(context, R.color.house_eight));//顶部取消按钮文字颜色
+                picker.setCancelTextSize(14);
+                picker.setSubmitTextColor(ContextCompat.getColor(context, R.color.house_eight));//顶部确定按钮文字颜色
+                picker.setSubmitTextSize(14);
+                picker.setBackgroundColor(ContextCompat.getColor(context, R.color.white));//背景色
+                picker.setSelectedTextColor(ContextCompat.getColor(context, R.color.house_eight));//前四位值是透明度
+                picker.setUnSelectedTextColor(ContextCompat.getColor(context, R.color.addstore_one));
+//                picker.setLabel("小时制", "点");
+                picker.setSelectedIndex(0, 0);
+                //picker.setSelectedItem("12", "9");
+                picker.setOnMoreItemPickListener(new OnMoreItemPickListener<String>() {
+
+                    @Override
+                    public void onItemPicked(String first, String second, String third) {
+                        Log.e(TAG, "---onItemPicked---" + first + "---" + second + "---" + third);
+
+                    }
+                });
+                picker.show();
+                break;
+            //其它服务
+            case R.id.ll_order_other:
                 break;
             //提交订单
             case R.id.tv_order_submit:

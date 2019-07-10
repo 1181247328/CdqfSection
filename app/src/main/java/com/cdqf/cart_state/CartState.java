@@ -779,6 +779,19 @@ public class CartState {
         return result;
     }
 
+    /**
+     * 界面设置状态栏字体颜色
+     */
+    public void changeStatusBarTextImgColor(Activity activity, boolean isBlack) {
+        if (isBlack) {
+            //设置状态栏黑色字体
+            activity.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        } else {
+            //恢复状态栏白色字体
+            activity.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+        }
+    }
+
     public Bitmap getHeadBitmap() {
         return headBitmap;
     }

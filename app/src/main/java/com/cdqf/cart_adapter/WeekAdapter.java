@@ -9,34 +9,28 @@ import android.widget.TextView;
 
 import com.cdqf.cart.R;
 import com.cdqf.cart_state.CartState;
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 
-/**
- * 会员下单适配器
- */
-public class MembershipAdapter extends BaseAdapter {
+public class WeekAdapter extends BaseAdapter {
 
-    private String TAG = MembershipAdapter.class.getSimpleName();
+    private String TAG = WeekAdapter.class.getSimpleName();
 
     private CartState cartState = CartState.getCartState();
-
-    private ImageLoader imageLoader = ImageLoader.getInstance();
 
     private EventBus eventBus = EventBus.getDefault();
 
     private Context context = null;
 
-    public MembershipAdapter(Context context) {
+    public WeekAdapter(Context context) {
         this.context = context;
     }
 
     @Override
     public int getCount() {
-        return 30;
+        return 5;
     }
 
     @Override
@@ -51,9 +45,9 @@ public class MembershipAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder viewHolder = null;
+      ViewHolder viewHolder = null;
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_membership, null);
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_daily, null);
             viewHolder = new ViewHolder(convertView);
             convertView.setTag(viewHolder);
         } else {
@@ -62,15 +56,36 @@ public class MembershipAdapter extends BaseAdapter {
         return convertView;
     }
 
+
     class ViewHolder {
 
-        //图片
-        @BindView(R.id.tv_membership_item_name)
-        public TextView tvMembershipItemName = null;
+        //时间
+        @BindView(R.id.tv_daily_item_timer)
+        public TextView tvDailyItemTimer = null;
 
-        //昵称
-        @BindView(R.id.tv_membership_item_phone)
-        public TextView tvMembershipItemPhone = null;
+        //下单次数
+        @BindView(R.id.tv_daily_item_place)
+        public TextView tvDailyItemPlace = null;
+
+        //服务次数
+        @BindView(R.id.tv_daily_item_service)
+        public TextView tvDailyItemService = null;
+
+        //比例
+        @BindView(R.id.tv_daily_item_proportion)
+        public TextView tvDailyItemProportion = null;
+
+        //比例率
+        @BindView(R.id.tv_daily_item_rate)
+        public TextView tvDailyItemRate = null;
+
+        //服务金额
+        @BindView(R.id.tv_daily_item_price)
+        public TextView tvDailyItemPrice = null;
+
+        //提成
+        @BindView(R.id.tv_daily_item_commission)
+        public TextView tvDailyItemCommission = null;
 
         public ViewHolder(View v) {
             ButterKnife.bind(this, v);

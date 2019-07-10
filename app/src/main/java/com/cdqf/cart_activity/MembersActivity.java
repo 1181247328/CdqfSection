@@ -2,13 +2,12 @@ package com.cdqf.cart_activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -18,13 +17,18 @@ import com.cdqf.cart.R;
 import com.cdqf.cart_find.ThroughFind;
 import com.cdqf.cart_state.BaseActivity;
 import com.cdqf.cart_state.CartState;
-import com.cdqf.cart_state.StatusBarCompat;
+import com.cdqf.cart_state.StaturBar;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.addapp.pickers.common.LineConfig;
+import cn.addapp.pickers.listeners.OnItemPickListener;
+import cn.addapp.pickers.listeners.OnSingleWheelListener;
+import cn.addapp.pickers.picker.SinglePicker;
+import cn.addapp.pickers.util.ConvertUtils;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 
@@ -64,7 +68,7 @@ public class MembersActivity extends BaseActivity {
 
     //下单会员
     @BindView(R.id.tv_members_numbers)
-    public EditText tvMembersNumbers = null;
+    public TextView tvMembersNumbers = null;
 
     //总下单金额
     @BindView(R.id.tv_members_price)
@@ -91,20 +95,10 @@ public class MembersActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        //API19以下用于沉侵式菜单栏
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        }
-
         //加载布局
         setContentView(R.layout.activity_members);
 
-        //API>=20以上用于沉侵式菜单栏
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-            //沉侵
-            StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.black));
-        }
+        StaturBar.setStatusBar(this, R.color.tab_main_text_icon);
 
         initAgo();
 
@@ -148,7 +142,7 @@ public class MembersActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    private void initIntent(Class<?> activity,int type) {
+    private void initIntent(Class<?> activity, int type) {
         Intent intent = new Intent(context, activity);
         intent.putExtra("type", type);
         startActivity(intent);
@@ -163,12 +157,51 @@ public class MembersActivity extends BaseActivity {
                 break;
             //店名
             case R.id.ll_members_shop:
+                SinglePicker<String> pickerSource = new SinglePicker<String>(MembersActivity.this, new String[]{
+                        "浅水半岛店"
+                });
+                LineConfig configSource = new LineConfig();
+                configSource.setColor(ContextCompat.getColor(context, R.color.addstore_one));//线颜色
+                configSource.setThick(ConvertUtils.toPx(context, 1));//线粗
+                configSource.setItemHeight(20);
+                pickerSource.setLineConfig(configSource);
+                pickerSource.setCanLoop(false);//不禁用循环
+                pickerSource.setLineVisible(true);
+                pickerSource.setTopLineColor(Color.TRANSPARENT);
+                pickerSource.setTextSize(14);
+                pickerSource.setTitleText("店名");
+                pickerSource.setSelectedIndex(0);
+                pickerSource.setWheelModeEnable(true);
+                pickerSource.setWeightEnable(true);
+                pickerSource.setWeightWidth(1);
+                pickerSource.setCancelTextColor(ContextCompat.getColor(context, R.color.house_eight));//顶部取消按钮文字颜色
+                pickerSource.setCancelTextSize(14);
+                pickerSource.setSubmitTextColor(ContextCompat.getColor(context, R.color.house_eight));//顶部确定按钮文字颜色
+                pickerSource.setSubmitTextSize(14);
+                pickerSource.setBackgroundColor(ContextCompat.getColor(context, R.color.white));//背景色
+                pickerSource.setSelectedTextColor(ContextCompat.getColor(context, R.color.house_eight));//前四位值是透明度
+                pickerSource.setUnSelectedTextColor(ContextCompat.getColor(context, R.color.addstore_one));
+                pickerSource.setOnSingleWheelListener(new OnSingleWheelListener() {
+                    @Override
+                    public void onWheeled(int index, String item) {
+
+                    }
+                });
+                pickerSource.setOnItemPickListener(new OnItemPickListener<String>() {
+                    @Override
+                    public void onItemPicked(int index, String item) {
+                        tvMembersShop.setText(item);
+                    }
+                });
+                pickerSource.show();
                 break;
             //会员总数
             case R.id.ll_members_number:
+                initIntent(MemebershipActivity.class, 1);
                 break;
             //下单总数
             case R.id.ll_members_numbers:
+                initIntent(MemebershipActivity.class, 2);
                 break;
         }
     }

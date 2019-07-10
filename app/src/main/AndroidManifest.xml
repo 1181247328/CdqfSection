@@ -346,7 +346,8 @@
         <activity
             android:name="com.cdqf.cart_activity.AddOrderActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
 
         <!--立即提现-->
         <activity
@@ -354,6 +355,13 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 
+        <!--饼图-->
+        <activity
+            android:name="com.cdqf.cart_activity.ReportDatilsActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+
+        </activity>
 
     </application>
 </manifest>

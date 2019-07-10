@@ -8,12 +8,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.cdqf.cart.R;
-import com.cdqf.cart_activity.ReportDatilsActivity;
-import com.cdqf.cart_adapter.DailyAdapter;
+import com.cdqf.cart_adapter.MothAdapter;
 import com.cdqf.cart_find.AccountExitFind;
 import com.cdqf.cart_state.CartState;
 import com.google.gson.Gson;
@@ -27,11 +25,11 @@ import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 
 /**
- * 日报
+ * 月报
  */
-public class DailyFragment extends Fragment {
+public class MothFragment extends Fragment {
 
-    private String TAG = DailyFragment.class.getSimpleName();
+    private String TAG = MothFragment.class.getSimpleName();
 
     private CartState cartState = CartState.getCartState();
 
@@ -48,7 +46,7 @@ public class DailyFragment extends Fragment {
 
     private ListView lvDailyList = null;
 
-    private DailyAdapter dailyAdapter = null;
+    private MothAdapter mothAdapter = null;
 
     @Nullable
     @Override
@@ -94,17 +92,11 @@ public class DailyFragment extends Fragment {
                 //上拉加载
             }
         });
-        lvDailyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                initIntent(ReportDatilsActivity.class);
-            }
-        });
     }
 
     private void initAdapter() {
-        dailyAdapter = new DailyAdapter(getContext());
-        lvDailyList.setAdapter(dailyAdapter);
+        mothAdapter = new MothAdapter(getContext());
+        lvDailyList.setAdapter(mothAdapter);
     }
 
     private void initBack() {

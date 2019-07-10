@@ -2,9 +2,12 @@ package com.cdqf.cart_activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.NestedScrollView;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -24,6 +27,11 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.addapp.pickers.common.LineConfig;
+import cn.addapp.pickers.listeners.OnItemPickListener;
+import cn.addapp.pickers.listeners.OnSingleWheelListener;
+import cn.addapp.pickers.picker.SinglePicker;
+import cn.addapp.pickers.util.ConvertUtils;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 
@@ -47,6 +55,12 @@ public class MembersDatilsActivity extends BaseActivity {
     //返回
     @BindView(R.id.rl_datils_return)
     public RelativeLayout rlDatilsReturn = null;
+
+    @BindView(R.id.srl_datils_pull)
+    public SwipeRefreshLayout srlDatilspull = null;
+
+    @BindView(R.id.sv_datils_pull)
+    public NestedScrollView svDatilsPull = null;
 
     //标题
     @BindView(R.id.tv_datils_title)
@@ -172,12 +186,52 @@ public class MembersDatilsActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    @OnClick({R.id.rl_datils_return, R.id.rcrl_details_claim, R.id.rcrl_details_addorder})
+    @OnClick({R.id.rl_datils_return, R.id.rl_detils_next, R.id.rcrl_details_claim, R.id.rcrl_details_addorder})
     public void onClick(View v) {
         switch (v.getId()) {
             //返回
             case R.id.rl_datils_return:
                 finish();
+                break;
+            //车牌号
+            case R.id.rl_detils_next:
+                SinglePicker<String> pickerSource = new SinglePicker<String>(MembersDatilsActivity.this, new String[]{
+                        "浅水半岛店"
+                });
+                LineConfig configSource = new LineConfig();
+                configSource.setColor(ContextCompat.getColor(context, R.color.addstore_one));//线颜色
+                configSource.setThick(ConvertUtils.toPx(context, 1));//线粗
+                configSource.setItemHeight(20);
+                pickerSource.setLineConfig(configSource);
+                pickerSource.setCanLoop(false);//不禁用循环
+                pickerSource.setLineVisible(true);
+                pickerSource.setTopLineColor(Color.TRANSPARENT);
+                pickerSource.setTextSize(14);
+                pickerSource.setTitleText("店名");
+                pickerSource.setSelectedIndex(0);
+                pickerSource.setWheelModeEnable(true);
+                pickerSource.setWeightEnable(true);
+                pickerSource.setWeightWidth(1);
+                pickerSource.setCancelTextColor(ContextCompat.getColor(context, R.color.house_eight));//顶部取消按钮文字颜色
+                pickerSource.setCancelTextSize(14);
+                pickerSource.setSubmitTextColor(ContextCompat.getColor(context, R.color.house_eight));//顶部确定按钮文字颜色
+                pickerSource.setSubmitTextSize(14);
+                pickerSource.setBackgroundColor(ContextCompat.getColor(context, R.color.white));//背景色
+                pickerSource.setSelectedTextColor(ContextCompat.getColor(context, R.color.house_eight));//前四位值是透明度
+                pickerSource.setUnSelectedTextColor(ContextCompat.getColor(context, R.color.addstore_one));
+                pickerSource.setOnSingleWheelListener(new OnSingleWheelListener() {
+                    @Override
+                    public void onWheeled(int index, String item) {
+
+                    }
+                });
+                pickerSource.setOnItemPickListener(new OnItemPickListener<String>() {
+                    @Override
+                    public void onItemPicked(int index, String item) {
+                        tvDetilsNext.setText(item);
+                    }
+                });
+                pickerSource.show();
                 break;
             //服务
             case R.id.rcrl_details_claim:

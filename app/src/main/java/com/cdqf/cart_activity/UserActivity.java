@@ -185,8 +185,8 @@ public class UserActivity extends BaseActivity {
     }
 
     private void initBack() {
-        tvUserName.setText(cartState.getShopList().get(position).getCarnum());
-        initPull(true);
+//        tvUserName.setText(cartState.getShopList().get(position).getCarnum());
+//        initPull(true);
     }
 
     private void initPull(boolean isToast) {

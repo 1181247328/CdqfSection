@@ -97,9 +97,9 @@
                 android:paddingBottom="@dimen/dp_8"
                 android:text="提交订单"
                 android:textColor="@color/tab_main_text_default"
-                android:textSize="@dimen/sp_13" />
+                android:textSize="@dimen/sp_14" />
 
-            <ScrollView
+            <android.support.v4.widget.NestedScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@id/tv_order_submit"
@@ -128,7 +128,7 @@
                             android:paddingBottom="@dimen/dp_12"
                             android:text="车牌号码"
                             android:textColor="@color/tab_main_text_default"
-                            android:textSize="@dimen/sp_13" />
+                            android:textSize="@dimen/sp_14" />
 
                         <EditText
                             android:id="@+id/tv_order_number"
@@ -145,7 +145,7 @@
                             android:textColor="@color/login_text"
                             android:textColorHint="@color/clock_one"
                             android:textCursorDrawable="@drawable/nickname_cursor"
-                            android:textSize="@dimen/sp_13" />
+                            android:textSize="@dimen/sp_14" />
 
                     </LinearLayout>
 
@@ -171,7 +171,7 @@
                             android:paddingBottom="@dimen/dp_12"
                             android:text="车辆车型"
                             android:textColor="@color/tab_main_text_default"
-                            android:textSize="@dimen/sp_13" />
+                            android:textSize="@dimen/sp_14" />
 
                         <LinearLayout
                             android:id="@+id/ll_order_type"
@@ -196,7 +196,7 @@
                                 android:textColor="@color/login_text"
                                 android:textColorHint="@color/clock_one"
                                 android:textCursorDrawable="@drawable/nickname_cursor"
-                                android:textSize="@dimen/sp_13" />
+                                android:textSize="@dimen/sp_14" />
 
                             <ImageView
                                 android:layout_width="@dimen/dp_11"
@@ -233,7 +233,7 @@
                             android:paddingBottom="@dimen/dp_12"
                             android:text="车辆颜色"
                             android:textColor="@color/tab_main_text_default"
-                            android:textSize="@dimen/sp_13" />
+                            android:textSize="@dimen/sp_14" />
 
                         <LinearLayout
                             android:id="@+id/ll_order_color"
@@ -258,7 +258,7 @@
                                 android:textColor="@color/login_text"
                                 android:textColorHint="@color/clock_one"
                                 android:textCursorDrawable="@drawable/nickname_cursor"
-                                android:textSize="@dimen/sp_13" />
+                                android:textSize="@dimen/sp_14" />
 
                             <ImageView
                                 android:layout_width="@dimen/dp_11"
@@ -295,7 +295,7 @@
                             android:paddingBottom="@dimen/dp_12"
                             android:text="服务项目"
                             android:textColor="@color/tab_main_text_default"
-                            android:textSize="@dimen/sp_13" />
+                            android:textSize="@dimen/sp_14" />
 
                         <LinearLayout
                             android:id="@+id/ll_order_service"
@@ -320,7 +320,7 @@
                                 android:textColor="@color/login_text"
                                 android:textColorHint="@color/clock_one"
                                 android:textCursorDrawable="@drawable/nickname_cursor"
-                                android:textSize="@dimen/sp_13" />
+                                android:textSize="@dimen/sp_14" />
 
                             <ImageView
                                 android:layout_width="@dimen/dp_11"
@@ -357,7 +357,7 @@
                             android:paddingBottom="@dimen/dp_12"
                             android:text="其它服务"
                             android:textColor="@color/tab_main_text_default"
-                            android:textSize="@dimen/sp_13" />
+                            android:textSize="@dimen/sp_14" />
 
                         <LinearLayout
                             android:id="@+id/ll_order_other"
@@ -382,7 +382,7 @@
                                 android:textColor="@color/login_text"
                                 android:textColorHint="@color/clock_one"
                                 android:textCursorDrawable="@drawable/nickname_cursor"
-                                android:textSize="@dimen/sp_13" />
+                                android:textSize="@dimen/sp_14" />
 
                             <ImageView
                                 android:layout_width="@dimen/dp_11"
@@ -411,7 +411,7 @@
                         android:paddingBottom="@dimen/dp_5"
                         android:text="备注"
                         android:textColor="@color/tab_main_text_default"
-                        android:textSize="@dimen/sp_13" />
+                        android:textSize="@dimen/sp_14" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -436,7 +436,7 @@
                             android:textColor="@color/tab_main_text_default"
                             android:textColorHint="@color/clock_one"
                             android:textCursorDrawable="@drawable/nickname_cursor"
-                            android:textSize="@dimen/sp_12" />
+                            android:textSize="@dimen/sp_14" />
 
                     </LinearLayout>
 
@@ -487,7 +487,7 @@
                                     android:paddingLeft="@dimen/dp_10"
                                     android:text="余额付款"
                                     android:textColor="@color/tab_main_text_default"
-                                    android:textSize="@dimen/sp_13" />
+                                    android:textSize="@dimen/sp_14" />
                             </LinearLayout>
 
                             <TextView
@@ -520,7 +520,7 @@
                                     android:paddingLeft="@dimen/dp_10"
                                     android:text="现金支付"
                                     android:textColor="@color/tab_main_text_default"
-                                    android:textSize="@dimen/sp_13" />
+                                    android:textSize="@dimen/sp_14" />
                             </LinearLayout>
 
                             <TextView
@@ -553,7 +553,7 @@
                                     android:paddingLeft="@dimen/dp_10"
                                     android:text="农商"
                                     android:textColor="@color/tab_main_text_default"
-                                    android:textSize="@dimen/sp_13" />
+                                    android:textSize="@dimen/sp_14" />
                             </LinearLayout>
 
                             <TextView
@@ -633,7 +633,7 @@
                     </LinearLayout>
 
                 </LinearLayout>
-            </ScrollView>
+            </android.support.v4.widget.NestedScrollView>
         </RelativeLayout>
     </LinearLayout>
 </LinearLayout>

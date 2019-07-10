@@ -83,6 +83,7 @@ public class OKHttpRequestWrap {
             @Override
             public void onOkHttpError(String error) {
                 if (http != null) {
+                    Toast.makeText(context, error, Toast.LENGTH_SHORT).show();
                     http.onOkHttpError(error);
                 }
             }
