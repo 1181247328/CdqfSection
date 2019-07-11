@@ -3,13 +3,11 @@ package com.cdqf.cart_activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -17,23 +15,21 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cdqf.cart.R;
+import com.cdqf.cart_dilog.OtherDilogFragment;
+import com.cdqf.cart_dilog.ServiceDilogFragment;
 import com.cdqf.cart_find.ThroughFind;
 import com.cdqf.cart_state.BaseActivity;
 import com.cdqf.cart_state.CartState;
-import com.cdqf.cart_state.StatusBarCompat;
+import com.cdqf.cart_state.StaturBar;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.addapp.pickers.common.LineConfig;
 import cn.addapp.pickers.listeners.OnItemPickListener;
-import cn.addapp.pickers.listeners.OnMoreItemPickListener;
 import cn.addapp.pickers.listeners.OnSingleWheelListener;
-import cn.addapp.pickers.picker.LinkagePicker;
 import cn.addapp.pickers.picker.SinglePicker;
 import cn.addapp.pickers.util.ConvertUtils;
 import de.greenrobot.event.EventBus;
@@ -115,22 +111,13 @@ public class AddOrderActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        //API19以下用于沉侵式菜单栏
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        }
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         //加载布局
         setContentView(R.layout.actiivty_addorder);
 
-        //API>=20以上用于沉侵式菜单栏
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-            //沉侵
-            StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.black));
-        }
+        StaturBar.setStatusBar(this, R.color.tab_main_text_icon);
 
         initAgo();
 
@@ -269,70 +256,20 @@ public class AddOrderActivity extends BaseActivity {
                 pickerSourcecolor.setOnItemPickListener(new OnItemPickListener<String>() {
                     @Override
                     public void onItemPicked(int index, String item) {
+
                     }
                 });
                 pickerSourcecolor.show();
                 break;
             //服务项目
             case R.id.ll_order_service:
-                LinkagePicker.DataProvider provider = new LinkagePicker.DataProvider() {
-
-                    @Override
-                    public boolean isOnlyTwo() {
-                        return true;
-                    }
-
-                    @Override
-                    public List<String> provideFirstData() {
-
-                        return null;
-                    }
-
-                    @Override
-                    public List<String> provideSecondData(int firstIndex) {
-                        return null;
-                    }
-
-                    @Override
-                    public List<String> provideThirdData(int firstIndex, int secondIndex) {
-                        return null;
-                    }
-
-                };
-                LinkagePicker picker = new LinkagePicker(this, provider);
-                picker.setCanLoop(false);
-                LineConfig config = new LineConfig(1);
-                config.setColor(ContextCompat.getColor(context, R.color.addstore_one));//线颜色
-                config.setThick(ConvertUtils.toPx(this, 1));//线粗
-                picker.setLineConfig(config);
-                //是不是有线
-                picker.setLineVisible(true);
-                picker.setTopLineColor(Color.TRANSPARENT);
-                picker.setTextSize(14);
-//                picker.setWheelModeEnable(true);
-                picker.setWeightEnable(true);
-                picker.setCancelTextColor(ContextCompat.getColor(context, R.color.house_eight));//顶部取消按钮文字颜色
-                picker.setCancelTextSize(14);
-                picker.setSubmitTextColor(ContextCompat.getColor(context, R.color.house_eight));//顶部确定按钮文字颜色
-                picker.setSubmitTextSize(14);
-                picker.setBackgroundColor(ContextCompat.getColor(context, R.color.white));//背景色
-                picker.setSelectedTextColor(ContextCompat.getColor(context, R.color.house_eight));//前四位值是透明度
-                picker.setUnSelectedTextColor(ContextCompat.getColor(context, R.color.addstore_one));
-//                picker.setLabel("小时制", "点");
-                picker.setSelectedIndex(0, 0);
-                //picker.setSelectedItem("12", "9");
-                picker.setOnMoreItemPickListener(new OnMoreItemPickListener<String>() {
-
-                    @Override
-                    public void onItemPicked(String first, String second, String third) {
-                        Log.e(TAG, "---onItemPicked---" + first + "---" + second + "---" + third);
-
-                    }
-                });
-                picker.show();
+                ServiceDilogFragment serviceDilogFragment = new ServiceDilogFragment();
+                serviceDilogFragment.show(getSupportFragmentManager(), "服务项目");
                 break;
             //其它服务
             case R.id.ll_order_other:
+                OtherDilogFragment otherDilogFragment = new OtherDilogFragment();
+                otherDilogFragment.show(getSupportFragmentManager(), "其它服务");
                 break;
             //提交订单
             case R.id.tv_order_submit:

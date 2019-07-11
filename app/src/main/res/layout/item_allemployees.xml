@@ -24,7 +24,7 @@
             android:paddingBottom="@dimen/dp_5"
             android:text="浅水半岛店"
             android:textColor="@color/tab_main_text_default"
-            android:textSize="@dimen/sp_12" />
+            android:textSize="@dimen/sp_14" />
 
         <TextView
             android:layout_width="match_parent"
@@ -45,7 +45,7 @@
                 android:paddingBottom="@dimen/dp_10"
                 android:text="姓名"
                 android:textColor="@color/tab_main_text_default"
-                android:textSize="@dimen/sp_12" />
+                android:textSize="@dimen/sp_14" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -63,7 +63,7 @@
                     android:paddingBottom="@dimen/dp_10"
                     android:text="杨显澎"
                     android:textColor="@color/tab_main_text_default"
-                    android:textSize="@dimen/sp_12" />
+                    android:textSize="@dimen/sp_14" />
 
             </LinearLayout>
 
@@ -88,7 +88,7 @@
                 android:paddingBottom="@dimen/dp_10"
                 android:text="职位"
                 android:textColor="@color/tab_main_text_default"
-                android:textSize="@dimen/sp_12" />
+                android:textSize="@dimen/sp_14" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -106,7 +106,7 @@
                     android:paddingBottom="@dimen/dp_10"
                     android:text="店长"
                     android:textColor="@color/tab_main_text_default"
-                    android:textSize="@dimen/sp_12" />
+                    android:textSize="@dimen/sp_14" />
 
             </LinearLayout>
 
@@ -131,7 +131,7 @@
                 android:paddingBottom="@dimen/dp_10"
                 android:text="工号"
                 android:textColor="@color/tab_main_text_default"
-                android:textSize="@dimen/sp_12" />
+                android:textSize="@dimen/sp_14" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -149,7 +149,7 @@
                     android:paddingBottom="@dimen/dp_10"
                     android:text="W1000"
                     android:textColor="@color/tab_main_text_default"
-                    android:textSize="@dimen/sp_12" />
+                    android:textSize="@dimen/sp_14" />
 
             </LinearLayout>
 
@@ -174,7 +174,7 @@
                 android:paddingBottom="@dimen/dp_10"
                 android:text="电话号码"
                 android:textColor="@color/tab_main_text_default"
-                android:textSize="@dimen/sp_12" />
+                android:textSize="@dimen/sp_14" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -192,7 +192,7 @@
                     android:paddingBottom="@dimen/dp_10"
                     android:text="13551021774"
                     android:textColor="@color/tab_main_text_default"
-                    android:textSize="@dimen/sp_12" />
+                    android:textSize="@dimen/sp_14" />
 
             </LinearLayout>
 
@@ -217,7 +217,7 @@
                 android:paddingBottom="@dimen/dp_10"
                 android:text="紧急联系人"
                 android:textColor="@color/tab_main_text_default"
-                android:textSize="@dimen/sp_12" />
+                android:textSize="@dimen/sp_14" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -235,7 +235,7 @@
                     android:paddingBottom="@dimen/dp_10"
                     android:text="小谢"
                     android:textColor="@color/tab_main_text_default"
-                    android:textSize="@dimen/sp_12" />
+                    android:textSize="@dimen/sp_14" />
 
             </LinearLayout>
 
@@ -261,7 +261,7 @@
                 android:paddingBottom="@dimen/dp_10"
                 android:text="状态"
                 android:textColor="@color/tab_main_text_default"
-                android:textSize="@dimen/sp_12" />
+                android:textSize="@dimen/sp_14" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -283,7 +283,7 @@
                     android:paddingBottom="@dimen/dp_5"
                     android:text="上班中"
                     android:textColor="@color/tab_main_text_default"
-                    android:textSize="@dimen/sp_12" />
+                    android:textSize="@dimen/sp_14" />
 
             </LinearLayout>
 

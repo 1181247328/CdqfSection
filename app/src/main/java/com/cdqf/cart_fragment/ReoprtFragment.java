@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,8 +13,12 @@ import android.view.ViewGroup;
 
 import com.cdqf.cart.R;
 import com.cdqf.cart_adapter.ShopFragmentAdapter;
-import com.cdqf.cart_find.AccountExitFind;
+import com.cdqf.cart_find.DailyPullFind;
+import com.cdqf.cart_find.MothPullFind;
+import com.cdqf.cart_find.ReoptrPullFind;
+import com.cdqf.cart_find.WeekPullFind;
 import com.cdqf.cart_state.CartState;
+import com.cdqf.cart_view.ViewPageSwipeRefreshLayout;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.zhengsr.viewpagerlib.indicator.TabIndicator;
@@ -44,6 +49,8 @@ public class ReoprtFragment extends Fragment {
 
     private View view = null;
 
+    private int position = 0;
+
     private Fragment[] orderList = new Fragment[]{
             new DailyFragment(),
             new WeekFragment(),
@@ -51,6 +58,10 @@ public class ReoprtFragment extends Fragment {
     };
 
     private List<String> orderName = Arrays.asList("日报", "周报", "月报");
+
+    //刷新
+    @BindView(R.id.srl_report_pull)
+    public ViewPageSwipeRefreshLayout srlReportPull = null;
 
     @BindView(R.id.ti_report_dicatior)
     public TabIndicator tiReportDicatior = null;
@@ -91,7 +102,45 @@ public class ReoprtFragment extends Fragment {
         tiReportDicatior.setTabData(vpReportScreen, orderName, new TabIndicator.TabClickListener() {
             @Override
             public void onClick(int i) {
+                position = i;
                 vpReportScreen.setCurrentItem(i);
+            }
+        });
+        vpReportScreen.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+
+            }
+
+            @Override
+            public void onPageSelected(int i) {
+                position = i;
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+
+            }
+        });
+
+        srlReportPull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                srlReportPull.setRefreshing(false);
+                switch (position) {
+                    case 0:
+                        //日报
+                        eventBus.post(new DailyPullFind());
+                        break;
+                    case 1:
+                        //周报
+                        eventBus.post(new WeekPullFind());
+                        break;
+                    case 2:
+                        //月报
+                        eventBus.post(new MothPullFind());
+                        break;
+                }
             }
         });
     }
@@ -105,7 +154,6 @@ public class ReoprtFragment extends Fragment {
     private void initBack() {
 
     }
-
 
     private void forIntent(Class<?> activity) {
         Intent intent = new Intent(getContext(), activity);
@@ -151,12 +199,13 @@ public class ReoprtFragment extends Fragment {
     }
 
     /**
-     * 退出当前账户
+     * 刷新和禁用
      *
-     * @param a
+     * @param s
      */
     @Subscribe
-    public void onEventMainThread(AccountExitFind a) {
-
+    public void onEventMainThread(ReoptrPullFind s) {
+        srlReportPull.setRefreshing(s.isRefreshing);
+        srlReportPull.setEnabled(s.isEnabled);
     }
 }

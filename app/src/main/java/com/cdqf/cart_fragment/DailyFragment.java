@@ -8,13 +8,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.cdqf.cart.R;
 import com.cdqf.cart_activity.ReportDatilsActivity;
 import com.cdqf.cart_adapter.DailyAdapter;
-import com.cdqf.cart_find.AccountExitFind;
+import com.cdqf.cart_find.DailyPullFind;
+import com.cdqf.cart_find.ReoptrPullFind;
 import com.cdqf.cart_state.CartState;
 import com.google.gson.Gson;
 import com.jingchen.pulltorefresh.PullToRefreshLayout;
@@ -94,6 +96,25 @@ public class DailyFragment extends Fragment {
                 //上拉加载
             }
         });
+
+        lvDailyList.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                View firstView = view.getChildAt(firstVisibleItem);
+                // 当firstVisibleItem是第0位。如果firstView==null说明列表为空，需要刷新;或者top==0说明已经到达列表顶部, 也需要刷新
+                if (firstVisibleItem == 0 && (firstView == null || firstView.getTop() == view.getPaddingTop())) {
+                    eventBus.post(new ReoptrPullFind(false, true));
+                } else {
+                    eventBus.post(new ReoptrPullFind(false, false));
+                }
+            }
+        });
+
         lvDailyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -154,8 +175,12 @@ public class DailyFragment extends Fragment {
         eventBus.unregister(this);
     }
 
+    /**
+     * 刷新
+     * @param a
+     */
     @Subscribe
-    public void onEventMainThread(AccountExitFind a) {
+    public void onEventMainThread(DailyPullFind a) {
 
     }
 }

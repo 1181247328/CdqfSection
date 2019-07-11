@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent">
+
+            <TextView
+                android:id="@+id/tv_other_dilog_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shop_item"
+                android:gravity="center_vertical|left"
+                android:paddingLeft="@dimen/dp_8"
+                android:paddingTop="@dimen/dp_8"
+                android:paddingRight="@dimen/dp_8"
+                android:paddingBottom="@dimen/dp_8"
+                android:text="取消"
+                android:textColor="@color/tab_main_text_default"
+                android:textSize="@dimen/sp_14" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:gravity="center_vertical|center"
+                android:paddingLeft="@dimen/dp_8"
+                android:paddingTop="@dimen/dp_8"
+                android:paddingRight="@dimen/dp_8"
+                android:paddingBottom="@dimen/dp_8"
+                android:text="请输入其它服务"
+                android:textColor="@color/tab_main_text_default"
+                android:textSize="@dimen/sp_15" />
+
+            <TextView
+                android:id="@+id/tv_other_dilog_sumit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/shop_item"
+                android:gravity="center_vertical|left"
+                android:paddingLeft="@dimen/dp_8"
+                android:paddingTop="@dimen/dp_8"
+                android:paddingRight="@dimen/dp_8"
+                android:paddingBottom="@dimen/dp_8"
+                android:text="确定"
+                android:textColor="@color/tab_main_text_default"
+                android:textSize="@dimen/sp_14" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_1"
+            android:background="@color/service_bak" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shop_item"
+                android:gravity="center_vertical|left"
+                android:paddingLeft="@dimen/dp_8"
+                android:paddingTop="@dimen/dp_12"
+                android:paddingRight="@dimen/dp_8"
+                android:paddingBottom="@dimen/dp_12"
+                android:text="项目名称"
+                android:textColor="@color/tab_main_text_default"
+                android:textSize="@dimen/sp_14" />
+
+            <EditText
+                android:id="@+id/et_other_dilog_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:gravity="center_vertical|right"
+                android:hint="请输入项目名称"
+                android:paddingLeft="@dimen/dp_8"
+                android:paddingTop="@dimen/dp_12"
+                android:paddingRight="@dimen/dp_8"
+                android:paddingBottom="@dimen/dp_12"
+                android:textColor="@color/tab_main_text_default"
+                android:textColorHint="@color/clock_one"
+                android:textCursorDrawable="@drawable/nickname_cursor"
+                android:textSize="@dimen/sp_14" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_1"
+            android:background="@color/service_bak" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shop_item"
+                android:gravity="center_vertical|left"
+                android:paddingLeft="@dimen/dp_8"
+                android:paddingTop="@dimen/dp_12"
+                android:paddingRight="@dimen/dp_8"
+                android:paddingBottom="@dimen/dp_12"
+                android:text="服务项目"
+                android:textColor="@color/tab_main_text_default"
+                android:textSize="@dimen/sp_14" />
+
+            <EditText
+                android:id="@+id/et_other_dilog_project"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:gravity="center_vertical|right"
+                android:hint="请输入服务项目"
+                android:paddingLeft="@dimen/dp_8"
+                android:paddingTop="@dimen/dp_12"
+                android:paddingRight="@dimen/dp_8"
+                android:paddingBottom="@dimen/dp_12"
+                android:textColor="@color/tab_main_text_default"
+                android:textColorHint="@color/clock_one"
+                android:textCursorDrawable="@drawable/nickname_cursor"
+                android:textSize="@dimen/sp_14" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_1"
+            android:background="@color/service_bak" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shop_item"
+                android:gravity="center_vertical|left"
+                android:paddingLeft="@dimen/dp_8"
+                android:paddingTop="@dimen/dp_12"
+                android:paddingRight="@dimen/dp_8"
+                android:paddingBottom="@dimen/dp_12"
+                android:text="耗材成本"
+                android:textColor="@color/tab_main_text_default"
+                android:textSize="@dimen/sp_14" />
+
+            <EditText
+                android:id="@+id/et_other_dilog_cost"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:gravity="center_vertical|right"
+                android:hint="请输入金额"
+                android:inputType="numberDecimal"
+                android:paddingLeft="@dimen/dp_8"
+                android:paddingTop="@dimen/dp_12"
+                android:paddingRight="@dimen/dp_8"
+                android:paddingBottom="@dimen/dp_12"
+                android:textColor="@color/tab_main_text_default"
+                android:textColorHint="@color/clock_one"
+                android:textCursorDrawable="@drawable/nickname_cursor"
+                android:textSize="@dimen/sp_14" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_1"
+            android:background="@color/service_bak" />
+
+    </LinearLayout>
+
+</LinearLayout>

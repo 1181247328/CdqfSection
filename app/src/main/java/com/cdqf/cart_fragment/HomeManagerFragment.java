@@ -275,6 +275,7 @@ public class HomeManagerFragment extends Fragment {
         }
     }
 
+
     @Override
     public void onPause() {
         super.onPause();

@@ -2,27 +2,30 @@ package com.cdqf.cart_activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
 import com.cdqf.cart.R;
 import com.cdqf.cart_adapter.ShopFragmentAdapter;
+import com.cdqf.cart_find.AllEmployeesPullFind;
 import com.cdqf.cart_find.DatilsPullFind;
+import com.cdqf.cart_find.EmployeesPullFind;
+import com.cdqf.cart_find.VacationPullFind;
+import com.cdqf.cart_find.WorkPullFind;
 import com.cdqf.cart_fragment.AddEmployeesFragment;
 import com.cdqf.cart_fragment.AllEmployeesFragment;
 import com.cdqf.cart_fragment.VacationFragment;
 import com.cdqf.cart_fragment.WorkFragment;
 import com.cdqf.cart_state.BaseActivity;
 import com.cdqf.cart_state.CartState;
-import com.cdqf.cart_state.StatusBarCompat;
+import com.cdqf.cart_state.StaturBar;
+import com.cdqf.cart_view.ViewPageSwipeRefreshLayout;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.zhengsr.viewpagerlib.indicator.TabIndicator;
@@ -62,6 +65,9 @@ public class EmployeesActivity extends BaseActivity {
 
     private List<String> orderName = Arrays.asList("全部", "上班中", "休假", "添加");
 
+    @BindView(R.id.srl_shop_pull)
+    public ViewPageSwipeRefreshLayout srlShopPull = null;
+
     //返回
     @BindView(R.id.rl_employeess_return)
     public RelativeLayout rlEmployeessReturn = null;
@@ -74,25 +80,17 @@ public class EmployeesActivity extends BaseActivity {
 
     private ShopFragmentAdapter shopFragmentAdapter = null;
 
+    private int position = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        //API19以下用于沉侵式菜单栏
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        }
-
         //加载布局
         setContentView(R.layout.activity_employees);
 
-        //API>=20以上用于沉侵式菜单栏
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-            //沉侵
-            StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.black));
-        }
+        StaturBar.setStatusBar(this, R.color.tab_main_text_icon);
 
         initAgo();
 
@@ -128,7 +126,60 @@ public class EmployeesActivity extends BaseActivity {
         tiEmployeesDicatior.setTabData(vpEmployeesScreen, orderName, new TabIndicator.TabClickListener() {
             @Override
             public void onClick(int i) {
+                Log.e(TAG, "---当前为1---" + i);
+                position = i;
+                srlShopPull.setEnabled(true);
+                if (position == 3) {
+                    Log.e(TAG, "---当前为3---" + position);
+                    srlShopPull.setEnabled(false);
+                }
                 vpEmployeesScreen.setCurrentItem(i);
+            }
+        });
+
+        vpEmployeesScreen.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+
+            }
+
+            @Override
+            public void onPageSelected(int i) {
+                Log.e(TAG, "---当前为2---" + i);
+                position = i;
+                srlShopPull.setEnabled(true);
+                if (position == 3) {
+                    Log.e(TAG, "---当前为4---" + position);
+                    srlShopPull.setEnabled(false);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+
+            }
+        });
+
+        srlShopPull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                srlShopPull.setRefreshing(false);
+                switch (position) {
+                    case 0:
+                        //全部
+                        eventBus.post(new AllEmployeesPullFind());
+                        break;
+                    case 1:
+                        //上班中
+                        eventBus.post(new WorkPullFind());
+                        break;
+                    case 2:
+                        //休假
+                        eventBus.post(new VacationPullFind());
+                        break;
+                    case 3:
+                        break;
+                }
             }
         });
     }
@@ -197,6 +248,21 @@ public class EmployeesActivity extends BaseActivity {
     @Subscribe
     public void onEventMainThread(DatilsPullFind r) {
 
+    }
+
+    /**
+     * 是否刷新和禁用
+     *
+     * @param s
+     */
+    @Subscribe
+    public void onEventMainThread(EmployeesPullFind s) {
+        Log.e(TAG, "---是否刷新和禁用---" + s.isRefreshing + "---" + s.isEnabled);
+        srlShopPull.setRefreshing(s.isRefreshing);
+        srlShopPull.setEnabled(s.isEnabled);
+        if(position == 3){
+            srlShopPull.setEnabled(false);
+        }
     }
 
 }
