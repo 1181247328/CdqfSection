@@ -170,9 +170,7 @@ public class ReportDatilsActivity extends BaseActivity {
 
     private void initBack() {
         ptrlDatilsPull.setPullDownEnable(false);
-
     }
-
 
     private void initIntent(Class<?> activity) {
         Intent intent = new Intent(context, activity);

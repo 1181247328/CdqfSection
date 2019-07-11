@@ -162,6 +162,10 @@ public class HomeManagerFragment extends Fragment {
                     case 7:
                         initIntent(ClockActivity.class);
                         break;
+                    //报销
+                    case 8:
+
+                        break;
                 }
             }
         });

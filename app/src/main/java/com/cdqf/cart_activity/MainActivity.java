@@ -205,11 +205,11 @@ public class MainActivity extends BaseActivity {
                 //我的
                 ivMainMy.setImageResource(R.mipmap.main_tab_my_default);
                 tvMainMy.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_default));
-                if (homeFragment == null) {
-                    homeFragment = new HomeFragment();
-                    transaction.add(R.id.fl_main_fragment, homeFragment);
+                if (reoprtFragment == null) {
+                    reoprtFragment = new ReoprtFragment();
+                    transaction.add(R.id.fl_main_fragment, reoprtFragment);
                 } else {
-                    transaction.show(homeFragment);
+                    transaction.show(reoprtFragment);
                 }
                 break;
             //我的
@@ -242,6 +242,9 @@ public class MainActivity extends BaseActivity {
     private void hideFragments(FragmentTransaction transaction) {
         if (homeFragment != null) {
             transaction.hide(homeFragment);
+        }
+        if (reoprtFragment != null) {
+            transaction.hide(reoprtFragment);
         }
         if (myFragment != null) {
             transaction.hide(myFragment);

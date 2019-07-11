@@ -1,23 +1,30 @@
 package com.cdqf.cart_fragment;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
-import com.cdqf.cart_activity.NoticeActivity;
-import com.cdqf.cart_activity.ServiceActivity;
+import com.cdqf.cart_activity.ClockActivity;
+import com.cdqf.cart_activity.LossNewsActivity;
+import com.cdqf.cart_activity.NoticeManagerActivity;
+import com.cdqf.cart_activity.ShopActivity;
 import com.cdqf.cart_adapter.HomeAdapter;
-import com.cdqf.cart_find.AssistantShopFind;
+import com.cdqf.cart_find.ScanFind;
+import com.cdqf.cart_find.ShopViscousFind;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;
 import com.cdqf.cart_state.CartAddaress;
@@ -31,6 +38,12 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import cn.addapp.pickers.common.LineConfig;
+import cn.addapp.pickers.listeners.OnItemPickListener;
+import cn.addapp.pickers.listeners.OnSingleWheelListener;
+import cn.addapp.pickers.picker.SinglePicker;
+import cn.addapp.pickers.util.ConvertUtils;
 import de.greenrobot.event.EventBus;
 
 /**
@@ -38,7 +51,7 @@ import de.greenrobot.event.EventBus;
  */
 public class HomeFragment extends Fragment {
 
-    private String TAG = HomeFragment.class.getSimpleName();
+    private String TAG = HomeManagerFragment.class.getSimpleName();
 
     private CartState cartState = CartState.getCartState();
 
@@ -50,19 +63,37 @@ public class HomeFragment extends Fragment {
 
     private View view = null;
 
-    //名称
-    @BindView(R.id.tv_home_name)
-    public TextView tvHomeName = null;
+//    //名称
+//    @BindView(R.id.tv_home_name)
+//    public TextView tvHomeName = null;
+//
+//    //内容
+//    @BindView(R.id.tv_home_context)
+//    public TextView tvHomeContext = null;
 
-    //内容
-    @BindView(R.id.tv_home_context)
-    public TextView tvHomeContext = null;
+    //选择店
+    @BindView(R.id.ll_homemanager_shop)
+    public LinearLayout llHomemanagerShop = null;
+
+    @BindView(R.id.tv_homemanager_shop)
+    public TextView tvHomemanagerShop = null;
+
+    @BindView(R.id.tv_homemanager_scan)
+    public RelativeLayout tvHomemanagerScan = null;
 
     //集合
     @BindView(R.id.mgv_home_list)
     public LineGridView mgvHomeList = null;
 
     private HomeAdapter homeAdapter = null;
+
+    //数量
+    @BindView(R.id.tv_home_order)
+    public TextView tv_homeOrder = null;
+
+    //营业额
+    @BindView(R.id.tv_home_ordermoney)
+    public TextView tvHomeOrdermoney = null;
 
     private int s = 0;
 
@@ -96,16 +127,23 @@ public class HomeFragment extends Fragment {
                 switch (position) {
                     //损耗品
                     case 0:
-//                        initIntent(LossActivity.class);
-                        cartState.initToast(getContext(), "暂未开通", true, 0);
+                        initIntent(LossNewsActivity.class);
+//                        cartState.initToast(getContext(), "暂未开通", true, 0);
                         break;
                     //服务
                     case 1:
-                        initIntent(ServiceActivity.class);
+                        initIntent(ShopActivity.class);
                         break;
                     //通知
                     case 2:
-                        initIntent(NoticeActivity.class);
+                        initIntent(NoticeManagerActivity.class);
+                        break;
+                    //考勤打卡
+                    case 3:
+                        initIntent(ClockActivity.class);
+                        break;
+                    //报销
+                    case 4:
                         break;
                 }
             }
@@ -118,14 +156,12 @@ public class HomeFragment extends Fragment {
     }
 
     private void initBack() {
-        tvHomeName.setText(cartState.getUser().getName() + ":");
-        tvHomeContext.setText("今天是您加入脱狗车宝第" + cartState.getUser().getDay() + "天!");
+        initShopPull();
     }
 
     private void initIntent(Class<?> activity) {
         Intent intent = new Intent(getContext(), activity);
         startActivity(intent);
-        initShopPull();
     }
 
     private void initShopPull() {
@@ -143,13 +179,13 @@ public class HomeFragment extends Fragment {
                     //获取成功
                     case 200:
                         String data = resultJSON.getString("data");
-                        eventBus.postSticky(new AssistantShopFind(data, true));
+                        eventBus.postSticky(new ShopViscousFind(data, true));
                         break;
                     default:
                         s++;
                         if (s == 3) {
                             s = 0;
-                            eventBus.postSticky(new AssistantShopFind(msg, false));
+                            eventBus.postSticky(new ShopViscousFind(msg, false));
                         } else {
                             initShopPull();
                         }
@@ -166,10 +202,61 @@ public class HomeFragment extends Fragment {
 
     private String shop(String shopid) {
         String result = null;
-        result = CartAddaress.ADDRESS + "/?s=order.staff&shopid=" + shopid;
+        result = CartAddaress.ADDRESS + "/?s=order.shopowenr&shopid=" + shopid;
         Log.e(TAG, "---店总---" + result);
         return result;
     }
+
+    @OnClick({R.id.ll_homemanager_shop, R.id.tv_homemanager_scan})
+    public void onClick(View v) {
+        switch (v.getId()) {
+            //选择店铺
+            case R.id.ll_homemanager_shop:
+                SinglePicker<String> pickerSource = new SinglePicker<>(getActivity(), new String[]{
+                        "浅水半岛店"
+                });
+                LineConfig configSource = new LineConfig();
+                configSource.setColor(ContextCompat.getColor(getContext(), R.color.addstore_one));//线颜色
+                configSource.setThick(ConvertUtils.toPx(getActivity(), 1));//线粗
+                configSource.setItemHeight(20);
+                pickerSource.setLineConfig(configSource);
+                pickerSource.setCanLoop(false);//不禁用循环
+                pickerSource.setLineVisible(true);
+                pickerSource.setTopLineColor(Color.TRANSPARENT);
+                pickerSource.setTextSize(14);
+                pickerSource.setTitleText("店名");
+                pickerSource.setSelectedIndex(0);
+                pickerSource.setWheelModeEnable(true);
+                pickerSource.setWeightEnable(true);
+                pickerSource.setWeightWidth(1);
+                pickerSource.setCancelTextColor(ContextCompat.getColor(getContext(), R.color.house_eight));//顶部取消按钮文字颜色
+                pickerSource.setCancelTextSize(14);
+                pickerSource.setSubmitTextColor(ContextCompat.getColor(getContext(), R.color.house_eight));//顶部确定按钮文字颜色
+                pickerSource.setSubmitTextSize(14);
+                pickerSource.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));//背景色
+                pickerSource.setSelectedTextColor(ContextCompat.getColor(getContext(), R.color.house_eight));//前四位值是透明度
+                pickerSource.setUnSelectedTextColor(ContextCompat.getColor(getContext(), R.color.addstore_one));
+                pickerSource.setOnSingleWheelListener(new OnSingleWheelListener() {
+                    @Override
+                    public void onWheeled(int index, String item) {
+
+                    }
+                });
+                pickerSource.setOnItemPickListener(new OnItemPickListener<String>() {
+                    @Override
+                    public void onItemPicked(int index, String item) {
+                        tvHomemanagerShop.setText(item);
+                    }
+                });
+                pickerSource.show();
+                break;
+            //扫一扫
+            case R.id.tv_homemanager_scan:
+                eventBus.post(new ScanFind());
+                break;
+        }
+    }
+
 
     @Override
     public void onPause() {

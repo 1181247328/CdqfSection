@@ -25,13 +25,17 @@ public class HomeAdapter extends BaseAdapter {
     private int[] image = {
             R.mipmap.home_loss,
             R.mipmap.home_service,
-            R.mipmap.home_notices
+            R.mipmap.home_notices,
+            R.mipmap.home_clock,
+            R.mipmap.home_account
     };
 
     private String[] name = {
-            "损耗品",
+            "耗材管理",
             "服务",
-            "通知"
+            "通知",
+            "考勤打卡",
+            "报销",
     };
 
     public HomeAdapter(Context context) {
@@ -40,7 +44,7 @@ public class HomeAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 3;
+        return name.length;
     }
 
     @Override
