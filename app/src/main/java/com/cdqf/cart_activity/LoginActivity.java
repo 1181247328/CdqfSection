@@ -186,10 +186,10 @@ public class LoginActivity extends BaseActivity {
                         CartPreferences.setUser(context, user);
                         if (TextUtils.equals(user.getState(), "1")) {
                             //审核通过
-                            if (TextUtils.equals(user.getType(), "1")) {
+                            if (TextUtils.equals(user.getType(), "2")) {
                                 //员工
                                 initIntent(MainActivity.class);
-                            } else if (TextUtils.equals(user.getType(), "2")) {
+                            } else if (TextUtils.equals(user.getType(), "3")) {
                                 //店长
                                 initIntent(MainManagerActivity.class);
                             } else {

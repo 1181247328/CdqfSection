@@ -1,0 +1,398 @@
+package com.cdqf.cart_activity;
+
+import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
+import android.view.View;
+import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
+
+import com.cdqf.cart.R;
+import com.cdqf.cart_adapter.FillContextAdapter;
+import com.cdqf.cart_adapter.FillImageAdapter;
+import com.cdqf.cart_find.FillAddImageFind;
+import com.cdqf.cart_find.ShopFillFind;
+import com.cdqf.cart_find.TypeFillTypeFind;
+import com.cdqf.cart_image.PagerActivity;
+import com.cdqf.cart_state.BaseActivity;
+import com.cdqf.cart_state.CartState;
+import com.cdqf.cart_state.StaturBar;
+import com.cdqf.cart_view.ListViewForScrollView;
+import com.cdqf.cart_view.MyGridView;
+import com.google.gson.Gson;
+import com.luck.picture.lib.PictureSelector;
+import com.luck.picture.lib.config.PictureConfig;
+import com.luck.picture.lib.config.PictureMimeType;
+import com.luck.picture.lib.entity.LocalMedia;
+import com.luck.picture.lib.tools.PictureFileUtils;
+import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import cn.addapp.pickers.common.LineConfig;
+import cn.addapp.pickers.listeners.OnItemPickListener;
+import cn.addapp.pickers.listeners.OnSingleWheelListener;
+import cn.addapp.pickers.picker.SinglePicker;
+import cn.addapp.pickers.util.ConvertUtils;
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
+
+/**
+ * 报销明细
+ */
+public class FillActivity extends BaseActivity {
+
+    private String TAG = FillActivity.class.getSimpleName();
+
+    private Context context = null;
+
+    private ImageLoader imageLoader = ImageLoader.getInstance();
+
+    private EventBus eventBus = EventBus.getDefault();
+
+    private CartState cartState = CartState.getCartState();
+
+    private Gson gson = new Gson();
+
+    //返回
+    @BindView(R.id.rl_fill_return)
+    public RelativeLayout rlFillReturn = null;
+
+    @BindView(R.id.sv_fill_view)
+    public ScrollView svFillView = null;
+
+    //时间
+    @BindView(R.id.tv_fill_data)
+    public TextView tvFillData = null;
+
+    @BindView(R.id.lvfsv_fill_list)
+    public ListViewForScrollView lvfsvFillList = null;
+
+    private FillContextAdapter fillContextAdapter = null;
+
+    //添加报销明细
+    @BindView(R.id.ll_fill_add)
+    public LinearLayout llFillAdd = null;
+
+    //总额
+    @BindView(R.id.tv_fill_total)
+    public TextView tvFillTotal = null;
+
+    @BindView(R.id.mgv_fill_list)
+    public MyGridView mgvFillList = null;
+
+    private FillImageAdapter fillImageAdapter = null;
+
+    //提交审批
+    @BindView(R.id.tv_fill_account)
+    public TextView tvFillAccount = null;
+
+    private Handler handler = null;
+
+    private List<LocalMedia> selectList = new CopyOnWriteArrayList<>();
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        //加载布局
+        setContentView(R.layout.activity_fill);
+
+        StaturBar.setStatusBar(this, R.color.tab_main_text_icon);
+
+        initAgo();
+
+        initView();
+
+        initAdapter();
+
+        initListener();
+
+        initBack();
+    }
+
+    private void initAgo() {
+        context = this;
+        if (!eventBus.isRegistered(this)) {
+            eventBus.register(this);
+        }
+        ButterKnife.bind(this);
+        imageLoader = cartState.getImageLoader(context);
+        handler = new Handler();
+    }
+
+    private void initView() {
+
+    }
+
+    private void initAdapter() {
+        fillContextAdapter = new FillContextAdapter(context);
+        lvfsvFillList.setAdapter(fillContextAdapter);
+        fillImageAdapter = new FillImageAdapter(context);
+        mgvFillList.setAdapter(fillImageAdapter);
+    }
+
+    private void initListener() {
+        mgvFillList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                initIntent(PagerActivity.class,position);
+            }
+        });
+    }
+
+    private void initBack() {
+
+    }
+
+    private void initIntent(Class<?> activity) {
+        Intent intent = new Intent(context, activity);
+        startActivity(intent);
+    }
+
+    private void initIntent(Class<?> activity, int position) {
+        Intent intent = new Intent(context, activity);
+        intent.putExtra("position", position);
+        intent.putExtra("pageList", (Serializable) cartState.getImagePathsList());
+        startActivity(intent);
+    }
+
+    private void create() {
+        PictureSelector.create(FillActivity.this)
+                .openGallery(PictureMimeType.ofImage())
+                .maxSelectNum(200)
+                .minSelectNum(1)
+                .imageSpanCount(4)
+                .compress(true)
+                .minimumCompressSize(100)
+                .imageFormat(PictureMimeType.PNG)
+                .selectionMedia(selectList)
+                .isCamera(true)
+                .forResult(PictureConfig.CHOOSE_REQUEST);
+    }
+
+
+    @OnClick({R.id.rl_fill_return, R.id.ll_fill_add, R.id.tv_fill_account})
+    public void onClick(View v) {
+        switch (v.getId()) {
+            //返回
+            case R.id.rl_fill_return:
+                finish();
+                break;
+            //添加报销明细
+            case R.id.ll_fill_add:
+                fillContextAdapter.setNumber(1);
+                handler.postAtTime(new Runnable() {
+                    @Override
+                    public void run() {
+                        svFillView.fullScroll(ScrollView.FOCUS_DOWN);
+                        lvfsvFillList.setSelection(fillContextAdapter.getCount() - 1);
+                    }
+                }, 300);
+                break;
+            //提交审批
+            case R.id.tv_fill_account:
+                break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case PictureConfig.CHOOSE_REQUEST:
+                    // 图片、视频、音频选择结果回调
+                    cartState.getImagePathsList().clear();
+                    selectList = PictureSelector.obtainMultipleResult(data);
+                    // 例如 LocalMedia 里面返回三种path
+                    // 1.media.getPath(); 为原图path
+                    // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true  注意：音视频除外
+                    // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true  注意：音视频除外
+                    // 如果裁剪并压缩了，以取压缩路径为准，因为是先裁剪后压缩的
+                    for (LocalMedia media : selectList) {
+                        Log.e(TAG, "---1---" + media.getPath() + "---2---" + media.getCutPath() + "---3---" + media.getCompressPath());
+                        if (media.isCompressed()) {
+                            cartState.getImagePathsList().add(media.getCompressPath());
+                        } else if (media.isCut()) {
+                            cartState.getImagePathsList().add(media.getCutPath());
+                        } else {
+                            cartState.getImagePathsList().add(media.getPath());
+                        }
+                    }
+                    fillImageAdapter.notifyDataSetChanged();
+                    break;
+            }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.e(TAG, "---启动---");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.e(TAG, "---恢复---");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.e(TAG, "---暂停---");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.e(TAG, "---停止---");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.e(TAG, "---重启---");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.e(TAG, "---销毁---");
+        eventBus.unregister(this);
+        cartState.getImagePathsList().clear();
+        PictureFileUtils.deleteCacheDirFile(FillActivity.this);
+    }
+
+    /**
+     * 添加
+     *
+     * @param s
+     */
+    @Subscribe
+    public void onEventMainThread(FillAddImageFind s) {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (ContextCompat.checkSelfPermission(FillActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(FillActivity.this, new String[]{Manifest.permission.CAMERA}, 8);
+            } else {
+                create();
+            }
+        } else {
+            create();
+        }
+
+    }
+
+    /**
+     * 门店选择
+     *
+     * @param s
+     */
+    @Subscribe
+    public void onEventMainThread(ShopFillFind s) {
+        SinglePicker<String> pickerSource = new SinglePicker<>(FillActivity.this, new String[]{
+                "浅水半岛店"
+        });
+        LineConfig configSource = new LineConfig();
+        configSource.setColor(ContextCompat.getColor(FillActivity.this, R.color.addstore_one));//线颜色
+        configSource.setThick(ConvertUtils.toPx(FillActivity.this, 1));//线粗
+        configSource.setItemHeight(20);
+        pickerSource.setLineConfig(configSource);
+        pickerSource.setCanLoop(false);//不禁用循环
+        pickerSource.setLineVisible(true);
+        pickerSource.setTopLineColor(Color.TRANSPARENT);
+        pickerSource.setTextSize(14);
+        pickerSource.setTitleText("所属店名");
+        pickerSource.setSelectedIndex(0);
+        pickerSource.setWheelModeEnable(true);
+        pickerSource.setWeightEnable(true);
+        pickerSource.setWeightWidth(1);
+        pickerSource.setCancelTextColor(ContextCompat.getColor(FillActivity.this, R.color.house_eight));//顶部取消按钮文字颜色
+        pickerSource.setCancelTextSize(14);
+        pickerSource.setSubmitTextColor(ContextCompat.getColor(FillActivity.this, R.color.house_eight));//顶部确定按钮文字颜色
+        pickerSource.setSubmitTextSize(14);
+        pickerSource.setBackgroundColor(ContextCompat.getColor(FillActivity.this, R.color.white));//背景色
+        pickerSource.setSelectedTextColor(ContextCompat.getColor(FillActivity.this, R.color.house_eight));//前四位值是透明度
+        pickerSource.setUnSelectedTextColor(ContextCompat.getColor(FillActivity.this, R.color.addstore_one));
+        pickerSource.setOnSingleWheelListener(new OnSingleWheelListener() {
+            @Override
+            public void onWheeled(int index, String item) {
+
+            }
+        });
+        pickerSource.setOnItemPickListener(new OnItemPickListener<String>() {
+            @Override
+            public void onItemPicked(int index, String item) {
+            }
+        });
+        pickerSource.show();
+    }
+
+    /**
+     * 报销类别
+     *
+     * @param s
+     */
+    @Subscribe
+    public void onEventMainThread(TypeFillTypeFind s) {
+        SinglePicker<String> pickerSource = new SinglePicker<>(FillActivity.this, new String[]{
+                "耗材", "硬件"
+        });
+        LineConfig configSource = new LineConfig();
+        configSource.setColor(ContextCompat.getColor(FillActivity.this, R.color.addstore_one));//线颜色
+        configSource.setThick(ConvertUtils.toPx(FillActivity.this, 1));//线粗
+        configSource.setItemHeight(20);
+        pickerSource.setLineConfig(configSource);
+        pickerSource.setCanLoop(false);//不禁用循环
+        pickerSource.setLineVisible(true);
+        pickerSource.setTopLineColor(Color.TRANSPARENT);
+        pickerSource.setTextSize(14);
+        pickerSource.setTitleText("报销类别");
+        pickerSource.setSelectedIndex(0);
+        pickerSource.setWheelModeEnable(true);
+        pickerSource.setWeightEnable(true);
+        pickerSource.setWeightWidth(1);
+        pickerSource.setCancelTextColor(ContextCompat.getColor(FillActivity.this, R.color.house_eight));//顶部取消按钮文字颜色
+        pickerSource.setCancelTextSize(14);
+        pickerSource.setSubmitTextColor(ContextCompat.getColor(FillActivity.this, R.color.house_eight));//顶部确定按钮文字颜色
+        pickerSource.setSubmitTextSize(14);
+        pickerSource.setBackgroundColor(ContextCompat.getColor(FillActivity.this, R.color.white));//背景色
+        pickerSource.setSelectedTextColor(ContextCompat.getColor(FillActivity.this, R.color.house_eight));//前四位值是透明度
+        pickerSource.setUnSelectedTextColor(ContextCompat.getColor(FillActivity.this, R.color.addstore_one));
+        pickerSource.setOnSingleWheelListener(new OnSingleWheelListener() {
+            @Override
+            public void onWheeled(int index, String item) {
+
+            }
+        });
+        pickerSource.setOnItemPickListener(new OnItemPickListener<String>() {
+            @Override
+            public void onItemPicked(int index, String item) {
+            }
+        });
+        pickerSource.show();
+    }
+}

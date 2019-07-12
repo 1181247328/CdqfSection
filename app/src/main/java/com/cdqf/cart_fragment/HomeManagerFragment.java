@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
+import com.cdqf.cart_activity.AccountActivity;
 import com.cdqf.cart_activity.AuditActivity;
 import com.cdqf.cart_activity.ClockActivity;
 import com.cdqf.cart_activity.EmployeesActivity;
@@ -164,7 +165,7 @@ public class HomeManagerFragment extends Fragment {
                         break;
                     //报销
                     case 8:
-
+                        initIntent(AccountActivity.class);
                         break;
                 }
             }

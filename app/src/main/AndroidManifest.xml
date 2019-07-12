@@ -151,6 +151,12 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 
+        <!--浏览大图-->
+        <activity
+            android:name="com.cdqf.cart_image.PagerActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
         <service
             android:name="com.cdqf.cart_ble.BleService"
             android:permission="true" />
@@ -358,6 +364,30 @@
         <!--饼图-->
         <activity
             android:name="com.cdqf.cart_activity.ReportDatilsActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+
+        </activity>
+
+        <!--报销-->
+        <activity
+            android:name="com.cdqf.cart_activity.AccountActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+
+        </activity>
+
+        <!--添加报销-->
+        <activity
+            android:name="com.cdqf.cart_activity.FillActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+
+        </activity>
+
+        <!--添加报销-->
+        <activity
+            android:name="com.cdqf.cart_activity.AccountDatilsActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
 
