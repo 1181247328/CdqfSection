@@ -385,7 +385,7 @@
 
         </activity>
 
-        <!--添加报销-->
+        <!--报销详情-->
         <activity
             android:name="com.cdqf.cart_activity.AccountDatilsActivity"
             android:launchMode="singleTask"
@@ -393,5 +393,12 @@
 
         </activity>
 
+        <!--审批详情-->
+        <activity
+            android:name="com.cdqf.cart_activity.AuditsDatilsActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+
+        </activity>
     </application>
 </manifest>

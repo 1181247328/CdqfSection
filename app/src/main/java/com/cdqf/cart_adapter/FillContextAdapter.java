@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cdqf.cart.R;
+import com.cdqf.cart_find.FillContextCencelFind;
 import com.cdqf.cart_find.ShopFillFind;
 import com.cdqf.cart_find.TypeFillTypeFind;
 
@@ -66,6 +67,8 @@ public class FillContextAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+        viewHolder.tvFillItemId.setText("报销明细(" + (position + 1) + ")");
+        viewHolder.tvFillItemCencel.setOnClickListener(new OnCencelListener(position));
         viewHolder.llFillItemShop.setOnClickListener(new OnShopListener(position));
         viewHolder.llFillItemType.setOnClickListener(new OnTypeListener(position));
         viewHolder.etFillItemPrice.addTextChangedListener(new OnPriteListener(position, viewHolder));
@@ -74,6 +77,13 @@ public class FillContextAdapter extends BaseAdapter {
     }
 
     class ViewHolder {
+
+        @BindView(R.id.tv_fill_item_id)
+        public TextView tvFillItemId = null;
+
+        //取消
+        @BindView(R.id.tv_fill_item_cencel)
+        public TextView tvFillItemCencel = null;
 
         //所属门店
         @BindView(R.id.ll_fill_item_shop)
@@ -101,6 +111,24 @@ public class FillContextAdapter extends BaseAdapter {
 
         public ViewHolder(View v) {
             ButterKnife.bind(this, v);
+        }
+    }
+
+    /**
+     * 取消
+     */
+    class OnCencelListener implements View.OnClickListener {
+
+        private int position = 0;
+
+        public OnCencelListener(int position) {
+
+            this.position = position;
+        }
+
+        @Override
+        public void onClick(View v) {
+            eventBus.post(new FillContextCencelFind(position));
         }
     }
 

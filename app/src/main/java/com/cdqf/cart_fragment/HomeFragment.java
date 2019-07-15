@@ -25,7 +25,6 @@ import com.cdqf.cart_activity.NoticeManagerActivity;
 import com.cdqf.cart_activity.ShopActivity;
 import com.cdqf.cart_adapter.HomeAdapter;
 import com.cdqf.cart_find.ScanFind;
-import com.cdqf.cart_find.ShopViscousFind;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;
 import com.cdqf.cart_state.CartAddaress;
@@ -158,7 +157,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void initBack() {
-        initShopPull();
+//        initShopPull();
     }
 
     private void initIntent(Class<?> activity) {
@@ -168,29 +167,23 @@ public class HomeFragment extends Fragment {
 
     private void initShopPull() {
         Map<String, Object> params = new HashMap<String, Object>();
+        params.put("", cartState.getUser().getId());
+        Log.e(TAG, "---主页---" + cartState.getUser().getId());
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
-        String shop = shop(cartState.getUser().getShopid());
-        okHttpRequestWrap.post(shop, false, "请稍候", params, new OnHttpRequest() {
+        okHttpRequestWrap.post(CartAddaress.HOME, false, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
-                Log.e(TAG, "---onOkHttpResponse服务的粘性事件(店员)---" + response);
+                Log.e(TAG, "---onOkHttpResponse---主页---(店员)---" + response);
                 JSONObject resultJSON = JSON.parseObject(response);
                 int error_code = resultJSON.getInteger("ret");
                 String msg = resultJSON.getString("msg");
                 switch (error_code) {
                     //获取成功
                     case 200:
-                        String data = resultJSON.getString("data");
-                        eventBus.postSticky(new ShopViscousFind(data, true));
+                        cartState.initToast(getContext(), msg, true, 0);
                         break;
                     default:
-                        s++;
-                        if (s == 3) {
-                            s = 0;
-                            eventBus.postSticky(new ShopViscousFind(msg, false));
-                        } else {
-                            initShopPull();
-                        }
+                        cartState.initToast(getContext(), msg, true, 0);
                         break;
                 }
             }
@@ -198,15 +191,9 @@ public class HomeFragment extends Fragment {
             @Override
             public void onOkHttpError(String error) {
                 Log.e(TAG, "---onOkHttpError---" + error);
+                cartState.initToast(getContext(), error, true, 0);
             }
         });
-    }
-
-    private String shop(String shopid) {
-        String result = null;
-        result = CartAddaress.ADDRESS + "/?s=order.shopowenr&shopid=" + shopid;
-        Log.e(TAG, "---店总---" + result);
-        return result;
     }
 
     @OnClick({R.id.ll_homemanager_shop, R.id.tv_homemanager_scan})

@@ -9,6 +9,8 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.cdqf.cart.R;
 import com.cdqf.cart_adapter.ShopFragmentAdapter;
@@ -66,11 +68,22 @@ public class ShopActivity extends BaseActivity {
             new EntryFragment(),
     };
 
-    private List<String> orderName = Arrays.asList("待服务", "已完成", "录入");
+    private List<String> orderName = Arrays.asList("待服务", "已完成", "待付款");
 
     //刷新器
     @BindView(R.id.srl_shop_pull)
     public ViewPageSwipeRefreshLayout srlShopPull = null;
+
+    //返回
+    @BindView(R.id.rl_shop_return)
+    public RelativeLayout rlShopReturn = null;
+
+    //录入
+    @BindView(R.id.tv_shop_entry)
+    public TextView tvShopEntry = null;
+
+    @BindView(R.id.tv_shop_name)
+    public TextView tvShopName = null;
 
     @BindView(R.id.ti_shop_dicatior)
     public TabIndicator tiShopDicatior = null;
@@ -335,11 +348,15 @@ public class ShopActivity extends BaseActivity {
     }
 
 
-    @OnClick({R.id.rl_shop_return})
+    @OnClick({R.id.rl_shop_return, R.id.tv_shop_entry})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.rl_shop_return:
                 finish();
+                break;
+            //录入
+            case R.id.tv_shop_entry:
+                initIntent(AddOrderActivity.class);
                 break;
         }
     }

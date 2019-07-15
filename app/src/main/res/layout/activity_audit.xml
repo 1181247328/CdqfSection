@@ -1,131 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
+    android:background="@color/tab_main_text_icon"
     android:fitsSystemWindows="true">
 
-    <LinearLayout
+    <com.cdqf.cart_view.ViewPageSwipeRefreshLayout
+        android:id="@+id/srl_audit_pull"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
-        android:orientation="vertical">
+        android:scrollbars="none">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/tab_main_text_icon">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:background="@android:color/transparent"
-                android:gravity="center_horizontal"
-                android:text="审核"
-                android:textColor="@color/white"
-                android:textSize="@dimen/sp_16" />
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:orientation="vertical">
 
             <RelativeLayout
-                android:id="@+id/rl_audit_return"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/dp_40"
-                android:background="@drawable/notice_click"
-                android:paddingLeft="@dimen/dp_6"
-                android:paddingRight="@dimen/dp_8">
-
-                <ImageView
-                    android:id="@+id/iv_notice_return"
-                    android:layout_width="@dimen/dp_17"
-                    android:layout_height="@dimen/dp_17"
-                    android:layout_centerVertical="true"
-                    android:background="@android:color/transparent"
-                    android:src="@mipmap/pldetails_return" />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/tab_main_text_icon">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_toRightOf="@id/iv_notice_return"
-                    android:paddingLeft="@dimen/dp_5"
-                    android:text="返回"
+                    android:background="@android:color/transparent"
+                    android:gravity="center_horizontal"
+                    android:text="审核"
                     android:textColor="@color/white"
-                    android:textSize="14sp" />
+                    android:textSize="@dimen/sp_16" />
+
+                <RelativeLayout
+                    android:id="@+id/rl_audit_return"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/dp_40"
+                    android:background="@drawable/notice_click"
+                    android:paddingLeft="@dimen/dp_6"
+                    android:paddingRight="@dimen/dp_8">
+
+                    <ImageView
+                        android:id="@+id/iv_notice_return"
+                        android:layout_width="@dimen/dp_17"
+                        android:layout_height="@dimen/dp_17"
+                        android:layout_centerVertical="true"
+                        android:background="@android:color/transparent"
+                        android:src="@mipmap/pldetails_return" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@id/iv_notice_return"
+                        android:paddingLeft="@dimen/dp_5"
+                        android:text="返回"
+                        android:textColor="@color/white"
+                        android:textSize="14sp" />
+
+                </RelativeLayout>
 
             </RelativeLayout>
 
-            <TextView
-                android:id="@+id/tv_audit_record"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/dp_40"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:background="@drawable/notice_click"
-                android:gravity="center"
-                android:paddingLeft="@dimen/dp_12"
-                android:paddingRight="@dimen/dp_12"
-                android:text="记录"
-                android:textColor="@color/white"
-                android:textSize="@dimen/sp_16" />
+            <com.zhengsr.viewpagerlib.indicator.TabIndicator
+                android:id="@+id/ti_audit_dicatior"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_45"
+                android:layout_gravity="center_horizontal"
+                android:background="@android:color/transparent"
+                app:tab_color="@color/tab_main_text_icon"
+                app:tab_height="@dimen/dp_1_5"
+                app:tab_show="true"
+                app:tab_text_change_color="@color/tab_main_text_icon"
+                app:tab_text_default_color="@color/clock_one"
+                app:tab_text_type="normaltext"
+                app:tab_textsize="@dimen/sp_14"
+                app:tab_width="@dimen/dp_55"
+                app:tap_type="rect"
+                app:visiabel_size="3">
 
-        </RelativeLayout>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="待审批"
+                    android:textColor="@color/clock_one"
+                    android:textSize="14sp" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_1"
-            android:background="#f3f3f3" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="已审批"
+                    android:textColor="@color/clock_one"
+                    android:textSize="14sp" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/white">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="已撤回"
+                    android:textColor="@color/clock_one"
+                    android:textSize="14sp" />
 
-            <com.cdqf.cart_view.VerticalSwipeRefreshLayout
-                android:id="@+id/srl_audit_pull"
+
+            </com.zhengsr.viewpagerlib.indicator.TabIndicator>
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/vp_audit_screen"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/white">
+                android:background="@color/white" />
 
-                <ScrollView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/white"
-                    android:scrollbars="none">
+        </LinearLayout>
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@color/white"
-                        android:scrollbars="none">
-
-                        <com.cdqf.cart_view.ListViewForScrollView
-                            android:id="@+id/lv_audit_list"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@color/service_bak"
-                            android:divider="@null"
-                            android:dividerHeight="@dimen/dp_1"
-                            android:paddingTop="@dimen/dp_10"
-                            android:paddingBottom="@dimen/dp_10"
-                            android:scrollbars="none"
-                            android:visibility="gone" />
-                    </LinearLayout>
-                </ScrollView>
-
-            </com.cdqf.cart_view.VerticalSwipeRefreshLayout>
-
-            <TextView
-                android:id="@+id/tv_audit_no"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:background="@color/white"
-                android:gravity="center"
-                android:text="暂无~"
-                android:textColor="@color/black"
-                android:textSize="@dimen/sp_16"
-                android:visibility="gone" />
-        </RelativeLayout>
-    </LinearLayout>
-
+    </com.cdqf.cart_view.ViewPageSwipeRefreshLayout>
 </LinearLayout>
+

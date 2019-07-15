@@ -2,44 +2,39 @@ package com.cdqf.cart_activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.support.v4.content.ContextCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
-import com.cdqf.cart_adapter.AuditAdapter;
-import com.cdqf.cart_class.Audit;
+import com.cdqf.cart_adapter.ShopFragmentAdapter;
 import com.cdqf.cart_dilog.WhyDilogFragment;
+import com.cdqf.cart_find.AuditPullFind;
 import com.cdqf.cart_find.RefusedFind;
 import com.cdqf.cart_find.RefusedTwoFind;
+import com.cdqf.cart_find.SwipePullFind;
 import com.cdqf.cart_find.ThroughFind;
+import com.cdqf.cart_find.ThroughPullFind;
 import com.cdqf.cart_find.ThroughTwoFind;
-import com.cdqf.cart_okhttp.OKHttpRequestWrap;
-import com.cdqf.cart_okhttp.OnHttpRequest;
+import com.cdqf.cart_find.WithdrawPullFind;
+import com.cdqf.cart_fragment.AuditsFragment;
+import com.cdqf.cart_fragment.ThroughsFragment;
+import com.cdqf.cart_fragment.WithdrawsFragment;
 import com.cdqf.cart_state.BaseActivity;
-import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
-import com.cdqf.cart_state.StatusBarCompat;
+import com.cdqf.cart_state.StaturBar;
+import com.cdqf.cart_view.ViewPageSwipeRefreshLayout;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.zhengsr.viewpagerlib.indicator.TabIndicator;
 
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -63,63 +58,41 @@ public class AuditActivity extends BaseActivity {
 
     private Gson gson = new Gson();
 
+    private Fragment[] orderList = new Fragment[]{
+            new AuditsFragment(),
+            new ThroughsFragment(),
+            new WithdrawsFragment(),
+    };
+
+    private List<String> orderName = Arrays.asList("待审批", "已通过", "已撤回");
+
     @BindView(R.id.srl_audit_pull)
-    public SwipeRefreshLayout srlAuditPull = null;
+    public ViewPageSwipeRefreshLayout srlAuditPull = null;
 
     //帐户
     @BindView(R.id.rl_audit_return)
     public RelativeLayout rlAuditReturn = null;
 
-    //记录
-    @BindView(R.id.tv_audit_record)
-    public TextView tvAuditRecord = null;
+    @BindView(R.id.ti_audit_dicatior)
+    public TabIndicator tiAuditDicatior = null;
 
-    @BindView(R.id.lv_audit_list)
-    public ListView lvAuditList = null;
+    @BindView(R.id.vp_audit_screen)
+    public ViewPager vpAuditScreen = null;
 
-    @BindView(R.id.tv_audit_no)
-    public TextView tvAuditNo = null;
+    private ShopFragmentAdapter shopFragmentAdapter = null;
 
-    private AuditAdapter auditAdapter = null;
-
-    //领取的数量
-    private int number = 0;
-
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 0x001:
-                    lvAuditList.setVisibility(View.VISIBLE);
-                    tvAuditNo.setVisibility(View.GONE);
-                    break;
-                case 0x002:
-                    lvAuditList.setVisibility(View.GONE);
-                    tvAuditNo.setVisibility(View.VISIBLE);
-                    break;
-            }
-        }
-    };
+    //哪个碎片要刷新
+    private int position = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        //API19以下用于沉侵式菜单栏
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        }
-
         //加载布局
         setContentView(R.layout.activity_audit);
 
-        //API>=20以上用于沉侵式菜单栏
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-            //沉侵
-            StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.black));
-        }
+        StaturBar.setStatusBar(this, R.color.tab_main_text_icon);
 
         initAgo();
 
@@ -142,90 +115,79 @@ public class AuditActivity extends BaseActivity {
     }
 
     private void initView() {
-        auditAdapter = new AuditAdapter(context);
-        lvAuditList.setAdapter(auditAdapter);
+
     }
 
     private void initAdapter() {
-
+        shopFragmentAdapter = new ShopFragmentAdapter(getSupportFragmentManager(), orderList);
+        vpAuditScreen.setAdapter(shopFragmentAdapter);
+        vpAuditScreen.setOffscreenPageLimit(3);
     }
 
     private void initListener() {
 
+        tiAuditDicatior.setViewPagerSwitchSpeed(vpAuditScreen, 600);
+        tiAuditDicatior.setTabData(vpAuditScreen, orderName, new TabIndicator.TabClickListener() {
+            @Override
+            public void onClick(int i) {
+                position = i;
+                vpAuditScreen.setCurrentItem(i);
+            }
+        });
         srlAuditPull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                initPull(false);
+                switch (position) {
+                    case 0:
+                        //待审批
+                        eventBus.post(new AuditPullFind());
+                        break;
+                    case 1:
+                        //已通过
+                        eventBus.post(new ThroughPullFind());
+                        break;
+                    case 2:
+                        //已撤回
+                        eventBus.post(new WithdrawPullFind());
+                        break;
+                }
+                srlAuditPull.setRefreshing(false);
+            }
+        });
+        vpAuditScreen.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+
+            }
+
+            @Override
+            public void onPageSelected(int i) {
+                position = i;
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+
             }
         });
     }
 
     private void initBack() {
-        initPull(true);
+
     }
 
-    private void initPull(boolean isToast) {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("s", "TotalGoods.shop_approval_list");
-        params.put("shop_id", cartState.getUser().getShopid());
-        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        okHttpRequestWrap.post(CartAddaress.SHOP_AUDIT, isToast, "请稍候", params, new OnHttpRequest() {
-            @Override
-            public void onOkHttpResponse(String response, int id) {
-                Log.e(TAG, "---onOkHttpResponse审核---" + response);
-                if (srlAuditPull != null) {
-                    srlAuditPull.setRefreshing(false);
-                }
-                JSONObject resultJSON = JSON.parseObject(response);
-                int error_code = resultJSON.getInteger("ret");
-                String msg = resultJSON.getString("msg");
-                switch (error_code) {
-                    //获取成功
-                    case 200:
-
-                        String data = resultJSON.getString("data");
-                        Log.e(TAG, "---审核---" + data);
-                        if (TextUtils.equals(data, "20")) {
-                            handler.sendEmptyMessage(0x002);
-                            return;
-                        }
-                        handler.sendEmptyMessage(0x001);
-                        cartState.getAuditList().clear();
-                        List<Audit> auditList = gson.fromJson(data, new TypeToken<List<Audit>>() {
-                        }.getType());
-                        cartState.setAuditList(auditList);
-                        if (auditAdapter != null) {
-                            auditAdapter.notifyDataSetChanged();
-                        }
-                        break;
-                    default:
-                        handler.sendEmptyMessage(0x002);
-                        cartState.initToast(context, msg, true, 0);
-                        break;
-                }
-            }
-
-            @Override
-            public void onOkHttpError(String error) {
-                Log.e(TAG, "---onOkHttpError---" + error);
-            }
-        });
-    }
 
     private void initIntent(Class<?> activity) {
         Intent intent = new Intent(context, activity);
         startActivity(intent);
     }
 
-    @OnClick({R.id.rl_audit_return, R.id.tv_audit_record})
+    @OnClick({R.id.rl_audit_return})
     public void onClick(View v) {
         switch (v.getId()) {
             //返回
             case R.id.rl_audit_return:
                 finish();
-                break;
-            case R.id.tv_audit_record:
-                initIntent(RecordActivity.class);
                 break;
         }
     }
@@ -273,6 +235,17 @@ public class AuditActivity extends BaseActivity {
     }
 
     /**
+     * 是否刷新和禁用
+     *
+     * @param s
+     */
+    @Subscribe
+    public void onEventMainThread(SwipePullFind s) {
+        srlAuditPull.setRefreshing(s.isRefreshing);
+        srlAuditPull.setEnabled(s.isEnabled);
+    }
+
+    /**
      * 通过第一次
      *
      * @param t
@@ -291,36 +264,7 @@ public class AuditActivity extends BaseActivity {
      */
     @Subscribe
     public void onEventMainThread(ThroughTwoFind t) {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("s", "TotalGoods.shop_approval");
-        params.put("goods_id", cartState.getAuditList().get(t.position).getGoods_id());
-        params.put("shop_id", cartState.getUser().getShopid());
-        params.put("id", cartState.getAuditList().get(t.position).getId());
-        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        okHttpRequestWrap.post(CartAddaress.SHOP_THROUGH, true, "请稍候", params, new OnHttpRequest() {
-            @Override
-            public void onOkHttpResponse(String response, int id) {
-                Log.e(TAG, "---onOkHttpResponse通过---" + response);
-                JSONObject resultJSON = JSON.parseObject(response);
-                int error_code = resultJSON.getInteger("ret");
-                String msg = resultJSON.getString("msg");
-                switch (error_code) {
-                    //获取成功
-                    case 200:
-                        cartState.initToast(context, "已同意申请", true, 0);
-                        initPull(true);
-                        break;
-                    default:
-                        cartState.initToast(context, msg, true, 0);
-                        break;
-                }
-            }
 
-            @Override
-            public void onOkHttpError(String error) {
-                Log.e(TAG, "---onOkHttpError---" + error);
-            }
-        });
     }
 
     /**
@@ -342,36 +286,7 @@ public class AuditActivity extends BaseActivity {
      */
     @Subscribe
     public void onEventMainThread(RefusedTwoFind r) {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("s", "TotalGoods.shop_exit");
-        params.put("goods_id", cartState.getAuditList().get(r.position).getGoods_id());
-        params.put("shop_id", cartState.getUser().getShopid());
-        params.put("id", cartState.getAuditList().get(r.position).getId());
-        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        okHttpRequestWrap.post(CartAddaress.SHOP_THROUGH_NO, true, "请稍候", params, new OnHttpRequest() {
-            @Override
-            public void onOkHttpResponse(String response, int id) {
-                Log.e(TAG, "---onOkHttpResponse通过---" + response);
-                JSONObject resultJSON = JSON.parseObject(response);
-                int error_code = resultJSON.getInteger("ret");
-                String msg = resultJSON.getString("msg");
-                switch (error_code) {
-                    //获取成功
-                    case 200:
-                        cartState.initToast(context, "已拒绝申请", true, 0);
-                        initPull(true);
-                        break;
-                    default:
-                        cartState.initToast(context, msg, true, 0);
-                        break;
-                }
-            }
 
-            @Override
-            public void onOkHttpError(String error) {
-                Log.e(TAG, "---onOkHttpError---" + error);
-            }
-        });
     }
 }
 

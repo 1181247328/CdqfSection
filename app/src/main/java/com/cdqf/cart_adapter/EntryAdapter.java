@@ -72,7 +72,7 @@ public class EntryAdapter extends BaseAdapter {
         } else if (type == 1) {
             ViewHolder viewHolder = null;
             if (convertView == null) {
-                convertView = LayoutInflater.from(context).inflate(R.layout.item_shop, null);
+                convertView = LayoutInflater.from(context).inflate(R.layout.item_entry, null);
                 viewHolder = new ViewHolder(convertView);
                 convertView.setTag(viewHolder);
             } else {

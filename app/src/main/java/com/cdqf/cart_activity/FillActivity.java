@@ -22,7 +22,9 @@ import android.widget.TextView;
 import com.cdqf.cart.R;
 import com.cdqf.cart_adapter.FillContextAdapter;
 import com.cdqf.cart_adapter.FillImageAdapter;
+import com.cdqf.cart_dilog.WhyDilogFragment;
 import com.cdqf.cart_find.FillAddImageFind;
+import com.cdqf.cart_find.FillContextCencelFind;
 import com.cdqf.cart_find.ShopFillFind;
 import com.cdqf.cart_find.TypeFillTypeFind;
 import com.cdqf.cart_image.PagerActivity;
@@ -154,7 +156,7 @@ public class FillActivity extends BaseActivity {
         mgvFillList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                initIntent(PagerActivity.class,position);
+                initIntent(PagerActivity.class, position);
             }
         });
     }
@@ -394,5 +396,17 @@ public class FillActivity extends BaseActivity {
             }
         });
         pickerSource.show();
+    }
+
+    /**
+     * 取消
+     *
+     * @param s
+     */
+    @Subscribe
+    public void onEventMainThread(FillContextCencelFind s) {
+        WhyDilogFragment whyDilogFragment = new WhyDilogFragment();
+        whyDilogFragment.setInit(15, "提示", "是否删除", "否", "是", s.position);
+        whyDilogFragment.show(getSupportFragmentManager(), "删除明细");
     }
 }
