@@ -5,48 +5,35 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cdqf.cart.R;
+import com.cdqf.cart_state.CartState;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.greenrobot.event.EventBus;
 
 /**
- * 首页
+ * 会员备注
  */
-public class HomeAdapter extends BaseAdapter {
+public class DatilsRemarksAdapter extends BaseAdapter {
 
-    private String TAG = HomeAdapter.class.getSimpleName();
+    private String TAG = DatilsRemarksAdapter.class.getSimpleName();
+
+    private CartState cartState = CartState.getCartState();
+
+    private EventBus eventBus = EventBus.getDefault();
 
     private Context context = null;
 
-    private int[] image = {
-            R.mipmap.home_loss,
-            R.mipmap.home_service,
-            R.mipmap.home_notices,
-            R.mipmap.home_task,
-            R.mipmap.home_clock,
-            R.mipmap.home_account
-    };
-
-    private String[] name = {
-            "耗材管理",
-            "服务",
-            "通知",
-            "任务",
-            "考勤打卡",
-            "报销",
-    };
-
-    public HomeAdapter(Context context) {
+    public DatilsRemarksAdapter(Context context) {
         this.context = context;
     }
 
     @Override
     public int getCount() {
-        return name.length;
+        return cartState.getDatils().getUser_remarks().size();
     }
 
     @Override
@@ -63,26 +50,21 @@ public class HomeAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder = null;
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_home, null);
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_daremarks, null);
             viewHolder = new ViewHolder(convertView);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        viewHolder.ivHomeItemLoss.setImageResource(image[position]);
-        viewHolder.tvHomeItemName.setText(name[position]);
+        viewHolder.tvDatilsItemNote.setText(cartState.getDatils().getUser_remarks().get(position).getContent());
         return convertView;
     }
 
     class ViewHolder {
 
-        //图片
-        @BindView(R.id.iv_home_item_loss)
-        public ImageView ivHomeItemLoss = null;
-
-        //名称
-        @BindView(R.id.tv_home_item_name)
-        public TextView tvHomeItemName = null;
+        //车牌号
+        @BindView(R.id.tv_datils_item_note)
+        public TextView tvDatilsItemNote = null;
 
         public ViewHolder(View v) {
             ButterKnife.bind(this, v);

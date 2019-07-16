@@ -11,18 +11,25 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
 import com.cdqf.cart_adapter.CompleteAdapter;
+import com.cdqf.cart_class.Complete;
+import com.cdqf.cart_find.CompleteKeyFind;
 import com.cdqf.cart_find.CompletePullFind;
 import com.cdqf.cart_find.SwipePullFind;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;
+import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.jingchen.pulltorefresh.PullToRefreshLayout;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -48,12 +55,16 @@ public class CompleteFragment extends Fragment {
 
     private View view = null;
 
+    private int page = 1;
+
     @BindView(R.id.ptrl_service_pull)
     public PullToRefreshLayout ptrlServicePull = null;
 
     private ListView lvServiceList = null;
 
     private CompleteAdapter completeAdapter = null;
+
+    private String key = "";
 
     @Nullable
     @Override
@@ -95,8 +106,57 @@ public class CompleteFragment extends Fragment {
             }
 
             @Override
-            public void onLoadMore(PullToRefreshLayout pullToRefreshLayout) {
+            public void onLoadMore(final PullToRefreshLayout pullToRefreshLayout) {
                 //上拉加载
+                Map<String, Object> params = new HashMap<String, Object>();
+                OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
+                //店铺id
+                params.put("shop_id", cartState.getUser().getShopid());
+                //关键字2 = 待服务
+                params.put("type", "3");
+                //页码
+                params.put("page", page);
+                okHttpRequestWrap.postString(CartAddaress.service, false, "请稍候", params, new OnHttpRequest() {
+                    @Override
+                    public void onOkHttpResponse(String response, int id) {
+                        Log.e(TAG, "---onOkHttpResponse---已服务之上拉加载---" + response);
+                        JSONObject resultJSON = JSON.parseObject(response);
+                        int error_code = resultJSON.getInteger("code");
+                        String msg = resultJSON.getString("message");
+                        switch (error_code) {
+                            //获取成功
+                            case 200:
+                                page++;
+                                pullToRefreshLayout.refreshFinish(PullToRefreshLayout.SUCCEED);
+                                JSONObject data = resultJSON.getJSONObject("data");
+                                String datas = data.getString("data");
+                                cartState.initToast(getContext(), msg, true, 0);
+                                eventBus.post(new SwipePullFind(false, true));
+                                List<Complete> completeList = gson.fromJson(datas, new TypeToken<List<Complete>>() {
+                                }.getType());
+                                cartState.getCompleteList().addAll(completeList);
+                                if (completeAdapter != null) {
+                                    completeAdapter.notifyDataSetChanged();
+                                }
+                                break;
+                            default:
+                                page--;
+                                pullToRefreshLayout.refreshFinish(PullToRefreshLayout.FAIL);
+                                eventBus.post(new SwipePullFind(false, true));
+                                cartState.initToast(getContext(), msg, true, 0);
+                                break;
+                        }
+
+                    }
+
+                    @Override
+                    public void onOkHttpError(String error) {
+                        Log.e(TAG, "---onOkHttpError---" + error);
+                        page--;
+                        pullToRefreshLayout.refreshFinish(PullToRefreshLayout.FAIL);
+                        eventBus.post(new SwipePullFind(false, true));
+                    }
+                });
             }
         });
 
@@ -126,29 +186,66 @@ public class CompleteFragment extends Fragment {
 
     private void initBack() {
         ptrlServicePull.setPullDownEnable(false);
+        initPull(false);
     }
 
-    private void initPull() {
+    private void initPull(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
-        params.put("", "");
-        okHttpRequestWrap.post("", true, "请稍候", params, new OnHttpRequest() {
+        //店铺id
+        params.put("shop_id", cartState.getUser().getShopid());
+        //3 =已服务
+        params.put("type", "3");
+        //关键字
+        params.put("keywords", key);
+        //页码
+        page = 1;
+        params.put("page", page);
+        okHttpRequestWrap.postString(CartAddaress.service, isToast, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
-                Log.e(TAG, "---onOkHttpResponse---待服务---" + response);
-                eventBus.post(new SwipePullFind(false, false));
+                Log.e(TAG, "---onOkHttpResponse---已服务---" + response);
+                JSONObject resultJSON = JSON.parseObject(response);
+                int error_code = resultJSON.getInteger("code");
+                String msg = resultJSON.getString("message");
+                switch (error_code) {
+                    //获取成功
+                    case 200:
+                        page = 2;
+                        JSONObject data = resultJSON.getJSONObject("data");
+                        String datas = data.getString("data");
+                        cartState.getCompleteList().clear();
+                        cartState.initToast(getContext(), msg, true, 0);
+                        eventBus.post(new SwipePullFind(false, true));
+                        List<Complete> completeList = gson.fromJson(datas, new TypeToken<List<Complete>>() {
+                        }.getType());
+                        cartState.setCompleteList(completeList);
+                        if (completeAdapter != null) {
+                            completeAdapter.notifyDataSetChanged();
+                        }
+                        cartState.closeKeyboard(getActivity());
+                        break;
+                    default:
+
+                        eventBus.post(new SwipePullFind(false, true));
+                        cartState.initToast(getContext(), msg, true, 0);
+                        break;
+                }
+
             }
 
             @Override
             public void onOkHttpError(String error) {
                 Log.e(TAG, "---onOkHttpError---" + error);
-                eventBus.post(new SwipePullFind(false, false));
+                eventBus.post(new SwipePullFind(false, true));
             }
         });
     }
 
-    private void forIntent(Class<?> activity) {
+    private void initIntent(Class<?> activity, int position) {
         Intent intent = new Intent(getContext(), activity);
+        intent.putExtra("type", 2);
+        intent.putExtra("position", position);
         startActivity(intent);
     }
 
@@ -197,6 +294,22 @@ public class CompleteFragment extends Fragment {
      */
     @Subscribe
     public void onEventMainThread(CompletePullFind s) {
+        page = 1;
+        key = "";
+        ptrlServicePull.setPullUpEnable(true);
+        initPull(s.isToast);
+    }
 
+    /**
+     * 是否使用关键字
+     *
+     * @param s
+     */
+    @Subscribe
+    public void onEventMainThread(CompleteKeyFind s) {
+        page = 1;
+        key = s.key;
+        initPull(true);
+        ptrlServicePull.setPullUpEnable(false);
     }
 }

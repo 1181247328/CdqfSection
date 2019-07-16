@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.cdqf.cart.R;
 import com.cdqf.cart_state.CartState;
+import com.cdqf.cart_state.DoubleOperationUtil;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import butterknife.BindView;
@@ -35,7 +36,7 @@ public class ServiceDilogAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 3;
+        return cartState.getServiceOrderList().size();
     }
 
     @Override
@@ -58,7 +59,17 @@ public class ServiceDilogAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-
+        viewHolder.tvserviceItemName.setText(cartState.getServiceOrderList().get(position).getGoods_name());
+        if (cartState.getModel() == 1) {
+            //小轿车
+            viewHolder.tvServiceItemprice.setText("￥" + cartState.getServiceOrderList().get(position).getPrice());
+        } else {
+            //SUV
+            double price = Double.parseDouble(cartState.getServiceOrderList().get(position).getPrice());
+            double addPrice = Double.parseDouble(cartState.getServiceOrderList().get(position).getAddprice());
+            double sum = DoubleOperationUtil.add(price, addPrice);
+            viewHolder.tvServiceItemprice.setText("￥" + sum);
+        }
         return convertView;
     }
 

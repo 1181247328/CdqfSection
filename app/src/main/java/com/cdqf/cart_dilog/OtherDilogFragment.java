@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.cdqf.cart.R;
+import com.cdqf.cart_find.OtherFind;
 import com.cdqf.cart_state.CartState;
 
 import butterknife.BindView;
@@ -52,13 +53,19 @@ public class OtherDilogFragment extends DialogFragment {
     @BindView(R.id.et_other_dilog_name)
     public EditText etOtherDilogName = null;
 
-    //服务项目
+    //服务金额
     @BindView(R.id.et_other_dilog_project)
     public EditText etOtherDilogProject = null;
 
     //耗材成本
     @BindView(R.id.et_other_dilog_cost)
     public EditText etOtherDilogCost = null;
+
+    private String name;
+
+    private String project;
+
+    private String cost;
 
     @Nullable
     @Override
@@ -126,10 +133,26 @@ public class OtherDilogFragment extends DialogFragment {
                 break;
             //确定
             case R.id.tv_other_dilog_sumit:
+                name = etOtherDilogName.getText().toString();
+                if (name.length() <= 0) {
+                    cartState.initToast(getContext(), "请输入服务名称", true, 0);
+                    return;
+                }
+                project = etOtherDilogProject.getText().toString();
+                if (project.length() <= 0) {
+                    cartState.initToast(getContext(), "请输入服务金额", true, 0);
+                    return;
+                }
+                cost = etOtherDilogCost.getText().toString();
+                if (cost.length() <= 0) {
+                    cartState.initToast(getContext(), "请输入耗材成本", true, 0);
+                    return;
+                }
+                eventBus.post(new OtherFind(name, project, cost));
                 dismiss();
                 break;
         }
-        dismiss();
+
     }
 
     @Override

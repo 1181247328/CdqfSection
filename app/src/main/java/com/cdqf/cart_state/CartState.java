@@ -21,6 +21,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Toast;
@@ -29,8 +30,11 @@ import com.apkfuns.xprogressdialog.XProgressDialog;
 import com.cdqf.cart.R;
 import com.cdqf.cart_ble.Ble;
 import com.cdqf.cart_class.Audit;
+import com.cdqf.cart_class.Complete;
 import com.cdqf.cart_class.Datils;
 import com.cdqf.cart_class.Employees;
+import com.cdqf.cart_class.Entry;
+import com.cdqf.cart_class.Home;
 import com.cdqf.cart_class.LossMan;
 import com.cdqf.cart_class.LossNews;
 import com.cdqf.cart_class.LossStaff;
@@ -38,6 +42,8 @@ import com.cdqf.cart_class.MyUser;
 import com.cdqf.cart_class.Notice;
 import com.cdqf.cart_class.Position;
 import com.cdqf.cart_class.Record;
+import com.cdqf.cart_class.Service;
+import com.cdqf.cart_class.ServiceOrder;
 import com.cdqf.cart_class.Shop;
 import com.cdqf.cart_class.User;
 import com.cdqf.cart_class.UserGoods;
@@ -164,6 +170,29 @@ public class CartState {
 
     //图片选择
     private List<String> imagePathsList = new CopyOnWriteArrayList<>();
+
+
+    /*************************************/
+    //店名
+    private List<Home> homeList = new CopyOnWriteArrayList<>();
+
+    //待服务
+    private List<Service> serviceLis = new CopyOnWriteArrayList<>();
+
+    //已完成
+    private List<Complete> completeList = new CopyOnWriteArrayList<>();
+
+    //待付款
+    private List<Entry> entryList = new CopyOnWriteArrayList<>();
+
+    //车辆颜色
+    private List<com.cdqf.cart_class.Color> colorList = new CopyOnWriteArrayList<>();
+
+    //服务选项
+    private List<ServiceOrder> serviceOrderList = new CopyOnWriteArrayList<>();
+
+    //小轿车1,SUV = 2;
+    private int model = 0;
 
     /**
      * 提示信息
@@ -633,12 +662,14 @@ public class CartState {
      * @return
      */
     public boolean licensePlate(String license) {
-        // 验证规则
-        String regEx = "^[\\u4e00-\\u9fa5]{1}[A-Z]{1}[A-Z_0-9]{5}";
-        // 编译正则表达式
-        Pattern pattern = Pattern.compile(regEx);
-        Matcher matcher = pattern.matcher(license);
-        return matcher.matches();
+        String car_num_Regex = "^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z][A-Z][警京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼]?[A-Z0-9]{4}[A-Z0-9挂学警港澳]$";
+        if (TextUtils.isEmpty(license)) {
+            return false;
+        } else if (license.matches(car_num_Regex)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -792,6 +823,19 @@ public class CartState {
         } else {
             //恢复状态栏白色字体
             activity.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+        }
+    }
+
+    /**
+     * 隐藏软键盘
+     *
+     * @param activity
+     */
+    public void closeKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        View v = activity.getWindow().peekDecorView();
+        if (null != v) {
+            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
         }
     }
 
@@ -985,5 +1029,61 @@ public class CartState {
 
     public void setImagePathsList(List<String> imagePathsList) {
         this.imagePathsList = imagePathsList;
+    }
+
+    public List<Home> getHomeList() {
+        return homeList;
+    }
+
+    public void setHomeList(List<Home> homeList) {
+        this.homeList = homeList;
+    }
+
+    public List<Service> getServiceLis() {
+        return serviceLis;
+    }
+
+    public void setServiceLis(List<Service> serviceLis) {
+        this.serviceLis = serviceLis;
+    }
+
+    public List<Complete> getCompleteList() {
+        return completeList;
+    }
+
+    public void setCompleteList(List<Complete> completeList) {
+        this.completeList = completeList;
+    }
+
+    public List<Entry> getEntryList() {
+        return entryList;
+    }
+
+    public void setEntryList(List<Entry> entryList) {
+        this.entryList = entryList;
+    }
+
+    public List<com.cdqf.cart_class.Color> getColorList() {
+        return colorList;
+    }
+
+    public void setColorList(List<com.cdqf.cart_class.Color> colorList) {
+        this.colorList = colorList;
+    }
+
+    public List<ServiceOrder> getServiceOrderList() {
+        return serviceOrderList;
+    }
+
+    public void setServiceOrderList(List<ServiceOrder> serviceOrderList) {
+        this.serviceOrderList = serviceOrderList;
+    }
+
+    public int getModel() {
+        return model;
+    }
+
+    public void setModel(int model) {
+        this.model = model;
     }
 }

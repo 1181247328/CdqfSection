@@ -19,10 +19,12 @@ import android.widget.TextView;
 
 import com.cdqf.cart.R;
 import com.cdqf.cart_find.AccountExitFind;
+import com.cdqf.cart_find.AddOrderFind;
 import com.cdqf.cart_find.DatilsPhoneFind;
 import com.cdqf.cart_find.EmployeesIdFind;
 import com.cdqf.cart_find.ExitFind;
 import com.cdqf.cart_find.LossNewsFind;
+import com.cdqf.cart_find.NoteFind;
 import com.cdqf.cart_find.PreferentialFind;
 import com.cdqf.cart_find.RefusedTwoFind;
 import com.cdqf.cart_find.ReleaseFind;
@@ -152,10 +154,10 @@ public class WhyDilogFragment extends DialogFragment {
     private void initBack() {
         getDialog().setCanceledOnTouchOutside(false);
         tvWhyDilogTitle.setText(title);
-//        tvWhyDilogContext.setText(context);
+        tvWhyDilogContext.setText(context);
         tvWhyDilogCancel.setText(cancel);
         tvWhyDilogDetermine.setText(determine);
-        initTextColor();
+//        initTextColor();
     }
 
     private void initTextColor() {
@@ -245,6 +247,14 @@ public class WhyDilogFragment extends DialogFragment {
                     //FillActivity
                     case 15:
 
+                        break;
+                    //AddOrderActivity添加订单
+                    case 16:
+                        eventBus.post(new AddOrderFind());
+                        break;
+                    //NoteActivity添加备注
+                    case 17:
+                        eventBus.post(new NoteFind());
                         break;
                 }
                 break;

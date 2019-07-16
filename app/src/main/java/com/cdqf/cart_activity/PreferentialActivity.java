@@ -259,7 +259,8 @@ public class PreferentialActivity extends BaseActivity {
         String order_num = cartState.getDatils().getOrdernum();
         params.put("order_num", order_num);
         //用户id
-        int user_id = Integer.parseInt(cartState.getDatils().getUserid());
+//        int user_id = Integer.parseInt(cartState.getDatils().getUserid());
+        int user_id = 0;
         params.put("user_id", user_id);
         //金额
         params.put("money", price + "");
@@ -275,9 +276,9 @@ public class PreferentialActivity extends BaseActivity {
         Log.e(TAG, "---返余额---" + money);
         //服务项目
         String goodsNmae = "";
-        for (String name : cartState.getDatils().getGoodsname()) {
-            goodsNmae += name + " ";
-        }
+//        for (String name : cartState.getDatils().getGoodsname()) {
+//            goodsNmae += name + " ";
+//        }
         params.put("info", goodsNmae);
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
         Log.e(TAG, "---" + CartAddaress.SHOP_PREFERENT);

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
+    android:background="@color/tab_main_text_icon"
     android:fitsSystemWindows="true">
 
     <LinearLayout
@@ -111,6 +112,50 @@
                     android:background="@color/service_bak"
                     android:orientation="vertical"
                     android:paddingBottom="@dimen/dp_20">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:gravity="left|center_vertical"
+                            android:paddingLeft="@dimen/dp_10"
+                            android:paddingTop="@dimen/dp_12"
+                            android:paddingBottom="@dimen/dp_12"
+                            android:text="手机号码"
+                            android:textColor="@color/tab_main_text_default"
+                            android:textSize="@dimen/sp_14" />
+
+                        <EditText
+                            android:id="@+id/tv_order_phone"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:gravity="right|center_vertical"
+                            android:hint="请输入手机号码"
+                            android:inputType="phone"
+                            android:lines="1"
+                            android:paddingLeft="@dimen/dp_10"
+                            android:paddingTop="@dimen/dp_12"
+                            android:paddingRight="@dimen/dp_10"
+                            android:paddingBottom="@dimen/dp_12"
+                            android:textColor="@color/login_text"
+                            android:textColorHint="@color/clock_one"
+                            android:textCursorDrawable="@drawable/nickname_cursor"
+                            android:textSize="@dimen/sp_14" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/dp_1"
+                        android:layout_marginLeft="@dimen/dp_10"
+                        android:background="@color/service_bak" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -243,7 +288,7 @@
                             android:gravity="center_vertical|right"
                             android:orientation="horizontal">
 
-                            <EditText
+                            <TextView
                                 android:id="@+id/tv_order_color"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -588,7 +633,7 @@
                                     android:layout_marginBottom="@dimen/dp_12"
                                     android:background="@drawable/checkbox_order"
                                     android:button="@null"
-                                    android:checked="true" />
+                                    android:checked="false" />
 
                                 <TextView
                                     android:layout_width="match_parent"

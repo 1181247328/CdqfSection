@@ -22,8 +22,10 @@ import com.cdqf.cart_activity.AccountActivity;
 import com.cdqf.cart_activity.ClockActivity;
 import com.cdqf.cart_activity.LossNewsActivity;
 import com.cdqf.cart_activity.NoticeManagerActivity;
+import com.cdqf.cart_activity.OtherActivity;
 import com.cdqf.cart_activity.ShopActivity;
 import com.cdqf.cart_adapter.HomeAdapter;
+import com.cdqf.cart_class.Home;
 import com.cdqf.cart_find.ScanFind;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;
@@ -31,9 +33,11 @@ import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_view.LineGridView;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -95,6 +99,14 @@ public class HomeFragment extends Fragment {
     @BindView(R.id.tv_home_ordermoney)
     public TextView tvHomeOrdermoney = null;
 
+    //数量
+    @BindView(R.id.tv_home_number)
+    public TextView tvHomeNumber = null;
+
+    //营业额
+    @BindView(R.id.tv_home_money)
+    public TextView tvHomeMoney = null;
+
     private int s = 0;
 
     @Nullable
@@ -138,12 +150,16 @@ public class HomeFragment extends Fragment {
                     case 2:
                         initIntent(NoticeManagerActivity.class);
                         break;
-                    //考勤打卡
+                    //任务
                     case 3:
+                        initIntent(OtherActivity.class);
+                        break;
+                    //考勤打卡
+                    case 4:
                         initIntent(ClockActivity.class);
                         break;
                     //报销
-                    case 4:
+                    case 5:
                         initIntent(AccountActivity.class);
                         break;
                 }
@@ -157,7 +173,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void initBack() {
-//        initShopPull();
+        initShopPull();
     }
 
     private void initIntent(Class<?> activity) {
@@ -167,20 +183,32 @@ public class HomeFragment extends Fragment {
 
     private void initShopPull() {
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("", cartState.getUser().getId());
+        params.put("staff_id", cartState.getUser().getId());
         Log.e(TAG, "---主页---" + cartState.getUser().getId());
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
-        okHttpRequestWrap.post(CartAddaress.HOME, false, "请稍候", params, new OnHttpRequest() {
+        okHttpRequestWrap.postString(CartAddaress.HOME, true, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse---主页---(店员)---" + response);
                 JSONObject resultJSON = JSON.parseObject(response);
-                int error_code = resultJSON.getInteger("ret");
-                String msg = resultJSON.getString("msg");
+                int error_code = resultJSON.getInteger("code");
+                String msg = resultJSON.getString("message");
                 switch (error_code) {
                     //获取成功
                     case 200:
+                        String data = resultJSON.getString("data");
                         cartState.initToast(getContext(), msg, true, 0);
+                        cartState.getHomeList().clear();
+                        List<Home> homeList = gson.fromJson(data, new TypeToken<List<Home>>() {
+                        }.getType());
+                        cartState.setHomeList(homeList);
+                        for (Home h : homeList) {
+                            if (h.getStatus() == 1) {
+                                tvHomemanagerShop.setText(h.getShop_new_name());
+                                cartState.getUser().setShopid(h.getId() + "");
+                                cartState.getUser().setShopName(h.getShop_new_name());
+                            }
+                        }
                         break;
                     default:
                         cartState.initToast(getContext(), msg, true, 0);
@@ -201,9 +229,15 @@ public class HomeFragment extends Fragment {
         switch (v.getId()) {
             //选择店铺
             case R.id.ll_homemanager_shop:
-                SinglePicker<String> pickerSource = new SinglePicker<>(getActivity(), new String[]{
-                        "浅水半岛店"
-                });
+                if (cartState.getHomeList().size() <= 0) {
+                    initShopPull();
+                    return;
+                }
+                String[] homeName = new String[cartState.getHomeList().size()];
+                for (int i = 0; i < cartState.getHomeList().size(); i++) {
+                    homeName[i] = cartState.getHomeList().get(i).getShop_new_name();
+                }
+                SinglePicker<String> pickerSource = new SinglePicker<>(getActivity(), homeName);
                 LineConfig configSource = new LineConfig();
                 configSource.setColor(ContextCompat.getColor(getContext(), R.color.addstore_one));//线颜色
                 configSource.setThick(ConvertUtils.toPx(getActivity(), 1));//线粗
@@ -234,7 +268,10 @@ public class HomeFragment extends Fragment {
                 pickerSource.setOnItemPickListener(new OnItemPickListener<String>() {
                     @Override
                     public void onItemPicked(int index, String item) {
-                        tvHomemanagerShop.setText(item);
+                        tvHomemanagerShop.setText(cartState.getHomeList().get(index).getShop_new_name());
+                        cartState.getUser().setShopid(cartState.getHomeList().get(index).getId() + "");
+                        cartState.getUser().setShopName(cartState.getHomeList().get(index).getShop_new_name())
+                        ;
                     }
                 });
                 pickerSource.show();

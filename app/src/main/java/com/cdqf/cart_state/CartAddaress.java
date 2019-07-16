@@ -3,13 +3,37 @@ package com.cdqf.cart_state;
 public class CartAddaress {
 
     //线下
-//    public static final String ADDRESS = "";
+    public static final String ADDRESS = "http://192.168.31.213:8001";
 
     //线上
-    public static final String ADDRESS = "https://tgapi.baodi520.com";
+//    public static final String ADDRESS = "https://tgapi.baodi520.com";
 
     //主页(店员)
-    public static final String HOME = ADDRESS + "";
+    public static final String HOME = ADDRESS + "/staff/shops";
+
+    //服务(待服务、已完成、待付款)
+    public static final String service = ADDRESS + "/staff/service";
+
+    //颜色
+    public static final String COLOR = ADDRESS + "/staff/color";
+
+    //服务项目
+    public static final String SERVICE_ITEM = ADDRESS + "/staff/items";
+
+    //添加订单
+    public static final String ADD_ORDER = ADDRESS + "/staff/create";
+
+    //订单详情
+    public static final String ORDER_DATILS = ADDRESS + "/staff/order/{id}";
+
+    //添加订单备注信息
+    public static final String ORDER_NOET = ADDRESS + "/staff/orderRemarks";
+
+    //添加会员备注信息
+    public static final String USER_NOET = ADDRESS + "/staff/userRemarks";
+
+    //员工点击服务
+    public static final String USER_SERVICE = ADDRESS + "/staff/takeService";
 
     /****************************************************/
 

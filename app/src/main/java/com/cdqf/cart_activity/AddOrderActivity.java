@@ -8,21 +8,37 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
+import com.cdqf.cart_class.ServiceOrder;
 import com.cdqf.cart_dilog.OtherDilogFragment;
 import com.cdqf.cart_dilog.ServiceDilogFragment;
-import com.cdqf.cart_find.ThroughFind;
+import com.cdqf.cart_dilog.WhyDilogFragment;
+import com.cdqf.cart_find.AddOrderFind;
+import com.cdqf.cart_find.OtherFind;
+import com.cdqf.cart_find.ServiceOrderFind;
+import com.cdqf.cart_find.ServicePullFind;
+import com.cdqf.cart_okhttp.OKHttpRequestWrap;
+import com.cdqf.cart_okhttp.OnHttpRequest;
 import com.cdqf.cart_state.BaseActivity;
+import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_state.StaturBar;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -56,9 +72,13 @@ public class AddOrderActivity extends BaseActivity {
     @BindView(R.id.rl_order_return)
     public RelativeLayout rlOrderReturn = null;
 
+    //手机号码
+    @BindView(R.id.tv_order_phone)
+    public EditText tvOrderPhone = null;
+
     //车牌号码
     @BindView(R.id.tv_order_number)
-    public TextView tvOrderNumber = null;
+    public EditText tvOrderNumber = null;
 
     //车辆车型
     @BindView(R.id.ll_order_type)
@@ -108,7 +128,49 @@ public class AddOrderActivity extends BaseActivity {
     @BindView(R.id.tv_order_submit)
     public TextView tvOrderSubmit = null;
 
+    //手机号
+    private String phone = "";
+
+    //车牌号
+    private String number = "";
+
+    //车辆车型
+    private String type = "";
+
+    //颜色
+    private String color = "";
+    private int colorId = 0;
+
+    //服务项目
+    private String services = "";
+
+    private int serviceId = 0;
+
+    private boolean isService = false;
+
+    //其它服务
+    private String others = "";
+
+    //备注
+    private String note = "";
+
+    //服务项目
+    private String name;
+
+    //服务金额
+    private String project;
+
+    //耗材成本
+    private String cost;
+
+    //支付方式
+    private int pay = 0;
+
+    //小轿车1,SUV = 2;
+    private int model = 0;
+
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -154,12 +216,15 @@ public class AddOrderActivity extends BaseActivity {
                 switch (checkedId) {
                     case R.id.rb_order_payone:
                         //余额
+                        pay = 1;
                         break;
                     case R.id.rb_order_paytwo:
                         //现金
+                        pay = 3;
                         break;
                     case R.id.rb_order_paythree:
                         //农商
+                        pay = 4;
                         break;
                 }
             }
@@ -167,7 +232,83 @@ public class AddOrderActivity extends BaseActivity {
     }
 
     private void initBack() {
+        initColorPull();
+        initServicePull();
+    }
 
+    /**
+     * 获取车辆颜色
+     */
+    private void initColorPull() {
+        Map<String, Object> params = new HashMap<String, Object>();
+        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
+        okHttpRequestWrap.get(CartAddaress.COLOR, true, "请稍候", params, new OnHttpRequest() {
+            @Override
+            public void onOkHttpResponse(String response, int id) {
+                Log.e(TAG, "---onOkHttpResponse---获取颜色---" + response);
+                JSONObject resultJSON = JSON.parseObject(response);
+                int error_code = resultJSON.getInteger("code");
+                String msg = resultJSON.getString("message");
+                switch (error_code) {
+                    //获取成功
+                    case 200:
+                        cartState.initToast(context, msg, true, 0);
+                        String data = resultJSON.getString("data");
+                        cartState.getColorList().clear();
+                        List<com.cdqf.cart_class.Color> colorList = gson.fromJson(data, new TypeToken<List<com.cdqf.cart_class.Color>>() {
+                        }.getType());
+                        cartState.setColorList(colorList);
+                        break;
+                    default:
+                        cartState.initToast(context, msg, true, 0);
+                        break;
+                }
+            }
+
+            @Override
+            public void onOkHttpError(String error) {
+                Log.e(TAG, "---onOkHttpError---" + error);
+                cartState.initToast(context, error, true, 0);
+            }
+        });
+    }
+
+    /**
+     * 获取服务项目
+     */
+    private void initServicePull() {
+        Map<String, Object> params = new HashMap<String, Object>();
+        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
+        params.put("shop_id", cartState.getUser().getShopid());
+        okHttpRequestWrap.postString(CartAddaress.SERVICE_ITEM, true, "请稍候", params, new OnHttpRequest() {
+            @Override
+            public void onOkHttpResponse(String response, int id) {
+                Log.e(TAG, "---onOkHttpResponse---服务项目---" + response);
+                JSONObject resultJSON = JSON.parseObject(response);
+                int error_code = resultJSON.getInteger("code");
+                String msg = resultJSON.getString("message");
+                switch (error_code) {
+                    //获取成功
+                    case 200:
+                        String data = resultJSON.getString("data");
+                        cartState.initToast(context, msg, true, 0);
+                        cartState.getServiceOrderList().clear();
+                        List<ServiceOrder> colorList = gson.fromJson(data, new TypeToken<List<ServiceOrder>>() {
+                        }.getType());
+                        cartState.setServiceOrderList(colorList);
+                        break;
+                    default:
+                        cartState.initToast(context, msg, true, 0);
+                        break;
+                }
+            }
+
+            @Override
+            public void onOkHttpError(String error) {
+                Log.e(TAG, "---onOkHttpError---" + error);
+                cartState.initToast(context, error, true, 0);
+            }
+        });
     }
 
     private void initIntent(Class<?> activity) {
@@ -185,7 +326,7 @@ public class AddOrderActivity extends BaseActivity {
             //车辆车型
             case R.id.ll_order_type:
                 SinglePicker<String> pickerSource = new SinglePicker<String>(AddOrderActivity.this, new String[]{
-                        "USA"
+                        "小轿车", "SUV"
                 });
                 LineConfig configSource = new LineConfig();
                 configSource.setColor(ContextCompat.getColor(context, R.color.addstore_one));//线颜色
@@ -217,15 +358,32 @@ public class AddOrderActivity extends BaseActivity {
                 pickerSource.setOnItemPickListener(new OnItemPickListener<String>() {
                     @Override
                     public void onItemPicked(int index, String item) {
+                        tvOrderService.setText("");
+                        tvOrderOther.setText("");
+                        if (index == 0) {
+                            //小轿车
+                            model = 1;
+                        } else if (index == 1) {
+                            //SUV
+                            model = 2;
+                        }
+                        cartState.setModel(model);
+                        tvOrderType.setText(item);
                     }
                 });
                 pickerSource.show();
                 break;
             //车辆颜色
             case R.id.ll_order_color:
-                SinglePicker<String> pickerSourcecolor = new SinglePicker<String>(AddOrderActivity.this, new String[]{
-                        "黄色"
-                });
+                if (cartState.getColorList().size() <= 0) {
+                    initColorPull();
+                    return;
+                }
+                String[] colorName = new String[cartState.getColorList().size()];
+                for (int i = 0; i < cartState.getColorList().size(); i++) {
+                    colorName[i] = cartState.getColorList().get(i).getColor_name();
+                }
+                SinglePicker<String> pickerSourcecolor = new SinglePicker<String>(AddOrderActivity.this, colorName);
                 LineConfig configSourcecolor = new LineConfig();
                 configSourcecolor.setColor(ContextCompat.getColor(context, R.color.addstore_one));//线颜色
                 configSourcecolor.setThick(ConvertUtils.toPx(context, 1));//线粗
@@ -256,23 +414,93 @@ public class AddOrderActivity extends BaseActivity {
                 pickerSourcecolor.setOnItemPickListener(new OnItemPickListener<String>() {
                     @Override
                     public void onItemPicked(int index, String item) {
-
+                        colorId = cartState.getColorList().get(index).getId();
+                        tvOrderColor.setText(item);
                     }
                 });
                 pickerSourcecolor.show();
                 break;
             //服务项目
             case R.id.ll_order_service:
-                ServiceDilogFragment serviceDilogFragment = new ServiceDilogFragment();
-                serviceDilogFragment.show(getSupportFragmentManager(), "服务项目");
+                if (model == 0) {
+                    cartState.initToast(context, "请先选择车型", true, 0);
+                    return;
+                }
+                //判断其它服务是不是已经填写
+                String other = tvOrderOther.getText().toString();
+                if (other.length() <= 0) {
+                    ServiceDilogFragment serviceDilogFragment = new ServiceDilogFragment();
+                    serviceDilogFragment.show(getSupportFragmentManager(), "服务项目");
+                } else {
+                    cartState.initToast(context, "其它服目中已经选择了服务项目", true, 0);
+                }
                 break;
             //其它服务
             case R.id.ll_order_other:
-                OtherDilogFragment otherDilogFragment = new OtherDilogFragment();
-                otherDilogFragment.show(getSupportFragmentManager(), "其它服务");
+                if (model == 0) {
+                    cartState.initToast(context, "请先选择车型", true, 0);
+                    return;
+                }
+                String service = tvOrderService.getText().toString();
+                if (service.length() <= 0) {
+                    OtherDilogFragment otherDilogFragment = new OtherDilogFragment();
+                    otherDilogFragment.show(getSupportFragmentManager(), "其它服务");
+                } else {
+                    cartState.initToast(context, "服务项目已存在", true, 0);
+                }
                 break;
             //提交订单
             case R.id.tv_order_submit:
+                //手机号
+                phone = tvOrderPhone.getText().toString();
+                if (phone.length() <= 0) {
+                    cartState.initToast(context, "手机号不能为空", true, 0);
+                    return;
+                }
+                if (!cartState.isMobile(phone)) {
+                    cartState.initToast(context, "请输入正确的手机号", true, 0);
+                    return;
+                }
+                //车牌号
+                number = tvOrderNumber.getText().toString();
+                if (number.length() <= 0) {
+                    cartState.initToast(context, "车牌号不能为空", true, 0);
+                    return;
+                }
+                if (!cartState.licensePlate(number)) {
+                    cartState.initToast(context, "请输入正确的车牌号", true, 0);
+                    return;
+                }
+                //车辆车型
+                type = tvOrderType.getText().toString();
+                if (type.length() <= 0) {
+                    cartState.initToast(context, "请选择车辆车型", true, 0);
+                    return;
+                }
+                //车辆颜色
+                color = tvOrderColor.getText().toString();
+                if (color.length() <= 0) {
+                    cartState.initToast(context, "请选择车辆颜色", true, 0);
+                    return;
+                }
+                //服务
+                services = tvOrderService.getText().toString();
+                others = tvOrderOther.getText().toString();
+                if (services.length() <= 0 && others.length() <= 0) {
+                    cartState.initToast(context, "请选择服务项目", true, 0);
+                    return;
+                }
+                //支付方式
+                if (pay == 0) {
+                    cartState.initToast(context, "请选择支付方式", true, 0);
+                    return;
+                }
+
+                //备注
+                note = tvDatilsNote.getText().toString();
+                WhyDilogFragment whyDilogFragment = new WhyDilogFragment();
+                whyDilogFragment.setInit(16, "提示", "是否添加订单", "否", "是");
+                whyDilogFragment.show(getSupportFragmentManager(), "添加订单");
                 break;
         }
     }
@@ -317,14 +545,93 @@ public class AddOrderActivity extends BaseActivity {
         super.onDestroy();
         Log.e(TAG, "---销毁---");
         eventBus.unregister(this);
+        cartState.setModel(0);
     }
 
     /**
-     * @param t
+     * 添加订单
+     *
+     * @param a
      */
     @Subscribe
-    public void onEventMainThread(ThroughFind t) {
+    public void onEventMainThread(AddOrderFind a) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        //店铺id
+        params.put("shop_id", cartState.getUser().getShopid());
+        //手机号
+        params.put("phone", phone);
+        //车辆车型
+        params.put("car_type", model);
+        //车牌号
+        params.put("car_num", number);
+        if (isService) {
+            //服务项目
+            params.put("goods_id", serviceId);
+        } else {
+            //其它服务
+            params.put("goods_id", 0);
+            params.put("name", name);
+            params.put("cost_price", cost);
+            params.put("amount", project);
+        }
+        //车辆颜色
+        params.put("color", color);
+        //备注
+        params.put("remarks", note);
+        //支付方式
+        params.put("pay_type", pay);
+        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
+        okHttpRequestWrap.postString(CartAddaress.ADD_ORDER, true, "添加中", params, new OnHttpRequest() {
+            @Override
+            public void onOkHttpResponse(String response, int id) {
+                Log.e(TAG, "---onOkHttpResponse---添加订单---" + response);
+                JSONObject resultJSON = JSON.parseObject(response);
+                int error_code = resultJSON.getInteger("code");
+                String msg = resultJSON.getString("message");
+                switch (error_code) {
+                    //获取成功
+                    case 200:
+                        cartState.initToast(context, msg, true, 0);
+                        eventBus.post(new ServicePullFind(true));
+                        finish();
+                        break;
+                    default:
+                        cartState.initToast(context, msg, true, 0);
+                        break;
+                }
+            }
 
+            @Override
+            public void onOkHttpError(String error) {
+                Log.e(TAG, "---onOkHttpError---" + error);
+                cartState.initToast(context, error, true, 0);
+            }
+        });
     }
 
+    /**
+     * 获取服务项
+     *
+     * @param s
+     */
+    @Subscribe
+    public void onEventMainThread(ServiceOrderFind s) {
+        isService = true;
+        serviceId = cartState.getServiceOrderList().get(s.position).getId();
+        tvOrderService.setText(cartState.getServiceOrderList().get(s.position).getGoods_name());
+    }
+
+    /**
+     * 设置其它项目
+     *
+     * @param s
+     */
+    @Subscribe
+    public void onEventMainThread(OtherFind s) {
+        isService = false;
+        name = s.name;
+        project = s.project;
+        cost = s.cost;
+        tvOrderOther.setText(name + "," + project + "," + cost);
+    }
 }

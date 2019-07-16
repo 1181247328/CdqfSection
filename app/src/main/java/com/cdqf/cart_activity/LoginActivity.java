@@ -21,7 +21,6 @@ import com.cdqf.cart_class.User;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;
 import com.cdqf.cart_state.BaseActivity;
-import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartPreferences;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_state.ScreenUtils;
@@ -159,7 +158,7 @@ public class LoginActivity extends BaseActivity {
 
     private String loginAccPass(String account, String password) {
         String result = "";
-        result = CartAddaress.ADDRESS + "/?s=Staff.login&account=" + account + "&password=" + password;
+        result = "https://tgapi.baodi520.com/?s=Staff.login&account=" + account + "&password=" + password;
         Log.e(TAG, "---登录---" + result);
         return result;
     }

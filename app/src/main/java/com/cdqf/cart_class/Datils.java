@@ -1,36 +1,30 @@
 package com.cdqf.cart_class;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Datils {
-    private String id;
+    private int id;
     private String ordernum;
-    private String userid;
-    private String shopid;
+    private int userid;
     private String phone;
-    private String type;
-    private String daodian;
     private String carnum;
     private String remarks;
-    private String cartype;
     private String zongprice;
-    private String classifyid;
-    private String couponid;
     private String addtime;
-    private String updtime;
-    private String dealtime;
-    private String discount;
-    private List<String> goodsname;
-    //    private String class;
-    private String shopname;
-    private List<DiscountList> discount_list = new ArrayList<>();
+    private int cartype;
+    private int pay_type;
+    private String car_type_name;
+    private String goods_names;
+    private int cost_price;
+    private List<String> staff_sevice = new CopyOnWriteArrayList<>();
+    private List<UserRemarks> user_remarks = new CopyOnWriteArrayList<>();
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -42,20 +36,12 @@ public class Datils {
         this.ordernum = ordernum;
     }
 
-    public String getUserid() {
+    public int getUserid() {
         return userid;
     }
 
-    public void setUserid(String userid) {
+    public void setUserid(int userid) {
         this.userid = userid;
-    }
-
-    public String getShopid() {
-        return shopid;
-    }
-
-    public void setShopid(String shopid) {
-        this.shopid = shopid;
     }
 
     public String getPhone() {
@@ -64,22 +50,6 @@ public class Datils {
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getDaodian() {
-        return daodian;
-    }
-
-    public void setDaodian(String daodian) {
-        this.daodian = daodian;
     }
 
     public String getCarnum() {
@@ -98,36 +68,12 @@ public class Datils {
         this.remarks = remarks;
     }
 
-    public String getCartype() {
-        return cartype;
-    }
-
-    public void setCartype(String cartype) {
-        this.cartype = cartype;
-    }
-
     public String getZongprice() {
         return zongprice;
     }
 
     public void setZongprice(String zongprice) {
         this.zongprice = zongprice;
-    }
-
-    public String getClassifyid() {
-        return classifyid;
-    }
-
-    public void setClassifyid(String classifyid) {
-        this.classifyid = classifyid;
-    }
-
-    public String getCouponid() {
-        return couponid;
-    }
-
-    public void setCouponid(String couponid) {
-        this.couponid = couponid;
     }
 
     public String getAddtime() {
@@ -138,135 +84,107 @@ public class Datils {
         this.addtime = addtime;
     }
 
-    public String getUpdtime() {
-        return updtime;
+    public int getCartype() {
+        return cartype;
     }
 
-    public void setUpdtime(String updtime) {
-        this.updtime = updtime;
+    public void setCartype(int cartype) {
+        this.cartype = cartype;
     }
 
-    public String getDealtime() {
-        return dealtime;
+    public int getPay_type() {
+        return pay_type;
     }
 
-    public void setDealtime(String dealtime) {
-        this.dealtime = dealtime;
+    public void setPay_type(int pay_type) {
+        this.pay_type = pay_type;
     }
 
-    public String getDiscount() {
-        return discount;
+    public String getCar_type_name() {
+        return car_type_name;
     }
 
-    public void setDiscount(String discount) {
-        this.discount = discount;
+    public void setCar_type_name(String car_type_name) {
+        this.car_type_name = car_type_name;
     }
 
-    public List<String> getGoodsname() {
-        return goodsname;
+    public String getGoods_names() {
+        return goods_names;
     }
 
-    public void setGoodsname(List<String> goodsname) {
-        this.goodsname = goodsname;
+    public void setGoods_names(String goods_names) {
+        this.goods_names = goods_names;
     }
 
-    public String getShopname() {
-        return shopname;
+    public int getCost_price() {
+        return cost_price;
     }
 
-    public void setShopname(String shopname) {
-        this.shopname = shopname;
+    public void setCost_price(int cost_price) {
+        this.cost_price = cost_price;
     }
 
-    public List<DiscountList> getDiscount_list() {
-        return discount_list;
+    public List<String> getStaff_sevice() {
+        return staff_sevice;
     }
 
-    public void setDiscount_list(List<DiscountList> discount_list) {
-        this.discount_list = discount_list;
+    public void setStaff_sevice(List<String> staff_sevice) {
+        this.staff_sevice = staff_sevice;
     }
 
-    public class DiscountList {
-        private String id;
-        private String order_num;
-        private String user_id;
-        private String money;
-        private String discount_num;
-        private String discount_money;
-        private String balance;
-        private String info;
-        private String add_time;
+    public List<UserRemarks> getUser_remarks() {
+        return user_remarks;
+    }
 
-        public String getId() {
+    public void setUser_remarks(List<UserRemarks> user_remarks) {
+        this.user_remarks = user_remarks;
+    }
+
+    public class UserRemarks {
+        private int id;
+        private String content;
+        private int staff_id;
+        private String created_at;
+        private String staff_name;
+
+        public int getId() {
             return id;
         }
 
-        public void setId(String id) {
+        public void setId(int id) {
             this.id = id;
         }
 
-        public String getOrder_num() {
-            return order_num;
+        public String getContent() {
+            return content;
         }
 
-        public void setOrder_num(String order_num) {
-            this.order_num = order_num;
+        public void setContent(String content) {
+            this.content = content;
         }
 
-        public String getUser_id() {
-            return user_id;
+        public int getStaff_id() {
+            return staff_id;
         }
 
-        public void setUser_id(String user_id) {
-            this.user_id = user_id;
+        public void setStaff_id(int staff_id) {
+            this.staff_id = staff_id;
         }
 
-        public String getMoney() {
-            return money;
+        public String getCreated_at() {
+            return created_at;
         }
 
-        public void setMoney(String money) {
-            this.money = money;
+        public void setCreated_at(String created_at) {
+            this.created_at = created_at;
         }
 
-        public String getDiscount_num() {
-            return discount_num;
+        public String getStaff_name() {
+            return staff_name;
         }
 
-        public void setDiscount_num(String discount_num) {
-            this.discount_num = discount_num;
-        }
-
-        public String getDiscount_money() {
-            return discount_money;
-        }
-
-        public void setDiscount_money(String discount_money) {
-            this.discount_money = discount_money;
-        }
-
-        public String getBalance() {
-            return balance;
-        }
-
-        public void setBalance(String balance) {
-            this.balance = balance;
-        }
-
-        public String getInfo() {
-            return info;
-        }
-
-        public void setInfo(String info) {
-            this.info = info;
-        }
-
-        public String getAdd_time() {
-            return add_time;
-        }
-
-        public void setAdd_time(String add_time) {
-            this.add_time = add_time;
+        public void setStaff_name(String staff_name) {
+            this.staff_name = staff_name;
         }
     }
 }

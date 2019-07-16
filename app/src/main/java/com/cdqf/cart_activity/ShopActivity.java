@@ -14,12 +14,10 @@ import android.widget.TextView;
 
 import com.cdqf.cart.R;
 import com.cdqf.cart_adapter.ShopFragmentAdapter;
-import com.cdqf.cart_dilog.WhyDilogFragment;
 import com.cdqf.cart_find.CompletePullFind;
 import com.cdqf.cart_find.EntryPullFind;
 import com.cdqf.cart_find.ServicePullFind;
 import com.cdqf.cart_find.ShopOneFind;
-import com.cdqf.cart_find.ShopServiceOneFind;
 import com.cdqf.cart_find.ShopServiceTwoFind;
 import com.cdqf.cart_find.ShopTwoFind;
 import com.cdqf.cart_find.ShopViscousFind;
@@ -151,18 +149,17 @@ public class ShopActivity extends BaseActivity {
                 switch (position) {
                     case 0:
                         //待服务
-                        eventBus.post(new ServicePullFind());
+                        eventBus.post(new ServicePullFind(false));
                         break;
                     case 1:
                         //已完成
-                        eventBus.post(new CompletePullFind());
+                        eventBus.post(new CompletePullFind(false));
                         break;
                     case 2:
                         //录入
-                        eventBus.post(new EntryPullFind());
+                        eventBus.post(new EntryPullFind(false));
                         break;
                 }
-                srlShopPull.setRefreshing(false);
             }
         });
 
@@ -197,7 +194,7 @@ public class ShopActivity extends BaseActivity {
     }
 
     private void initBack() {
-
+        tvShopName.setText(cartState.getUser().getShopName());
 //        if (aCache.getAsString("shop") != null) {
 ////            handler.sendEmptyMessage(0x001);
 //            String data = aCache.getAsString("shop");
@@ -433,18 +430,6 @@ public class ShopActivity extends BaseActivity {
 //        } else {
 //            initPullData(true);
 //        }
-    }
-
-    /**
-     * 服务第一次，用于提示
-     *
-     * @param s
-     */
-    @Subscribe
-    public void onEventMainThread(ShopServiceOneFind s) {
-        WhyDilogFragment whyDilogFragment = new WhyDilogFragment();
-        whyDilogFragment.setInit(1, "提示", "是否领取车牌号为" + cartState.getShopList().get(s.position).getCarnum() + "的订单.", "否", "是", s.position);
-        whyDilogFragment.show(getSupportFragmentManager(), "领取订单");
     }
 
     /**

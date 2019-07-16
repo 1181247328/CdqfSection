@@ -19,7 +19,7 @@
             android:layout_marginRight="@dimen/dp_5"
             android:layout_marginBottom="@dimen/dp_10"
             android:padding="@dimen/dp_10"
-            android:text="取消"
+            android:text="确定"
             android:textColor="@color/tab_main_text_default"
             android:textSize="@dimen/sp_14" />
 

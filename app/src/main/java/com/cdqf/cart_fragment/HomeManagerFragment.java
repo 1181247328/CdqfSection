@@ -28,17 +28,19 @@ import com.cdqf.cart_activity.NoticeManagerActivity;
 import com.cdqf.cart_activity.OtherActivity;
 import com.cdqf.cart_activity.ShopActivity;
 import com.cdqf.cart_adapter.HomeManagerAdapter;
+import com.cdqf.cart_class.Home;
 import com.cdqf.cart_find.ScanFind;
-import com.cdqf.cart_find.ShopViscousFind;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;
 import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_view.LineGridView;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -189,29 +191,35 @@ public class HomeManagerFragment extends Fragment {
 
     private void initShopPull() {
         Map<String, Object> params = new HashMap<String, Object>();
+        params.put("staff_id", cartState.getUser().getId());
+        Log.e(TAG, "---主页---" + cartState.getUser().getId());
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
-        String shop = shop(cartState.getUser().getShopid());
-        okHttpRequestWrap.post(shop, false, "请稍候", params, new OnHttpRequest() {
+        okHttpRequestWrap.postString(CartAddaress.HOME, true, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
-                Log.e(TAG, "---onOkHttpResponse服务的粘性事件(店长)---" + response);
+                Log.e(TAG, "---onOkHttpResponse---主页---(店员)---" + response);
                 JSONObject resultJSON = JSON.parseObject(response);
-                int error_code = resultJSON.getInteger("ret");
-                String msg = resultJSON.getString("msg");
+                int error_code = resultJSON.getInteger("code");
+                String msg = resultJSON.getString("message");
                 switch (error_code) {
                     //获取成功
                     case 200:
                         String data = resultJSON.getString("data");
-                        eventBus.postSticky(new ShopViscousFind(data, true));
+                        cartState.initToast(getContext(), msg, true, 0);
+                        cartState.getHomeList().clear();
+                        List<Home> homeList = gson.fromJson(data, new TypeToken<List<Home>>() {
+                        }.getType());
+                        cartState.setHomeList(homeList);
+                        for (Home h : homeList) {
+                            if (h.getStatus() == 1) {
+                                tvHomemanagerShop.setText(h.getShop_new_name());
+                                cartState.getUser().setShopid(h.getId() + "");
+                                cartState.getUser().setShopName(h.getShop_new_name());
+                            }
+                        }
                         break;
                     default:
-                        s++;
-                        if (s == 3) {
-                            s = 0;
-                            eventBus.postSticky(new ShopViscousFind(msg, false));
-                        } else {
-                            initShopPull();
-                        }
+                        cartState.initToast(getContext(), msg, true, 0);
                         break;
                 }
             }
@@ -219,15 +227,9 @@ public class HomeManagerFragment extends Fragment {
             @Override
             public void onOkHttpError(String error) {
                 Log.e(TAG, "---onOkHttpError---" + error);
+                cartState.initToast(getContext(), error, true, 0);
             }
         });
-    }
-
-    private String shop(String shopid) {
-        String result = null;
-        result = CartAddaress.ADDRESS + "/?s=order.shopowenr&shopid=" + shopid;
-        Log.e(TAG, "---店总---" + result);
-        return result;
     }
 
     @OnClick({R.id.ll_homemanager_shop, R.id.tv_homemanager_scan})
@@ -235,9 +237,15 @@ public class HomeManagerFragment extends Fragment {
         switch (v.getId()) {
             //选择店铺
             case R.id.ll_homemanager_shop:
-                SinglePicker<String> pickerSource = new SinglePicker<>(getActivity(), new String[]{
-                        "浅水半岛店"
-                });
+                if (cartState.getHomeList().size() <= 0) {
+                    initShopPull();
+                    return;
+                }
+                String[] homeName = new String[cartState.getHomeList().size()];
+                for (int i = 0; i < cartState.getHomeList().size(); i++) {
+                    homeName[i] = cartState.getHomeList().get(i).getShop_new_name();
+                }
+                SinglePicker<String> pickerSource = new SinglePicker<>(getActivity(), homeName);
                 LineConfig configSource = new LineConfig();
                 configSource.setColor(ContextCompat.getColor(getContext(), R.color.addstore_one));//线颜色
                 configSource.setThick(ConvertUtils.toPx(getActivity(), 1));//线粗
@@ -268,7 +276,9 @@ public class HomeManagerFragment extends Fragment {
                 pickerSource.setOnItemPickListener(new OnItemPickListener<String>() {
                     @Override
                     public void onItemPicked(int index, String item) {
-                        tvHomemanagerShop.setText(item);
+                        tvHomemanagerShop.setText(cartState.getHomeList().get(index).getShop_new_name());
+                        cartState.getUser().setShopid(cartState.getHomeList().get(index).getId() + "");
+                        cartState.getUser().setShopName(cartState.getHomeList().get(index).getShop_new_name());
                     }
                 });
                 pickerSource.show();

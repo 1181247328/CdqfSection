@@ -27,9 +27,9 @@
             <com.gcssloop.widget.RCRelativeLayout
                 android:id="@+id/rcrl_datils_call"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/dp_3"
+                android:layout_weight="1"
                 android:background="@android:color/transparent"
                 app:clip_background="true"
                 app:round_corner="30dp">
@@ -52,9 +52,9 @@
             <com.gcssloop.widget.RCRelativeLayout
                 android:id="@+id/rcrl_datils_add"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/dp_3"
+                android:layout_weight="1"
                 android:background="@android:color/transparent"
                 app:clip_background="true"
                 app:round_corner="30dp">
@@ -77,9 +77,9 @@
             <com.gcssloop.widget.RCRelativeLayout
                 android:id="@+id/rcrl_datils_preferential"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/dp_3"
+                android:layout_weight="1"
                 android:background="@android:color/transparent"
                 app:clip_background="true"
                 app:round_corner="30dp">
@@ -102,8 +102,8 @@
             <com.gcssloop.widget.RCRelativeLayout
                 android:id="@+id/rcrl_datils_note"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:background="@android:color/transparent"
                 app:clip_background="true"
                 app:round_corner="30dp">
@@ -227,7 +227,7 @@
                                         android:paddingBottom="@dimen/dp_5">
 
                                         <TextView
-                                            android:id="@+id/tv_shop_item_way"
+                                            android:id="@+id/tv_datils_way"
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
                                             android:background="@android:color/transparent"
@@ -648,6 +648,38 @@
                                     android:textColorHint="@color/clock_one"
                                     android:textCursorDrawable="@drawable/nickname_cursor"
                                     android:textSize="@dimen/sp_13" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/ll_datils_list"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/dp_10"
+                                android:background="@color/white"
+                                android:gravity="center_vertical"
+                                android:orientation="vertical"
+                                android:paddingLeft="@dimen/dp_8"
+                                android:paddingRight="@dimen/dp_8"
+                                android:paddingBottom="@dimen/dp_25">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:background="@color/white"
+                                    android:gravity="center_vertical"
+                                    android:paddingTop="@dimen/dp_12"
+                                    android:text="会员备注:"
+                                    android:textColor="@color/tab_main_text_default"
+                                    android:textSize="@dimen/sp_13" />
+
+                                <com.cdqf.cart_view.ListViewForScrollView
+                                    android:id="@+id/lvfsv_datils_list"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@color/service_bak"
+                                    android:divider="@null"
+                                    android:scrollbars="none" />
 
                             </LinearLayout>
                         </LinearLayout>

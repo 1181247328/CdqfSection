@@ -1,6 +1,7 @@
 package com.cdqf.cart_adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.cdqf.cart.R;
+import com.cdqf.cart_find.CompleteKeyFind;
 import com.cdqf.cart_find.ShopServiceOneFind;
 import com.cdqf.cart_state.CartState;
 import com.gcssloop.widget.RCRelativeLayout;
@@ -49,7 +51,8 @@ public class CompleteAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 20;
+        Log.e(TAG, "----数量---" + cartState.getCompleteList().size());
+        return cartState.getCompleteList().size() + 1;
     }
 
     @Override
@@ -69,58 +72,82 @@ public class CompleteAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(context).inflate(R.layout.item_shop_serach, null);
             TextView tvShopItemCancel = convertView.findViewById(R.id.tv_shop_item_cancel);
             EditText etShopItemInput = convertView.findViewById(R.id.et_shop_item_input);
+            tvShopItemCancel.setOnClickListener(new OnDetermineListener(etShopItemInput));
         } else if (type == 1) {
             ViewHolder viewHolder = null;
             if (convertView == null) {
-                convertView = LayoutInflater.from(context).inflate(R.layout.item_shop, null);
+                convertView = LayoutInflater.from(context).inflate(R.layout.item_complete, null);
                 viewHolder = new ViewHolder(convertView);
                 convertView.setTag(viewHolder);
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
+
+            //支付
+            String pay = "";
+            switch (cartState.getCompleteList().get(position - 1).getPay_type()) {
+                case 1:
+                    pay = "余额";
+                    break;
+                case 2:
+                    pay = "微信";
+                    break;
+                case 3:
+                    pay = "现金";
+                    break;
+                case 4:
+                    pay = "农商";
+                    break;
+                default:
+                    pay = "现金";
+                    break;
+            }
+            viewHolder.tvShopItemWay.setText(pay);
+            //项目名称
+            viewHolder.tvShopItemName.setText(cartState.getCompleteList().get(position - 1).getGoods_names());
+            //价格
+            viewHolder.tvShopItemPrice.setText("￥" + cartState.getCompleteList().get(position - 1).getAmount());
+            //车牌号
+            viewHolder.tvShopItemPlate.setText(cartState.getCompleteList().get(position - 1).getCarnum());
+            //车型
+            viewHolder.tvShopItemType.setText(cartState.getCompleteList().get(position - 1).getCar_type_name());
+            //服务方式
+            String claim = "";
+            switch (cartState.getCompleteList().get(position - 1).getType()) {
+                case 1:
+                    claim = "待付款";
+                    break;
+                case 2:
+                    claim = "服务";
+                    break;
+                case 3:
+                    claim = "已服务";
+                    break;
+                default:
+                    //TODO
+                    break;
+            }
+            viewHolder.tvShopItemClaim.setText(claim);
+            //时间
+            viewHolder.tvShopItemTimer.setText(cartState.getCompleteList().get(position - 1).getAddtime());
         }
-//        //订单号
-//        viewHolder.tvShopItemId.setText("订单:" + cartState.getShopList().get(position).getOrdernum());
-//        //车牌号
-//        if (TextUtils.equals(cartState.getShopList().get(position).getCarnum(), "")) {
-//            viewHolder.tvShopItemPlate.setText("此订单不可无须服务");
-//            viewHolder.rcrlShopItemClaim.setVisibility(View.GONE);
-//            //完成
-//            viewHolder.rcrlShopItemWashed.setVisibility(View.GONE);
-//        } else {
-//            viewHolder.tvShopItemPlate.setText(cartState.getShopList().get(position).getCarnum());
-//            viewHolder.rcrlShopItemClaim.setVisibility(View.VISIBLE);
-//            //完成
-//            viewHolder.rcrlShopItemWashed.setVisibility(View.VISIBLE);
-//        }
-//        //车型
-//        viewHolder.tvShopItemType.setText(cartState.getShopList().get(position).getType());
-//        //时间
-//        viewHolder.tvShopItemTimer.setText("时间:" + cartState.getShopList().get(position).getAddtime());
-//        //服务
-//        viewHolder.rcrlShopItemClaim.setOnClickListener(new OnServiceListener(position));
-//        //完成
-//        viewHolder.rcrlShopItemWashed.setOnClickListener(new OnWashedListener(position));
-//        String shop = "(" + cartState.getShopList().get(position).getService() + "人)";
-//        viewHolder.tvShopItemNumber.setText(shop);
-//        //完成状态
-//        int service = 0;
-//        try {
-//            service = Integer.parseInt(cartState.getShopList().get(position).getService().trim());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            service = 0;
-//        }
-//        Log.e(TAG, "---当前服务人数---" + service);
-//        if (service > 0) {
-//            viewHolder.rcrlShopItemWashed.setBackgroundColor(ContextCompat.getColor(context, R.color.loss_receive));
-//        } else {
-//            viewHolder.rcrlShopItemWashed.setBackgroundColor(ContextCompat.getColor(context, R.color.lossmanager_stock));
-//        }
+
         return convertView;
     }
 
     class ViewHolder {
+
+        //平台
+        @BindView(R.id.tv_shop_item_way)
+        public TextView tvShopItemWay = null;
+
+        //项目名称
+        @BindView(R.id.tv_shop_item_name)
+        public TextView tvShopItemName = null;
+
+        //价格
+        @BindView(R.id.tv_shop_item_price)
+        public TextView tvShopItemPrice = null;
 
         //车牌号
         @BindView(R.id.tv_shop_item_plate)
@@ -129,6 +156,8 @@ public class CompleteAdapter extends BaseAdapter {
         //认领
         @BindView(R.id.rcrl_shop_item_claim)
         public RCRelativeLayout rcrlShopItemClaim = null;
+        @BindView(R.id.tv_shop_item_claim)
+        public TextView tvShopItemClaim = null;
 
         //车型
         @BindView(R.id.tv_shop_item_type)
@@ -140,6 +169,36 @@ public class CompleteAdapter extends BaseAdapter {
 
         public ViewHolder(View v) {
             ButterKnife.bind(this, v);
+        }
+    }
+
+    /**
+     * 确定
+     */
+    class OnDetermineListener implements View.OnClickListener {
+
+        private EditText etShopItemInput = null;
+
+        public OnDetermineListener(EditText etShopItemInput) {
+            this.etShopItemInput = etShopItemInput;
+        }
+
+        @Override
+        public void onClick(View v) {
+            String item = etShopItemInput.getText().toString();
+            Log.e(TAG, "---要搜索的关键字---" + item);
+            if (item.length() <= 0) {
+                cartState.initToast(context, "车牌或手机号不能为空", true, 0);
+                return;
+            }
+            //判断是不是手机
+            if (cartState.isMobile(item)) {
+                eventBus.post(new CompleteKeyFind(item, false));
+            } else if (cartState.licensePlate(item)) {
+                eventBus.post(new CompleteKeyFind(item, false));
+            } else {
+                cartState.initToast(context, "请输入正确的车牌和手机", true, 0);
+            }
         }
     }
 

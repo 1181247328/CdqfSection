@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.cdqf.cart.R;
 import com.cdqf.cart_dilogadapter.ServiceDilogAdapter;
+import com.cdqf.cart_find.ServiceOrderFind;
 import com.cdqf.cart_state.CartState;
 
 import butterknife.BindView;
@@ -102,6 +103,7 @@ public class ServiceDilogFragment extends DialogFragment {
         lvServiceItemList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                eventBus.post(new ServiceOrderFind(position));
                 dismiss();
             }
         });

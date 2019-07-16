@@ -5,6 +5,7 @@ public class User {
     private String name;
     private String phone;
     private String shopid;
+    private String shopName;
     private String login_account;
     private String login_password;
     private String position_id;
@@ -128,6 +129,14 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getShopName() {
+        return shopName;
+    }
+
+    public void setShopName(String shopName) {
+        this.shopName = shopName;
     }
 
     public class ServiceAll {

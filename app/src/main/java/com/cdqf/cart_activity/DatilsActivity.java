@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
+import com.cdqf.cart_adapter.DatilsRemarksAdapter;
 import com.cdqf.cart_class.Datils;
 import com.cdqf.cart_dilog.WhyDilogFragment;
 import com.cdqf.cart_find.DatilsPhoneFind;
@@ -27,6 +28,7 @@ import com.cdqf.cart_state.BaseActivity;
 import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_state.StaturBar;
+import com.cdqf.cart_view.ListViewForScrollView;
 import com.gcssloop.widget.RCRelativeLayout;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -66,6 +68,10 @@ public class DatilsActivity extends BaseActivity {
     //返回
     @BindView(R.id.rl_datils_return)
     public RelativeLayout rlDatilsReturn = null;
+
+    //平台
+    @BindView(R.id.tv_datils_way)
+    public TextView tvDatilsWay = null;
 
     //车牌号
     @BindView(R.id.tv_datils_number)
@@ -128,10 +134,19 @@ public class DatilsActivity extends BaseActivity {
     @BindView(R.id.ll_datils_money)
     public LinearLayout llDatilsMoney = null;
 
+    //会员备注
+    @BindView(R.id.ll_datils_list)
+    public LinearLayout llDatilsList = null;
+    @BindView(R.id.lvfsv_datils_list)
+    public ListViewForScrollView lvfsvDatilsList = null;
 
     private int position = 0;
 
+    private int type = 0;
+
     private Datils datils = null;
+
+    private DatilsRemarksAdapter datilsRemarksAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,6 +174,7 @@ public class DatilsActivity extends BaseActivity {
         ButterKnife.bind(this);
         Intent intent = getIntent();
         position = intent.getIntExtra("position", 0);
+        type = intent.getIntExtra("type", 0);
         imageLoader = cartState.getImageLoader(context);
         if (!eventBus.isRegistered(this)) {
             eventBus.register(this);
@@ -170,7 +186,8 @@ public class DatilsActivity extends BaseActivity {
     }
 
     private void initAdapter() {
-
+        datilsRemarksAdapter = new DatilsRemarksAdapter(context);
+        lvfsvDatilsList.setAdapter(datilsRemarksAdapter);
     }
 
     private void initListener() {
@@ -190,14 +207,30 @@ public class DatilsActivity extends BaseActivity {
     }
 
     private void initBack() {
-//        initPull(true);
+        initPull(true);
     }
 
     private void initPull(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
+        int id = 0;
+        switch (type) {
+            case 1:
+                //待服务
+                id = cartState.getServiceLis().get(position).getId();
+                break;
+            case 2:
+                //已完成
+                id = cartState.getCompleteList().get(position).getId();
+                break;
+            case 3:
+                //待付款
+                id = cartState.getEntryList().get(position).getId();
+                break;
+        }
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        String ordernum = ordernum(cartState.getShopList().get(position).getOrdernum());
-        okHttpRequestWrap.post(ordernum, isToast, "请稍候", params, new OnHttpRequest() {
+        String DATILS = CartAddaress.ADDRESS + "/staff/order/" + id + "";
+        Log.e(TAG, "---订单详情---" + DATILS);
+        okHttpRequestWrap.get(DATILS, isToast, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse详情---" + response);
@@ -205,30 +238,64 @@ public class DatilsActivity extends BaseActivity {
                     srlDatilsPull.setRefreshing(false);
                 }
                 JSONObject resultJSON = JSON.parseObject(response);
-                int error_code = resultJSON.getInteger("ret");
-                String msg = resultJSON.getString("msg");
+                int error_code = resultJSON.getInteger("code");
+                String msg = resultJSON.getString("message");
                 switch (error_code) {
                     //获取成功
                     case 200:
+                        cartState.initToast(context, msg, true, 0);
                         String data = resultJSON.getString("data");
                         datils = gson.fromJson(data, Datils.class);
                         cartState.setDatils(datils);
-                        //车牌号码
-                        tvDatilsNumber.setText(datils.getCarnum());
-                        //金额
-                        tvDatilsMount.setText(datils.getZongprice());
-                        //电话
-                        tvDatilsPhone.setText(datils.getPhone());
-                        //服务项目
-                        String goodsNmae = "";
-                        for (String name : datils.getGoodsname()) {
-                            goodsNmae += name + " ";
+                        //支付
+                        String pay = "";
+                        switch (datils.getPay_type()) {
+                            case 1:
+                                pay = "余额";
+                                break;
+                            case 2:
+                                pay = "微信";
+                                break;
+                            case 3:
+                                pay = "现金";
+                                break;
+                            case 4:
+                                pay = "农商";
+                                break;
+                            default:
+                                pay = "现金";
+                                break;
                         }
-                        tvDatilsAdd.setText(goodsNmae);
+                        tvDatilsWay.setText(pay);
+                        //车牌号
+                        tvDatilsNumber.setText(datils.getCarnum());
+                        //消费金额
+                        tvDatilsMount.setText("￥" + datils.getZongprice());
+                        //耗材成本
+                        tvDatilsEliminatecost.setText("￥" + datils.getCost_price() + "");
+                        //服务项目
+                        tvDatilsAdd.setText(datils.getGoods_names());
+                        //服务人员
+                        for (int i = 0; i < datils.getStaff_sevice().size(); i++) {
+                            tvDatilsPeople.setText(datils.getStaff_sevice().get(i) + ",");
+                        }
+                        //手机号码
+                        tvDatilsPhone.setText(datils.getPhone());
                         //订单编号
                         tvDatilsSerial.setText(datils.getOrdernum());
                         //下单时间
                         tvDatilsTimer.setText(datils.getAddtime());
+                        //备注
+                        tvDatilsNote.setText(datils.getRemarks());
+                        //是否显示会员备注
+                        if (datils.getUserid() == 0) {
+                            llDatilsList.setVisibility(View.GONE);
+                        } else {
+                            llDatilsList.setVisibility(View.VISIBLE);
+                            if (datilsRemarksAdapter != null) {
+                                datilsRemarksAdapter.notifyDataSetChanged();
+                            }
+                        }
                         break;
                     default:
                         cartState.initToast(context, msg, true, 0);
@@ -243,23 +310,12 @@ public class DatilsActivity extends BaseActivity {
         });
     }
 
-    private String ordernum(String ordernum) {
-        String result = null;
-        result = CartAddaress.ADDRESS + "/?s=Order.getorderinfo&ordernum=" + ordernum;
-        Log.e(TAG, "---详情---" + result);
-        return result;
-    }
-
-    private void preferential(int state) {
-        //优惠折扣
-        llDatilsPreferential.setVisibility(state);
-        //折扣价
-        llDatilsDiscount.setVisibility(state);
-        //返余额
-        llDatilsMoney.setVisibility(state);
-    }
-
     private void initIntent(Class<?> activity) {
+        Intent intent = new Intent(context, activity);
+        startActivity(intent);
+    }
+
+    private void initIntentUser(Class<?> activity) {
         Intent intent = new Intent(context, activity);
         startActivity(intent);
     }
@@ -294,7 +350,7 @@ public class DatilsActivity extends BaseActivity {
                 break;
             //添加备注
             case R.id.rcrl_datils_note:
-                initIntent(NoteActivity.class);
+                initIntentUser(NoteActivity.class);
                 break;
         }
     }
