@@ -2,6 +2,8 @@ package com.cdqf.cart_adapter;
 
 import android.content.Context;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +15,11 @@ import android.widget.TextView;
 
 import com.cdqf.cart.R;
 import com.cdqf.cart_find.FillContextCencelFind;
+import com.cdqf.cart_find.FillContextFind;
+import com.cdqf.cart_find.FillPriceFind;
 import com.cdqf.cart_find.ShopFillFind;
 import com.cdqf.cart_find.TypeFillTypeFind;
+import com.cdqf.cart_state.CashierInputFilter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,12 +38,34 @@ public class FillContextAdapter extends BaseAdapter {
 
     private int number = 1;
 
+    private String shopName = "";
+
+    private String type = "";
+
     public FillContextAdapter(Context context) {
         this.context = context;
     }
 
     public void setNumber(int n) {
         number += n;
+        notifyDataSetChanged();
+    }
+
+    public String getShopName() {
+        return shopName;
+    }
+
+    public void setShopName(String shopName) {
+        this.shopName = shopName;
+        notifyDataSetChanged();
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
         notifyDataSetChanged();
     }
 
@@ -67,6 +94,17 @@ public class FillContextAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+
+        viewHolder.tvFillItemShop.setText(shopName);
+        viewHolder.tvFillItemType.setText(type);
+
+        viewHolder.etFillItemPrice.setTag(position);
+        viewHolder.etFillItemContext.setTag(position);
+
+        InputFilter[] filters = {new CashierInputFilter()};
+        viewHolder.etFillItemPrice.setFilters(filters);
+        viewHolder.etFillItemPrice.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+
         viewHolder.tvFillItemId.setText("报销明细(" + (position + 1) + ")");
         viewHolder.tvFillItemCencel.setOnClickListener(new OnCencelListener(position));
         viewHolder.llFillItemShop.setOnClickListener(new OnShopListener(position));
@@ -188,7 +226,11 @@ public class FillContextAdapter extends BaseAdapter {
 
         @Override
         public void afterTextChanged(Editable s) {
-
+            int position = (int) viewHolder.etFillItemPrice.getTag();
+            if (position == this.position) {
+                String price = viewHolder.etFillItemPrice.getText().toString();
+                eventBus.post(new FillPriceFind(price));
+            }
         }
     }
 
@@ -215,7 +257,11 @@ public class FillContextAdapter extends BaseAdapter {
 
         @Override
         public void afterTextChanged(Editable s) {
-
+            int position = (int) viewHolder.etFillItemContext.getTag();
+            if (position == this.position) {
+                String context = viewHolder.etFillItemContext.getText().toString();
+                eventBus.post(new FillContextFind(context));
+            }
         }
     }
 }

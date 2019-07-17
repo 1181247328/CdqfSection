@@ -153,7 +153,7 @@ public class LossNewsActivity extends BaseActivity {
         srlLossnewsPull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                String LOSS_NEWS = CartAddaress.ADDRESS + "/?s=TotalGoods.lists";
+                String LOSS_NEWS = CartAddaress.ADDRESS_THE + "/?s=TotalGoods.lists";
                 final String lossId = cartState.getLossNewsList().get(type).getId();
                 OkHttpUtils
                         .post()
@@ -229,7 +229,7 @@ public class LossNewsActivity extends BaseActivity {
 
     private void initPull() {
         Map<String, Object> params = new HashMap<String, Object>();
-        String LOSS_NEWS = CartAddaress.ADDRESS + "/?s=TotalGoods.lists";
+        String LOSS_NEWS = CartAddaress.ADDRESS_THE + "/?s=TotalGoods.lists";
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
         okHttpRequestWrap.post(LOSS_NEWS, true, "请稍候", params, new OnHttpRequest() {
             @Override
@@ -266,7 +266,7 @@ public class LossNewsActivity extends BaseActivity {
 
     //二次下载
     private void initPullItem(final String lossId) {
-        String LOSS_NEWS = CartAddaress.ADDRESS + "/?s=TotalGoods.lists";
+        String LOSS_NEWS = CartAddaress.ADDRESS_THE + "/?s=TotalGoods.lists";
         OkHttpUtils
                 .post()
                 .url(LOSS_NEWS)
@@ -455,7 +455,7 @@ public class LossNewsActivity extends BaseActivity {
         }
         String loss = gson.toJson(lossList);
         Log.e(TAG, "---最后所得数据---" + loss);
-        String LOSS_NEWS = CartAddaress.ADDRESS + "/?s=TotalGoods.receive";
+        String LOSS_NEWS = CartAddaress.ADDRESS_THE + "/?s=TotalGoods.receive";
         OkHttpUtils
                 .post()
                 .url(LOSS_NEWS)

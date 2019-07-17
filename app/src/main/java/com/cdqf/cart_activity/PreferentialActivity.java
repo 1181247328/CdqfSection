@@ -2,17 +2,16 @@ package com.cdqf.cart_activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -29,8 +28,9 @@ import com.cdqf.cart_okhttp.OnHttpRequest;
 import com.cdqf.cart_state.BaseActivity;
 import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
+import com.cdqf.cart_state.CashierInputFilter;
 import com.cdqf.cart_state.DoubleOperationUtil;
-import com.cdqf.cart_state.StatusBarCompat;
+import com.cdqf.cart_state.StaturBar;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -112,20 +112,10 @@ public class PreferentialActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        //API19以下用于沉侵式菜单栏
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        }
-
         //加载布局
         setContentView(R.layout.activity_preferential);
 
-        //API>=20以上用于沉侵式菜单栏
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-            //沉侵
-            StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.black));
-        }
+        StaturBar.setStatusBar(this, R.color.tab_main_text_icon);
 
         initAgo();
 
@@ -234,23 +224,19 @@ public class PreferentialActivity extends BaseActivity {
     }
 
     private void initBack() {
-//        //车牌号
-//        tvPreferentialNumber.setText(cartState.getDatils().getCarnum());
-//        //金额
-//        tvPreferentialMount.setText(cartState.getDatils().getZongprice());
-//        //折扣价
-////        tvPreferentialDiscount.setText("");
-//        //返余额
-////        tvPreferentialMoney.setText("");
-//        //服务项目
-//        String goodsNmae = "";
-//        for (String name : cartState.getDatils().getGoodsname()) {
-//            goodsNmae += name + " ";
-//        }
-//        tvPreferentialAdd.setText(goodsNmae);
-//        InputFilter[] filters = {new CashierInputFilter(10)};
-//        etPreferentialDiscount.setFilters(filters);
-//        etPreferentialDiscount.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        //车牌号
+        tvPreferentialNumber.setText(cartState.getDatils().getCarnum());
+        //金额
+        tvPreferentialMount.setText(cartState.getDatils().getZongprice());
+        //折扣价
+//        tvPreferentialDiscount.setText("");
+        //返余额
+//        tvPreferentialMoney.setText("");
+        //服务项目
+        tvPreferentialAdd.setText(cartState.getDatils().getGoods_names());
+        InputFilter[] filters = {new CashierInputFilter(10)};
+        etPreferentialDiscount.setFilters(filters);
+        etPreferentialDiscount.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
     }
 
     private void initPull(boolean isToast) {
@@ -259,8 +245,7 @@ public class PreferentialActivity extends BaseActivity {
         String order_num = cartState.getDatils().getOrdernum();
         params.put("order_num", order_num);
         //用户id
-//        int user_id = Integer.parseInt(cartState.getDatils().getUserid());
-        int user_id = 0;
+        int user_id = cartState.getDatils().getUserid();
         params.put("user_id", user_id);
         //金额
         params.put("money", price + "");
@@ -310,7 +295,7 @@ public class PreferentialActivity extends BaseActivity {
 
     private String ordernum(String ordernum) {
         String result = null;
-        result = CartAddaress.ADDRESS + "/?s=Order.getorderinfo&ordernum=" + ordernum;
+        result = CartAddaress.ADDRESS_THE + "/?s=Order.getorderinfo&ordernum=" + ordernum;
         Log.e(TAG, "---详情---" + result);
         return result;
     }

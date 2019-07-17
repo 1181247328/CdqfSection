@@ -79,7 +79,7 @@
                 app:tab_textsize="@dimen/sp_14"
                 app:tab_width="@dimen/dp_55"
                 app:tap_type="rect"
-                app:visiabel_size="3">
+                app:visiabel_size="2">
 
                 <TextView
                     android:layout_width="0dp"
@@ -96,15 +96,6 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="已审批"
-                    android:textColor="@color/clock_one"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="已撤回"
                     android:textColor="@color/clock_one"
                     android:textSize="14sp" />
 

@@ -142,7 +142,8 @@
                         android:gravity="center"
                         android:orientation="horizontal"
                         android:paddingTop="@dimen/dp_10"
-                        android:paddingBottom="@dimen/dp_10">
+                        android:paddingBottom="@dimen/dp_10"
+                        android:visibility="gone">
 
                         <ImageView
                             android:layout_width="@dimen/dp_16"
@@ -185,7 +186,6 @@
                             android:paddingLeft="@dimen/dp_8"
                             android:paddingTop="@dimen/dp_8"
                             android:paddingBottom="@dimen/dp_8"
-                            android:text="100.00"
                             android:textColor="@color/tab_main_text_default"
                             android:textSize="@dimen/sp_12" />
 

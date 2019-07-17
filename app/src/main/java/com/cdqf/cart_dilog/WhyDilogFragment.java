@@ -23,6 +23,7 @@ import com.cdqf.cart_find.AddOrderFind;
 import com.cdqf.cart_find.DatilsPhoneFind;
 import com.cdqf.cart_find.EmployeesIdFind;
 import com.cdqf.cart_find.ExitFind;
+import com.cdqf.cart_find.FillFind;
 import com.cdqf.cart_find.LossNewsFind;
 import com.cdqf.cart_find.NoteFind;
 import com.cdqf.cart_find.PreferentialFind;
@@ -255,6 +256,10 @@ public class WhyDilogFragment extends DialogFragment {
                     //NoteActivity添加备注
                     case 17:
                         eventBus.post(new NoteFind());
+                        break;
+                    //FillActivity提交报销
+                    case 18:
+                        eventBus.post(new FillFind());
                         break;
                 }
                 break;

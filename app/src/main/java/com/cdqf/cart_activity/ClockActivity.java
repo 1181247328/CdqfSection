@@ -1,26 +1,53 @@
 package com.cdqf.cart_activity;
 
+import android.Manifest;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationClient;
+import com.amap.api.location.AMapLocationClientOption;
+import com.amap.api.location.AMapLocationListener;
+import com.amap.api.maps.AMap;
+import com.amap.api.maps.MapView;
+import com.amap.api.maps.model.Circle;
+import com.amap.api.maps.model.CircleOptions;
+import com.amap.api.maps.model.LatLng;
+import com.amap.api.maps.model.Marker;
+import com.amap.api.maps.model.MarkerOptions;
 import com.cdqf.cart.R;
 import com.cdqf.cart_find.ThroughFind;
 import com.cdqf.cart_state.BaseActivity;
+import com.cdqf.cart_state.CartCalender;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_state.StaturBar;
 import com.gcssloop.widget.RCRelativeLayout;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.zxy.tiny.Tiny;
+import com.zxy.tiny.callback.FileCallback;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -93,6 +120,9 @@ public class ClockActivity extends BaseActivity {
     @BindView(R.id.tv_clock_fixed)
     public TextView tvClockFixed = null;
 
+    @BindView(R.id.ll_clock_on_timer)
+    public LinearLayout llClockOnTimer = null;
+
     //上班打卡时间
     @BindView(R.id.tv_clock_workon)
     public TextView tvClockWorkon = null;
@@ -106,6 +136,10 @@ public class ClockActivity extends BaseActivity {
     public RCRelativeLayout rcrlClockImageon = null;
     @BindView(R.id.iv_clock_imageon)
     public ImageView ivClockImageon = null;
+
+    //下班
+    @BindView(R.id.ll_clock_under)
+    public LinearLayout llClockUnder = null;
 
     //固定下班时间
     @BindView(R.id.tv_clock_after)
@@ -125,8 +159,33 @@ public class ClockActivity extends BaseActivity {
     @BindView(R.id.iv_clock_imageafter)
     public ImageView ivClockImageafter = null;
 
+
     @BindView(R.id.tv_clock_id)
     public TextView tvClockId = null;
+
+    //声明mlocationClient对象
+    public AMapLocationClient mlocationClient;
+
+    //声明mLocationOption对象
+    public AMapLocationClientOption mLocationOption = null;
+
+
+    private Circle cirCle = null;
+
+    private LatLng latLng = null;
+
+    //是否已经定位
+    private boolean isClock = false;
+
+    //是否到了打卡时间
+    private boolean isCart = false;
+
+    //是不是拍了上班门店照片
+    private boolean isImageOne = false;
+    //上班门店照片Uri
+    private Uri photoUriOne = null;
+
+    private String photoUriOn = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,6 +217,15 @@ public class ClockActivity extends BaseActivity {
         if (!eventBus.isRegistered(this)) {
             eventBus.register(this);
         }
+        //打卡的位置
+        LatLng latLngTwo = new LatLng(30.672024, 104.085349);
+        AMap aMap = new MapView(this).getMap();
+        cirCle = aMap.addCircle(new CircleOptions().
+                center(latLngTwo).
+                radius(300).
+                fillColor(Color.BLUE).
+                strokeColor(Color.TRANSPARENT));
+        final Marker marker = aMap.addMarker(new MarkerOptions().position(latLngTwo).title("成都启锋科技有限公司"));
     }
 
     private void initView() {
@@ -184,10 +252,114 @@ public class ClockActivity extends BaseActivity {
                 srlClockPull.setEnabled(svClockSc.getScrollY() == 0);
             }
         });
+
+        mlocationClient = new AMapLocationClient(this);
+        //初始化定位参数
+        mLocationOption = new AMapLocationClientOption();
+        //设置定位监听
+        mlocationClient.setLocationListener(new AMapLocationListener() {
+            @Override
+            public void onLocationChanged(AMapLocation aMapLocation) {
+                if (aMapLocation != null) {
+                    if (aMapLocation.getErrorCode() == 0) {
+                        //定位成功回调信息，设置相关消息
+                        double latiude = aMapLocation.getLatitude();//获取纬度
+                        double longitude = aMapLocation.getLongitude();//获取经度
+                        Log.e(TAG, "---纬度---" + latiude + "---经度---" + longitude);
+                        latLng = new LatLng(latiude, longitude);
+                        isClock = true;
+                        //获取系统时间
+                        //时
+                        int hour = CartCalender.getHour();
+                        String hours = hour + "";
+                        if (hour <= 9) {
+                            hours = "0" + hour;
+                        }
+                        //分
+                        int minute = CartCalender.getMinute();
+                        String minutes = minute + "";
+                        if (minute <= 9) {
+                            minutes = "0" + minute;
+                        }
+                        //秒
+                        int second = CartCalender.getSecond();
+                        String seconds = second + "";
+                        if (second <= 9) {
+                            seconds = "0" + second;
+                        }
+                        tvClockStateTimer.setVisibility(View.VISIBLE);
+                        tvClockStateTimer.setText(hours + ":" + minutes + ":" + seconds);
+                        //状态
+                        //打卡范围到了
+                        boolean isCard = cirCle.contains(latLng);
+                        if (isCard) {
+                            tvClockScope.setText("已进入打卡范围");
+                        } else {
+                            tvClockScope.setText("未进入打卡范围");
+                        }
+                        //此阶段为正常打卡
+                        if (hour >= 6 && hour < 9) {
+                            isCart = true;
+                            //是不是到了打卡范围了
+                            if (isCard) {
+                                tvClockState.setText("上班打卡");
+                            } else {
+                                tvClockState.setText("外勤打卡");
+                            }
+                        } else if (hour >= 9 && hour < 18) {
+                            isCart = true;
+                            tvClockState.setText("迟到打卡");
+                        } else if (hour >= 18 && hour < 0) {
+                            isCart = true;
+                            if (isCard) {
+                                tvClockState.setText("下班打卡");
+                            } else {
+                                tvClockState.setText("外勤打卡");
+                            }
+                        } else {
+                            isCart = false;
+                            tvClockState.setText("不能打卡");
+                        }
+                    } else {
+                        //显示错误信息ErrCode是错误码，errInfo是错误信息，详见错误码表。
+                        Log.e(TAG, "location Error, ErrCode:" + aMapLocation.getErrorCode() + ", errInfo:" + aMapLocation.getErrorInfo());
+                    }
+                }
+            }
+        });
+        //设置定位模式为高精度模式，Battery_Saving为低功耗模式，Device_Sensors是仅设备模式
+        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+        //设置定位间隔,单位毫秒,默认为2000ms
+        mLocationOption.setInterval(1000);
+        //设置定位参数
+        mlocationClient.setLocationOption(mLocationOption);
+// 此方法为每隔固定时间会发起一次定位请求，为了减少电量消耗或网络流量消耗，
+// 注意设置合适的定位时间的间隔（最小间隔支持为1000ms），并且在合适时间调用stopLocation()方法来取消定位请求
+// 在定位结束后，在合适的生命周期调用onDestroy()方法
+// 在单次定位情况下，定位无论成功与否，都无需调用stopLocation()方法移除请求，定位sdk内部会移除
+        //启动定位
+        mlocationClient.startLocation();
+
         initPull(true);
+
+
     }
 
     private void initPull(boolean isToast) {
+    }
+
+    /**
+     * 上班相机
+     */
+    private void camera(int REQUEST_CODE_TAKE_PICTURE) {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        SimpleDateFormat timeStampFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+        String filename = timeStampFormat.format(new Date());
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.TITLE, filename);
+        photoUriOne = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUriOne);
+        startActivityForResult(intent, REQUEST_CODE_TAKE_PICTURE);
     }
 
     private void initIntent(Class<?> activity) {
@@ -203,6 +375,25 @@ public class ClockActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.rcrl_clock_state:
+                //判断是不是定位了
+                if (!isClock) {
+                    cartState.initToast(context, "努力定位中", true, 0);
+                    return;
+                }
+                //判断是不是到了打卡时间
+                if (!isCart) {
+                    cartState.initToast(context, "未到打卡时间", true, 0);
+                    return;
+                }
+                //判断是不是拍了上班打卡门店照片
+                if (!isImageOne) {
+                    cartState.initToast(context, "请拍摄门店照片", true, 0);
+                    return;
+                }
+                //判断是不是打过卡了
+
+
+                //判断是不是正常上班打卡
                 break;
             //重新定位
             case R.id.tv_clock_positioning:
@@ -210,9 +401,46 @@ public class ClockActivity extends BaseActivity {
                 break;
             //上班打卡图片
             case R.id.rcrl_clock_imageon:
+                if (Build.VERSION.SDK_INT >= 23) {
+                    if (ContextCompat.checkSelfPermission(ClockActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(ClockActivity.this, new String[]{Manifest.permission.CAMERA}, 8);
+                    } else {
+                        camera(11);
+                    }
+                } else {
+                    camera(11);
+                }
                 break;
             case R.id.tv_clock_id:
                 initIntent(ClockinActivity.class);
+                break;
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            //上班拍照
+            case 11:
+                Uri uri = null;
+                if (data != null && data.getData() != null) {
+                    Log.e(TAG, "---Uri不为空---");
+                    uri = data.getData();
+                } else {
+                    Log.e(TAG, "---Uri为空---");
+                    uri = photoUriOne;
+                }
+                Tiny.FileCompressOptions options = new Tiny.FileCompressOptions();
+                Tiny.getInstance().source(uri).asFile().withOptions(options).compress(new FileCallback() {
+                    @Override
+                    public void callback(boolean isSuccess, String outfile, Throwable t) {
+                        Log.e(TAG, "---员工使用扫一扫---" + outfile);
+                        isImageOne = true;
+                        photoUriOn = outfile;
+                        imageLoader.displayImage("file:/" + outfile, ivClockImageon);
+                    }
+                });
                 break;
         }
     }
@@ -257,6 +485,7 @@ public class ClockActivity extends BaseActivity {
         super.onDestroy();
         Log.e(TAG, "---销毁---");
         eventBus.unregister(this);
+        mlocationClient.onDestroy();
     }
 
     /**

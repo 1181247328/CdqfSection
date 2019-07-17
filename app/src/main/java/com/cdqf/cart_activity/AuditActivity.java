@@ -24,7 +24,6 @@ import com.cdqf.cart_find.ThroughTwoFind;
 import com.cdqf.cart_find.WithdrawPullFind;
 import com.cdqf.cart_fragment.AuditsFragment;
 import com.cdqf.cart_fragment.ThroughsFragment;
-import com.cdqf.cart_fragment.WithdrawsFragment;
 import com.cdqf.cart_state.BaseActivity;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_state.StaturBar;
@@ -61,10 +60,10 @@ public class AuditActivity extends BaseActivity {
     private Fragment[] orderList = new Fragment[]{
             new AuditsFragment(),
             new ThroughsFragment(),
-            new WithdrawsFragment(),
+//            new WithdrawsFragment(),
     };
 
-    private List<String> orderName = Arrays.asList("待审批", "已通过", "已撤回");
+    private List<String> orderName = Arrays.asList("待审批", "已通过");
 
     @BindView(R.id.srl_audit_pull)
     public ViewPageSwipeRefreshLayout srlAuditPull = null;

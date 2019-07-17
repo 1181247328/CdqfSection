@@ -10,21 +10,29 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
+import com.cdqf.cart_activity.AccountDatilsActivity;
 import com.cdqf.cart_adapter.ThroughAccountAdapter;
+import com.cdqf.cart_class.Through;
 import com.cdqf.cart_find.AccountPullFind;
 import com.cdqf.cart_find.SwipePullFind;
 import com.cdqf.cart_find.ThroughPullFind;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;
+import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.jingchen.pulltorefresh.PullToRefreshLayout;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -50,12 +58,17 @@ public class ThroughFragment extends Fragment {
 
     private View view = null;
 
+    @BindView(R.id.ll_audit_list)
+    public LinearLayout llAuditList = null;
+
     @BindView(R.id.ptrl_service_pull)
     public PullToRefreshLayout ptrlServicePull = null;
 
     private ListView lvServiceList = null;
 
     private ThroughAccountAdapter throughAccountAdapter = null;
+
+    private int page = 1;
 
     @Nullable
     @Override
@@ -93,7 +106,7 @@ public class ThroughFragment extends Fragment {
         lvServiceList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                initIntent(AccountDatilsActivity.class, position);
             }
         });
         ptrlServicePull.setOnPullListener(new PullToRefreshLayout.OnPullListener() {
@@ -103,8 +116,62 @@ public class ThroughFragment extends Fragment {
             }
 
             @Override
-            public void onLoadMore(PullToRefreshLayout pullToRefreshLayout) {
+            public void onLoadMore(final PullToRefreshLayout pullToRefreshLayout) {
                 //上拉加载
+                Map<String, Object> params = new HashMap<String, Object>();
+                OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
+                params.put("staff_id", cartState.getUser().getId());
+                //1=已审批
+                params.put("status", 1);
+                //页码
+                params.put("page", page);
+                okHttpRequestWrap.post(CartAddaress.RECORD, false, "请稍候", params, new OnHttpRequest() {
+                    @Override
+                    public void onOkHttpResponse(String response, int id) {
+                        Log.e(TAG, "---onOkHttpResponse---待审批---" + response);
+                        JSONObject resultJSON = JSON.parseObject(response);
+                        int error_code = resultJSON.getInteger("code");
+                        String msg = resultJSON.getString("message");
+                        switch (error_code) {
+                            //获取成功
+                            case 204:
+                            case 201:
+                            case 200:
+                                page++;
+                                llAuditList.setVisibility(View.GONE);
+                                ptrlServicePull.setVisibility(View.VISIBLE);
+                                pullToRefreshLayout.refreshFinish(PullToRefreshLayout.SUCCEED);
+                                JSONObject data = resultJSON.getJSONObject("data");
+                                String datas = data.getString("data");
+                                cartState.initToast(getContext(), msg, true, 0);
+                                eventBus.post(new AccountPullFind(false, true));
+                                List<Through> throughList = gson.fromJson(datas, new TypeToken<List<Through>>() {
+                                }.getType());
+                                cartState.getThroughList().addAll(throughList);
+
+                                if (throughAccountAdapter != null) {
+                                    throughAccountAdapter.notifyDataSetChanged();
+                                }
+                                break;
+                            default:
+                                llAuditList.setVisibility(View.VISIBLE);
+                                ptrlServicePull.setVisibility(View.GONE);
+                                pullToRefreshLayout.refreshFinish(PullToRefreshLayout.FAIL);
+                                eventBus.post(new AccountPullFind(false, true));
+                                cartState.initToast(getContext(), msg, true, 0);
+                                break;
+                        }
+                    }
+
+                    @Override
+                    public void onOkHttpError(String error) {
+                        llAuditList.setVisibility(View.VISIBLE);
+                        ptrlServicePull.setVisibility(View.GONE);
+                        pullToRefreshLayout.refreshFinish(PullToRefreshLayout.FAIL);
+                        Log.e(TAG, "---onOkHttpError---" + error);
+                        eventBus.post(new AccountPullFind(false, false));
+                    }
+                });
             }
         });
         lvServiceList.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -133,32 +200,73 @@ public class ThroughFragment extends Fragment {
 
     private void initBack() {
         ptrlServicePull.setPullDownEnable(false);
+        initPull(true);
     }
 
-    private void initPull() {
+    private void initPull(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
-        params.put("", "");
-        okHttpRequestWrap.post("", true, "请稍候", params, new OnHttpRequest() {
+        params.put("staff_id", cartState.getUser().getId());
+        //1=已审批
+        params.put("status", 1);
+        //页码
+        params.put("page", page);
+        okHttpRequestWrap.post(CartAddaress.RECORD, isToast, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
-                Log.e(TAG, "---onOkHttpResponse---待服务---" + response);
-                eventBus.post(new AccountPullFind(false, false));
+                Log.e(TAG, "---onOkHttpResponse---已通过---" + response);
+                JSONObject resultJSON = JSON.parseObject(response);
+                int error_code = resultJSON.getInteger("code");
+                String msg = resultJSON.getString("message");
+                switch (error_code) {
+                    //获取成功
+                    case 204:
+                    case 201:
+                    case 200:
+                        page = 2;
+                        llAuditList.setVisibility(View.GONE);
+                        ptrlServicePull.setVisibility(View.VISIBLE);
+                        JSONObject data = resultJSON.getJSONObject("data");
+                        String datas = data.getString("data");
+                        cartState.getThroughList().clear();
+                        cartState.initToast(getContext(), msg, true, 0);
+                        eventBus.post(new AccountPullFind(false, true));
+                        List<Through> throughList = gson.fromJson(datas, new TypeToken<List<Through>>() {
+                        }.getType());
+                        cartState.setThroughList(throughList);
+                        if (cartState.getThroughList().size() <= 0) {
+                            llAuditList.setVisibility(View.VISIBLE);
+                            ptrlServicePull.setVisibility(View.GONE);
+                        }
+                        if (throughAccountAdapter != null) {
+                            throughAccountAdapter.notifyDataSetChanged();
+                        }
+                        break;
+                    default:
+                        llAuditList.setVisibility(View.VISIBLE);
+                        ptrlServicePull.setVisibility(View.GONE);
+                        eventBus.post(new AccountPullFind(false, true));
+                        cartState.initToast(getContext(), msg, true, 0);
+                        break;
+                }
             }
 
             @Override
             public void onOkHttpError(String error) {
+                llAuditList.setVisibility(View.VISIBLE);
+                ptrlServicePull.setVisibility(View.GONE);
                 Log.e(TAG, "---onOkHttpError---" + error);
                 eventBus.post(new AccountPullFind(false, false));
             }
         });
     }
 
-    private void initIntent(Class<?> activity) {
+    private void initIntent(Class<?> activity, int position) {
         Intent intent = new Intent(getContext(), activity);
+        intent.putExtra("position", position);
+        intent.putExtra("type", 2);
         startActivity(intent);
     }
-
     @OnClick({})
     public void onClick(View v) {
         switch (v.getId()) {
@@ -204,6 +312,8 @@ public class ThroughFragment extends Fragment {
      */
     @Subscribe
     public void onEventMainThread(ThroughPullFind s) {
+        page = 1;
+        initPull(false);
 //        Map<String, Object> params = new HashMap<String, Object>();
 //        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
 //        params.put("", "");

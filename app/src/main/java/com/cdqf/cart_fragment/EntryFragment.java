@@ -128,6 +128,8 @@ public class EntryFragment extends Fragment {
                         String msg = resultJSON.getString("message");
                         switch (error_code) {
                             //获取成功
+                            case 204:
+                            case 201:
                             case 200:
                                 page++;
                                 pullToRefreshLayout.refreshFinish(PullToRefreshLayout.SUCCEED);

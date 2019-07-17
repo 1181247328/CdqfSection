@@ -322,6 +322,7 @@ public class DatilsActivity extends BaseActivity {
 
     private void initIntent(Class<?> activity, int position) {
         Intent intent = new Intent(context, activity);
+        intent.putExtra("userType", type);
         intent.putExtra("position", position);
         startActivity(intent);
     }

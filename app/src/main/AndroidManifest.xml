@@ -400,5 +400,13 @@
             android:screenOrientation="portrait">
 
         </activity>
+
+        <!--营业-->
+        <activity
+            android:name="com.cdqf.cart_activity.BusinessActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+
+        </activity>
     </application>
 </manifest>

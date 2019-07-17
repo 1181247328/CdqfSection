@@ -33,7 +33,7 @@ public class AuditAccountAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 5;
+        return cartState.getAuditsList().size();
     }
 
     @Override
@@ -56,12 +56,16 @@ public class AuditAccountAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+        viewHolder.tvAuditItemNumber.setText("工号：" + cartState.getAuditsList().get(position).getStaff_id());
+        viewHolder.tvAuditItemPrice.setText("报销金额：￥" + cartState.getAuditsList().get(position).getExamine_price());
+        viewHolder.tvAuditItemTimer.setText("报销时间：" + cartState.getAuditsList().get(position).getCreated_at());
+        viewHolder.tvAuditItemTimer.setText("待审批");
         return convertView;
     }
 
     class ViewHolder {
 
-        //车牌号
+        //工号
         @BindView(R.id.tv_audit_item_number)
         public TextView tvAuditItemNumber = null;
 

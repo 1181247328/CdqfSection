@@ -35,7 +35,7 @@ public class ThroughsAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 10;
+        return cartState.getThroughsJudgeList().size();
     }
 
     @Override
@@ -58,7 +58,12 @@ public class ThroughsAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-
+        viewHolder.tvAuditsItemName.setText(cartState.getThroughsJudgeList().get(position).getExamines().getName() + "提交的报销");
+        viewHolder.tvAuditsItemTimer.setText(cartState.getThroughsJudgeList().get(position).getCreated_at());
+        viewHolder.tvAuditsItemPrice.setText("￥" + cartState.getThroughsJudgeList().get(position).getExamines().getExamine_price());
+        viewHolder.tvAuditsItemMaterial.setText(cartState.getThroughsJudgeList().get(position).getExamines().getType());
+        viewHolder.tvAuditsItemContext.setText(cartState.getThroughsJudgeList().get(position).getExamines().getDescribe());
+        viewHolder.tvAuditsItemState.setText(Integer.parseInt(cartState.getThroughsJudgeList().get(position).getExamines().getStatus()) == 0 ? "待审批" : "已通过");
         return convertView;
     }
 

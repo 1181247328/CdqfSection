@@ -19,6 +19,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
 import com.cdqf.cart_activity.AccountActivity;
+import com.cdqf.cart_activity.BusinessActivity;
 import com.cdqf.cart_activity.ClockActivity;
 import com.cdqf.cart_activity.LossNewsActivity;
 import com.cdqf.cart_activity.NoticeManagerActivity;
@@ -84,6 +85,9 @@ public class HomeFragment extends Fragment {
 
     @BindView(R.id.tv_homemanager_scan)
     public RelativeLayout tvHomemanagerScan = null;
+
+    @BindView(R.id.rcrl_home_situation)
+    public RelativeLayout rcrlHomeSituation = null;
 
     //集合
     @BindView(R.id.mgv_home_list)
@@ -224,7 +228,7 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    @OnClick({R.id.ll_homemanager_shop, R.id.tv_homemanager_scan})
+    @OnClick({R.id.ll_homemanager_shop, R.id.tv_homemanager_scan, R.id.rcrl_home_situation})
     public void onClick(View v) {
         switch (v.getId()) {
             //选择店铺
@@ -279,6 +283,9 @@ public class HomeFragment extends Fragment {
             //扫一扫
             case R.id.tv_homemanager_scan:
                 eventBus.post(new ScanFind());
+                break;
+            case R.id.rcrl_home_situation:
+                initIntent(BusinessActivity.class);
                 break;
         }
     }

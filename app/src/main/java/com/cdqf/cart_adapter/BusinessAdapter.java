@@ -5,35 +5,39 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.cdqf.cart.R;
-import com.cdqf.cart_state.CartState;
-import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import de.greenrobot.event.EventBus;
 
-public class AccountDatilsImageAdapter extends BaseAdapter {
+/**
+ * 营业状态
+ */
+public class BusinessAdapter extends BaseAdapter {
 
-    private String TAG = AccountDatilsImageAdapter.class.getSimpleName();
-
-    private CartState cartState = CartState.getCartState();
-
-    private EventBus eventBus = EventBus.getDefault();
-
-    private ImageLoader imageLoader = ImageLoader.getInstance();
+    private String TAG = BusinessAdapter.class.getSimpleName();
 
     private Context context = null;
 
-    public AccountDatilsImageAdapter(Context context) {
+    private List<String> testList = new CopyOnWriteArrayList<>();
+
+    public BusinessAdapter(Context context) {
         this.context = context;
+    }
+
+    public void setTestList(List<String> testList) {
+        this.testList = testList;
+        notifyDataSetChanged();
     }
 
     @Override
     public int getCount() {
-        return 0;
+        return testList.size();
     }
 
     @Override
@@ -50,24 +54,22 @@ public class AccountDatilsImageAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder = null;
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_acdatils_image, null);
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_business, null);
             viewHolder = new ViewHolder(convertView);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+        viewHolder.tvBusinessItemContext.setText(testList.get(position));
         return convertView;
     }
 
     class ViewHolder {
-
-        //图片显示
-        @BindView(R.id.iv_fill_item_image)
-        public ImageView ivFillItemImage = null;
+        @BindView(R.id.tv_business_item_context)
+        public TextView tvBusinessItemContext = null;
 
         public ViewHolder(View v) {
             ButterKnife.bind(this, v);
         }
     }
-
 }

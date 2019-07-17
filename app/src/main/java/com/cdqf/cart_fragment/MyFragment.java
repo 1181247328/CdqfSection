@@ -170,7 +170,7 @@ public class MyFragment extends Fragment {
 
     private String userInformation(String staffid, String shopid) {
         String result = null;
-        result = CartAddaress.ADDRESS + "/?s=staff.getstaff&staffid=" + staffid + "&shopid=" + shopid;
+        result = CartAddaress.ADDRESS_THE + "/?s=staff.getstaff&staffid=" + staffid + "&shopid=" + shopid;
         Log.e(TAG, "---我的---" + result);
         return result;
     }

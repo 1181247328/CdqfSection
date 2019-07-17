@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -19,16 +20,25 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
 import com.cdqf.cart_adapter.FillContextAdapter;
 import com.cdqf.cart_adapter.FillImageAdapter;
 import com.cdqf.cart_dilog.WhyDilogFragment;
+import com.cdqf.cart_find.AuditPullFind;
 import com.cdqf.cart_find.FillAddImageFind;
 import com.cdqf.cart_find.FillContextCencelFind;
+import com.cdqf.cart_find.FillContextFind;
+import com.cdqf.cart_find.FillFind;
+import com.cdqf.cart_find.FillPriceFind;
 import com.cdqf.cart_find.ShopFillFind;
 import com.cdqf.cart_find.TypeFillTypeFind;
 import com.cdqf.cart_image.PagerActivity;
+import com.cdqf.cart_okhttp.OKHttpRequestWrap;
+import com.cdqf.cart_okhttp.OnHttpRequest;
 import com.cdqf.cart_state.BaseActivity;
+import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_state.StaturBar;
 import com.cdqf.cart_view.ListViewForScrollView;
@@ -42,7 +52,9 @@ import com.luck.picture.lib.tools.PictureFileUtils;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import butterknife.BindView;
@@ -110,6 +122,18 @@ public class FillActivity extends BaseActivity {
 
     private List<LocalMedia> selectList = new CopyOnWriteArrayList<>();
 
+    //店铺id
+    private int shopId;
+
+    //金额
+    private String price = "";
+
+    //报销类别
+    private int fillId;
+
+    //费用描述
+    private String describe = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -162,7 +186,49 @@ public class FillActivity extends BaseActivity {
     }
 
     private void initBack() {
+        //店铺
+        fillContextAdapter.setShopName(cartState.getUser().getShopName());
+        shopId = Integer.parseInt(cartState.getUser().getShopid());
+        //类别
+        fillId = 1;
+        fillContextAdapter.setType("耗材");
+    }
 
+    /**
+     * 报销类别
+     */
+    private void initTypePull() {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("staff_id", cartState.getUser().getId());
+        Log.e(TAG, "---类别---" + cartState.getUser().getId());
+        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
+        okHttpRequestWrap.postString(CartAddaress.FILL_TYPE, true, "请稍候", params, new OnHttpRequest() {
+            @Override
+            public void onOkHttpResponse(String response, int id) {
+                Log.e(TAG, "---onOkHttpResponse---报销类别---" + response);
+                JSONObject resultJSON = JSON.parseObject(response);
+                int error_code = resultJSON.getInteger("code");
+                String msg = resultJSON.getString("message");
+                switch (error_code) {
+                    //获取成功
+                    case 204:
+                    case 201:
+                    case 200:
+                        String data = resultJSON.getString("data");
+                        cartState.initToast(context, msg, true, 0);
+                        break;
+                    default:
+                        cartState.initToast(context, msg, true, 0);
+                        break;
+                }
+            }
+
+            @Override
+            public void onOkHttpError(String error) {
+                Log.e(TAG, "---onOkHttpError---" + error);
+                cartState.initToast(context, error, true, 0);
+            }
+        });
     }
 
     private void initIntent(Class<?> activity) {
@@ -180,7 +246,7 @@ public class FillActivity extends BaseActivity {
     private void create() {
         PictureSelector.create(FillActivity.this)
                 .openGallery(PictureMimeType.ofImage())
-                .maxSelectNum(200)
+                .maxSelectNum(4)
                 .minSelectNum(1)
                 .imageSpanCount(4)
                 .compress(true)
@@ -212,6 +278,18 @@ public class FillActivity extends BaseActivity {
                 break;
             //提交审批
             case R.id.tv_fill_account:
+                if (TextUtils.equals(price, "")) {
+                    cartState.initToast(context, "请输入金额", true, 0);
+                    return;
+                }
+
+                if (TextUtils.equals(describe, "")) {
+                    cartState.initToast(context, "请输入费用描述", true, 0);
+                    return;
+                }
+                WhyDilogFragment whyDilogFragment = new WhyDilogFragment();
+                whyDilogFragment.setInit(18, "提示", "是否提交报销", "否", "是");
+                whyDilogFragment.show(getSupportFragmentManager(), "提交报销");
                 break;
         }
     }
@@ -315,9 +393,14 @@ public class FillActivity extends BaseActivity {
      */
     @Subscribe
     public void onEventMainThread(ShopFillFind s) {
-        SinglePicker<String> pickerSource = new SinglePicker<>(FillActivity.this, new String[]{
-                "浅水半岛店"
-        });
+        if (cartState.getHomeList().size() <= 0) {
+            return;
+        }
+        String[] homeName = new String[cartState.getHomeList().size()];
+        for (int i = 0; i < cartState.getHomeList().size(); i++) {
+            homeName[i] = cartState.getHomeList().get(i).getShop_new_name();
+        }
+        SinglePicker<String> pickerSource = new SinglePicker<>(FillActivity.this, homeName);
         LineConfig configSource = new LineConfig();
         configSource.setColor(ContextCompat.getColor(FillActivity.this, R.color.addstore_one));//线颜色
         configSource.setThick(ConvertUtils.toPx(FillActivity.this, 1));//线粗
@@ -348,6 +431,8 @@ public class FillActivity extends BaseActivity {
         pickerSource.setOnItemPickListener(new OnItemPickListener<String>() {
             @Override
             public void onItemPicked(int index, String item) {
+                shopId = cartState.getHomeList().get(index).getId();
+                fillContextAdapter.setShopName(item);
             }
         });
         pickerSource.show();
@@ -361,7 +446,7 @@ public class FillActivity extends BaseActivity {
     @Subscribe
     public void onEventMainThread(TypeFillTypeFind s) {
         SinglePicker<String> pickerSource = new SinglePicker<>(FillActivity.this, new String[]{
-                "耗材", "硬件"
+                "耗材", "硬件", "微信", "日常"
         });
         LineConfig configSource = new LineConfig();
         configSource.setColor(ContextCompat.getColor(FillActivity.this, R.color.addstore_one));//线颜色
@@ -393,6 +478,8 @@ public class FillActivity extends BaseActivity {
         pickerSource.setOnItemPickListener(new OnItemPickListener<String>() {
             @Override
             public void onItemPicked(int index, String item) {
+                fillId = index + 1;
+                fillContextAdapter.setType(item);
             }
         });
         pickerSource.show();
@@ -408,5 +495,79 @@ public class FillActivity extends BaseActivity {
         WhyDilogFragment whyDilogFragment = new WhyDilogFragment();
         whyDilogFragment.setInit(15, "提示", "是否删除", "否", "是", s.position);
         whyDilogFragment.show(getSupportFragmentManager(), "删除明细");
+    }
+
+    /**
+     * 金额
+     *
+     * @param s
+     */
+    @Subscribe
+    public void onEventMainThread(FillPriceFind s) {
+        Log.e(TAG, "---金额---" + s.price);
+        price = s.price;
+    }
+
+    /**
+     * 内容
+     *
+     * @param s
+     */
+    @Subscribe
+    public void onEventMainThread(FillContextFind s) {
+        Log.e(TAG, "---内容---" + s.context);
+        describe = s.context;
+    }
+
+    /**
+     * 提交报销
+     *
+     * @param s
+     */
+    @Subscribe
+    public void onEventMainThread(FillFind s) {
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        //员工id
+        params.put("staff_id", cartState.getUser().getId());
+        //店铺id
+        params.put("shop_id", shopId);
+        //耗材
+        params.put("type", fillId);
+        //报销价格
+        params.put("examine_price", price);
+        //备注说明
+        params.put("describe", describe);
+        //图片
+//        params.put("img", cartState.getImagePathsList());
+        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
+        okHttpRequestWrap.postString(CartAddaress.FILL, true, "请稍候", params, new OnHttpRequest() {
+            @Override
+            public void onOkHttpResponse(String response, int id) {
+                Log.e(TAG, "---onOkHttpResponse---提交报销---" + response);
+                JSONObject resultJSON = JSON.parseObject(response);
+                int error_code = resultJSON.getInteger("code");
+                String msg = resultJSON.getString("message");
+                switch (error_code) {
+                    //获取成功
+                    case 201:
+                    case 204:
+                    case 200:
+                        cartState.initToast(context, msg, true, 0);
+                        eventBus.post(new AuditPullFind());
+                        finish();
+                        break;
+                    default:
+                        cartState.initToast(context, msg, true, 0);
+                        break;
+                }
+            }
+
+            @Override
+            public void onOkHttpError(String error) {
+                Log.e(TAG, "---onOkHttpError---" + error);
+                cartState.initToast(context, error, true, 0);
+            }
+        });
     }
 }

@@ -30,6 +30,8 @@ import com.apkfuns.xprogressdialog.XProgressDialog;
 import com.cdqf.cart.R;
 import com.cdqf.cart_ble.Ble;
 import com.cdqf.cart_class.Audit;
+import com.cdqf.cart_class.Audits;
+import com.cdqf.cart_class.AuditsJudge;
 import com.cdqf.cart_class.Complete;
 import com.cdqf.cart_class.Datils;
 import com.cdqf.cart_class.Employees;
@@ -45,8 +47,11 @@ import com.cdqf.cart_class.Record;
 import com.cdqf.cart_class.Service;
 import com.cdqf.cart_class.ServiceOrder;
 import com.cdqf.cart_class.Shop;
+import com.cdqf.cart_class.Through;
+import com.cdqf.cart_class.ThroughsJudge;
 import com.cdqf.cart_class.User;
 import com.cdqf.cart_class.UserGoods;
+import com.cdqf.cart_class.Withdraw;
 import com.cdqf.cart_service.Province;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -193,6 +198,21 @@ public class CartState {
 
     //小轿车1,SUV = 2;
     private int model = 0;
+
+    //待审批
+    private List<Audits> auditsList = new CopyOnWriteArrayList<>();
+
+    //已同意
+    private List<Through> throughList = new CopyOnWriteArrayList<>();
+
+    //已撤回
+    private List<Withdraw> withdrawList = new CopyOnWriteArrayList<>();
+
+    //待审批(审核)
+    private List<AuditsJudge> auditsJudgeList = new CopyOnWriteArrayList<>();
+
+    //已通过(审核)
+    private List<ThroughsJudge> throughsJudgeList = new CopyOnWriteArrayList<>();
 
     /**
      * 提示信息
@@ -1085,5 +1105,45 @@ public class CartState {
 
     public void setModel(int model) {
         this.model = model;
+    }
+
+    public List<Audits> getAuditsList() {
+        return auditsList;
+    }
+
+    public void setAuditsList(List<Audits> auditsList) {
+        this.auditsList = auditsList;
+    }
+
+    public List<Through> getThroughList() {
+        return throughList;
+    }
+
+    public void setThroughList(List<Through> throughList) {
+        this.throughList = throughList;
+    }
+
+    public List<Withdraw> getWithdrawList() {
+        return withdrawList;
+    }
+
+    public void setWithdrawList(List<Withdraw> withdrawList) {
+        this.withdrawList = withdrawList;
+    }
+
+    public List<AuditsJudge> getAuditsJudgeList() {
+        return auditsJudgeList;
+    }
+
+    public void setAuditsJudgeList(List<AuditsJudge> auditsJudgeList) {
+        this.auditsJudgeList = auditsJudgeList;
+    }
+
+    public List<ThroughsJudge> getThroughsJudgeList() {
+        return throughsJudgeList;
+    }
+
+    public void setThroughsJudgeList(List<ThroughsJudge> throughsJudgeList) {
+        this.throughsJudgeList = throughsJudgeList;
     }
 }

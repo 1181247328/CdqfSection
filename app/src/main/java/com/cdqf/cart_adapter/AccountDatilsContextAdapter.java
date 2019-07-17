@@ -21,13 +21,26 @@ public class AccountDatilsContextAdapter extends BaseAdapter {
 
     private EventBus eventBus = EventBus.getDefault();
 
+    private String shopName = "";
+    private String price = "";
+    private String type = "";
+    private String describe = "";
+
     public AccountDatilsContextAdapter(Context context) {
         this.context = context;
     }
 
+    public void setContext(String shopName, String price, String type, String describe) {
+        this.shopName = shopName;
+        this.price = price;
+        this.type = type;
+        this.describe = describe;
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getCount() {
-        return 10;
+        return 1;
     }
 
     @Override
@@ -50,7 +63,10 @@ public class AccountDatilsContextAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-
+        viewHolder.tvFillItemShop.setText(shopName);
+        viewHolder.etFillItemPrice.setText(price);
+        viewHolder.tvFillItemType.setText(type);
+        viewHolder.etFillItemContext.setText(describe);
         return convertView;
     }
 
@@ -68,7 +84,7 @@ public class AccountDatilsContextAdapter extends BaseAdapter {
         @BindView(R.id.tv_fill_item_type)
         public TextView tvFillItemType = null;
 
-        //名称
+        //描述
         @BindView(R.id.tv_fill_item_context)
         public TextView etFillItemContext = null;
 

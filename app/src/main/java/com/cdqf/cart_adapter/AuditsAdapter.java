@@ -35,7 +35,7 @@ public class AuditsAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 10;
+        return cartState.getAuditsJudgeList().size();
     }
 
     @Override
@@ -58,6 +58,12 @@ public class AuditsAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+        viewHolder.tvAuditsItemName.setText(cartState.getAuditsJudgeList().get(position).getExamines().getName() + "提交的报销");
+        viewHolder.tvAuditsItemTimer.setText(cartState.getAuditsJudgeList().get(position).getCreated_at());
+        viewHolder.tvAuditsItemPrice.setText("￥" + cartState.getAuditsJudgeList().get(position).getExamines().getExamine_price());
+        viewHolder.tvAuditsItemMaterial.setText(cartState.getAuditsJudgeList().get(position).getExamines().getType());
+        viewHolder.tvAuditsItemContext.setText(cartState.getAuditsJudgeList().get(position).getExamines().getDescribe());
+        viewHolder.tvAuditsItemState.setText(Integer.parseInt(cartState.getAuditsJudgeList().get(position).getExamines().getStatus()) == 0 ? "待审批" : "已通过");
 
         return convertView;
     }

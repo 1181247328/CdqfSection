@@ -2,13 +2,32 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/ll_audit_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/service_bak"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="暂无~"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp_14" />
+
+    </LinearLayout>
 
     <com.jingchen.pulltorefresh.PullToRefreshLayout
         android:id="@+id/ptrl_service_pull"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/service_bak">
+        android:background="@color/service_bak"
+        android:visibility="gone">
 
         <com.jingchen.pulltorefresh.PullableListView
             android:layout_width="match_parent"

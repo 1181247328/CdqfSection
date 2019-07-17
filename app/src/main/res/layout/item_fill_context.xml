@@ -9,7 +9,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/service_bak"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/dp_10"
+        android:paddingBottom="@dimen/dp_5">
 
         <TextView
             android:id="@+id/tv_fill_item_id"
@@ -18,16 +20,17 @@
             android:background="@android:color/transparent"
             android:paddingLeft="@dimen/dp_10"
             android:paddingTop="@dimen/dp_5"
-            android:paddingBottom="@dimen/dp_5"
             android:text="报销明细(1)"
             android:textColor="@color/clock_one"
-            android:textSize="@dimen/sp_12" />
+            android:textSize="@dimen/sp_12"
+            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
-            android:gravity="right|center">
+            android:gravity="right|center"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/tv_fill_item_cencel"
@@ -36,9 +39,7 @@
                 android:background="@drawable/datils_click"
                 android:gravity="right|center"
                 android:paddingLeft="@dimen/dp_10"
-                android:paddingTop="@dimen/dp_5"
                 android:paddingRight="@dimen/dp_10"
-                android:paddingBottom="@dimen/dp_5"
                 android:text="取消"
                 android:textColor="@color/tab_main_text_icon"
                 android:textColorHint="@color/clock_one"
@@ -131,6 +132,7 @@
                 android:background="@android:color/transparent"
                 android:gravity="right|center"
                 android:hint="请输入金额"
+                android:inputType="numberDecimal"
                 android:paddingLeft="@dimen/dp_10"
                 android:paddingTop="@dimen/dp_12"
                 android:paddingRight="@dimen/dp_10"

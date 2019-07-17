@@ -6,7 +6,7 @@ public class CartAddaress {
     public static final String ADDRESS = "http://192.168.31.213:8001";
 
     //线上
-//    public static final String ADDRESS = "https://tgapi.baodi520.com";
+    public static final String ADDRESS_THE = "https://tgapi.baodi520.com";
 
     //主页(店员)
     public static final String HOME = ADDRESS + "/staff/shops";
@@ -35,6 +35,17 @@ public class CartAddaress {
     //员工点击服务
     public static final String USER_SERVICE = ADDRESS + "/staff/takeService";
 
+    public static final String FILL_TYPE = ADDRESS + "";
+
+    //提交报销
+    public static final String FILL = ADDRESS + "/staff/createExamine";
+
+    //报销记录
+    public static final String RECORD = ADDRESS + "/staff/examineList";
+
+    //审核
+    public static final String EXAMiNELIST = ADDRESS +"/staff/adminExamineList";
+
     /****************************************************/
 
     //店总
@@ -47,7 +58,7 @@ public class CartAddaress {
     public static String SHOP_SERVICE = ADDRESS + "/?s=Service.setservice&ordernum=ORDERNUMB&staffid=STAFFID";
 
     //店长通知
-    public static String SHOP_NOTICE = ADDRESS + "/?s=Notice.admingetnotice&staffid=STAFFID&shopid=SHOPID";
+    public static String SHOP_NOTICE = ADDRESS_THE + "/?s=Notice.admingetnotice&staffid=STAFFID&shopid=SHOPID";
 
     //店长添加通知
     public static String SHOP_NOTICE_ADD = ADDRESS + "/?s=Notice.stenotice&content=CONTENT&staffid=STAFFID&type=TYPE";
@@ -74,7 +85,7 @@ public class CartAddaress {
     public static String SHOP_RECORD = ADDRESS + "/?s=TotalGoods.goodsext_staff";
 
     //店长追加
-    public static String SHOP_GOODS = ADDRESS + "/?s=goods.goodsall";
+    public static String SHOP_GOODS = ADDRESS_THE + "/?s=goods.goodsall";
 
     //店长添加员工
     public static String SHOP_POSITION = ADDRESS + "/?s=Shopowner.add_position_list";
@@ -83,7 +94,7 @@ public class CartAddaress {
     public static String SHOP_IDIMAGE = ADDRESS + "/?s=Upload.addImg";
 
     //给予优惠
-    public static String SHOP_PREFERENT = ADDRESS + "/?s=order.discount_list";
+    public static String SHOP_PREFERENT = ADDRESS_THE + "/?s=order.discount_list";
 
     //员工管理列表
     public static String SHOP_EMPLOYEES = ADDRESS + "/?s=Shopowner.shop_user_list";

@@ -2,14 +2,11 @@ package com.cdqf.cart_activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -32,7 +29,7 @@ import com.cdqf.cart_state.BaseActivity;
 import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_state.DoubleOperationUtil;
-import com.cdqf.cart_state.StatusBarCompat;
+import com.cdqf.cart_state.StaturBar;
 import com.cdqf.cart_view.ListViewForScrollView;
 import com.cdqf.cart_view.VerticalSwipeRefreshLayout;
 import com.google.gson.Gson;
@@ -103,25 +100,17 @@ public class UserActivity extends BaseActivity {
 
     private double sum = 0;
 
+    private int userType = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        //API19以下用于沉侵式菜单栏
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        }
-
         //加载布局
         setContentView(R.layout.activity_user);
 
-        //API>=20以上用于沉侵式菜单栏
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-            //沉侵
-            StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.black));
-        }
+        StaturBar.setStatusBar(this, R.color.tab_main_text_icon);
 
         initAgo();
 
@@ -142,6 +131,7 @@ public class UserActivity extends BaseActivity {
         }
         Intent intent = getIntent();
         position = intent.getIntExtra("position", 0);
+        userType = intent.getIntExtra("userType", 0);
     }
 
     private void initView() {
@@ -185,8 +175,8 @@ public class UserActivity extends BaseActivity {
     }
 
     private void initBack() {
-//        tvUserName.setText(cartState.getShopList().get(position).getCarnum());
-//        initPull(true);
+        tvUserName.setText(cartState.getDatils().getCarnum());
+        initPull(true);
     }
 
     private void initPull(boolean isToast) {
@@ -232,9 +222,9 @@ public class UserActivity extends BaseActivity {
         });
     }
 
-    private String order(String cartype, String goodsid, String userid, String shopid, String carnum, String phone, String number) {
+    private String order(int cartype, String goodsid, int userid, String shopid, String carnum, String phone, String number) {
         String result = null;
-        result = CartAddaress.ADDRESS + "?s=order.appendorder&cartype=" + cartype + "&goodsid=" + goodsid + "&userid=" + userid + "&shopid=" + shopid + "&carnum=" + carnum + "&phone=" + phone + "&number=" + number;
+        result = CartAddaress.ADDRESS_THE + "/?s=order.appendorder&cartype=" + cartype + "&goodsid=" + goodsid + "&userid=" + userid + "&shopid=" + shopid + "&carnum=" + carnum + "&phone=" + phone + "&number=" + number;
         Log.e(TAG, "---提交订单---" + result);
         return result;
     }
@@ -254,7 +244,7 @@ public class UserActivity extends BaseActivity {
             //提交订单
             case R.id.tv_user_order:
                 WhyDilogFragment whyDilogFragment = new WhyDilogFragment();
-                whyDilogFragment.setInit(10, "提示", "是否提交车牌" + cartState.getShopList().get(position).getCarnum() + "的追加服务", "否", "是");
+                whyDilogFragment.setInit(10, "提示", "是否提交车牌" + cartState.getDatils().getCarnum() + "的追加服务", "否", "是");
                 whyDilogFragment.show(getSupportFragmentManager(), "提交订单");
                 break;
         }
@@ -368,24 +358,25 @@ public class UserActivity extends BaseActivity {
                 goodsid = goodsid + cartState.getUserGoodsList().get(cartState.getUserGoodsList().size() - 1).getData().get(0).getId();
             }
         }
-        Log.e(TAG, "---获得的数量---"+goodsid);
+        Log.e(TAG, "---获得的数量---" + goodsid);
         if (!isSelect) {
             cartState.initToast(context, "请选择追加的商品", true, 0);
             return;
         }
         Map<String, Object> params = new HashMap<String, Object>();
-        //原订单车型
-        String cartype = cartState.getShopList().get(position).getCartype();
+        //车辆车型
+        int cartype = cartState.getDatils().getCartype();
         //用户id
-        String userid = cartState.getShopList().get(position).getUserid();
+        int userid = cartState.getDatils().getUserid();
         //店铺id
-        String shopid = cartState.getShopList().get(position).getShopid();
+        String shopid = cartState.getUser().getShopid();
         //车牌号
-        String carnum = cartState.getShopList().get(position).getCarnum();
+        String carnum = cartState.getDatils().getCarnum();
         //用户电话
-        String phone = cartState.getShopList().get(position).getPhone();
+        String phone = cartState.getDatils().getPhone();
         //数量
         String number = numbers + "";
+
         String order = order(cartype, goodsid, userid, shopid, carnum, phone, number);
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
         okHttpRequestWrap.post(order, true, "请稍候", params, new OnHttpRequest() {
