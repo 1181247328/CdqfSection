@@ -44,12 +44,24 @@ public class CartAddaress {
     public static final String RECORD = ADDRESS + "/staff/examineList";
 
     //审核
-    public static final String EXAMiNELIST = ADDRESS +"/staff/adminExamineList";
+    public static final String EXAMiNELIST = ADDRESS + "/staff/adminExamineList";
 
-    public static final String CART_SHOP_ID = ADDRESS+"/staff/shops/";
+    public static final String CART_SHOP_ID = ADDRESS + "/staff/shops/";
 
     //同意审核
-    public static final String AGRED_AUDITS = ADDRESS+"/staff/examine";
+    public static final String AGRED_AUDITS = ADDRESS + "/staff/examine";
+
+    //会员管理
+    public static final String MEMBERS = ADDRESS + "/staff/member";
+
+    //会员下单列表
+    public static final String MEMBERS_LIST = ADDRESS + "/staff/shopMenber/";
+
+    //通过电话号码搜索直接跳进详情页
+    public static final String MEMBERS_PHONE = ADDRESS + "";
+
+    //报表
+    public static final String REPORT = ADDRESS + "";
 
     /****************************************************/
 

@@ -166,7 +166,6 @@ public class ServiceFragment extends Fragment {
                                 break;
                             default:
                                 pullToRefreshLayout.refreshFinish(PullToRefreshLayout.FAIL);
-                                page--;
                                 cartState.initToast(getContext(), msg, true, 0);
                                 break;
                         }
@@ -177,7 +176,6 @@ public class ServiceFragment extends Fragment {
                     public void onOkHttpError(String error) {
                         Log.e(TAG, "---onOkHttpError---" + error);
                         pullToRefreshLayout.refreshFinish(PullToRefreshLayout.FAIL);
-                        page--;
                         cartState.initToast(getContext(), error, true, 0);
                     }
                 });

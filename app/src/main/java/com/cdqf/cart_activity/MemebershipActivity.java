@@ -10,19 +10,30 @@ import android.view.Window;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
 import com.cdqf.cart_adapter.MembershipAdapter;
-import com.cdqf.cart_find.SwipePullFind;
+import com.cdqf.cart_class.Memebersship;
 import com.cdqf.cart_find.ThroughFind;
+import com.cdqf.cart_okhttp.OKHttpRequestWrap;
+import com.cdqf.cart_okhttp.OnHttpRequest;
 import com.cdqf.cart_state.BaseActivity;
+import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_state.StaturBar;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.jingchen.pulltorefresh.PullToRefreshLayout;
 import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,12 +69,30 @@ public class MemebershipActivity extends BaseActivity {
     @BindView(R.id.tv_membership_title)
     public TextView tvMembershipTitle = null;
 
+    @BindView(R.id.rl_orders_bar)
+    public RelativeLayout rlOrdersBar = null;
+
+    //订单异常
+    @BindView(R.id.tv_orders_abnormal)
+    public TextView tvOrdersAbnormal = null;
+
+    @BindView(R.id.pb_orders_bar)
+    public ProgressBar pbOrdersBar = null;
+
     @BindView(R.id.ptrl_membership_pull)
     public PullToRefreshLayout ptrlMembershipPull = null;
 
     private ListView lvMembershipList = null;
 
     private MembershipAdapter membershipAdapter = null;
+
+    private int type = 0;
+
+    private int shopId = 0;
+
+    private int page = 1;
+
+    private boolean isPull = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +122,9 @@ public class MemebershipActivity extends BaseActivity {
         if (!eventBus.isRegistered(this)) {
             eventBus.register(this);
         }
+        Intent intent = getIntent();
+        type = intent.getIntExtra("type", 0);
+        shopId = intent.getIntExtra("shopId", 0);
     }
 
     private void initView() {
@@ -108,7 +140,7 @@ public class MemebershipActivity extends BaseActivity {
         lvMembershipList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                initIntent(MembersDatilsActivity.class);
+                initIntents(MembersDatilsActivity.class, position);
             }
         });
         lvMembershipList.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -122,21 +154,155 @@ public class MemebershipActivity extends BaseActivity {
                 View firstView = view.getChildAt(firstVisibleItem);
                 // 当firstVisibleItem是第0位。如果firstView==null说明列表为空，需要刷新;或者top==0说明已经到达列表顶部, 也需要刷新
                 if (firstVisibleItem == 0 && (firstView == null || firstView.getTop() == view.getPaddingTop())) {
-                    eventBus.post(new SwipePullFind(false, true));
-                    srlMembershipPull.setEnabled(true);
+                    if (isPull) {
+                        srlMembershipPull.setEnabled(true);
+                    } else {
+                        srlMembershipPull.setEnabled(false);
+                    }
                 } else {
                     srlMembershipPull.setEnabled(false);
                 }
+            }
+        });
+        srlMembershipPull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                page = 1;
+                initPull(false);
+            }
+        });
+
+        ptrlMembershipPull.setOnPullListener(new PullToRefreshLayout.OnPullListener() {
+            @Override
+            public void onRefresh(PullToRefreshLayout pullToRefreshLayout) {
+
+            }
+
+            @Override
+            public void onLoadMore(final PullToRefreshLayout pullToRefreshLayout) {
+                //上拉加载
+                //上拉加载
+                final Map<String, Object> params = new HashMap<String, Object>();
+                OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
+                //页码
+                params.put("page", page);
+                okHttpRequestWrap.get(CartAddaress.MEMBERS_LIST + shopId, false, "请稍候", params, new OnHttpRequest() {
+                    @Override
+                    public void onOkHttpResponse(String response, int id) {
+                        Log.e(TAG, "---onOkHttpResponse---会员下单总数之上拉加载---" + response);
+                        JSONObject resultJSON = JSON.parseObject(response);
+                        int error_code = resultJSON.getInteger("code");
+                        String msg = resultJSON.getString("message");
+                        switch (error_code) {
+                            //获取成功
+                            case 204:
+                            case 201:
+                            case 200:
+                                page++;
+                                pullToRefreshLayout.refreshFinish(PullToRefreshLayout.SUCCEED);
+                                JSONObject data = resultJSON.getJSONObject("data");
+                                String datas = data.getString("data");
+                                cartState.initToast(context, msg, true, 0);
+                                List<Memebersship> memebersshipList = gson.fromJson(datas, new TypeToken<List<Memebersship>>() {
+                                }.getType());
+                                cartState.getMemebersshipList().addAll(memebersshipList);
+                                if (membershipAdapter != null) {
+                                    membershipAdapter.notifyDataSetInvalidated();
+                                }
+                                break;
+                            default:
+                                pullToRefreshLayout.refreshFinish(PullToRefreshLayout.FAIL);
+                                cartState.initToast(context, msg, true, 0);
+                                break;
+                        }
+
+                    }
+
+                    @Override
+                    public void onOkHttpError(String error) {
+                        Log.e(TAG, "---onOkHttpError---" + error);
+                        pullToRefreshLayout.refreshFinish(PullToRefreshLayout.FAIL);
+                        cartState.initToast(context, error, true, 0);
+                    }
+                });
             }
         });
     }
 
     private void initBack() {
         ptrlMembershipPull.setPullDownEnable(false);
+        srlMembershipPull.setEnabled(false);
+        initPull(false);
     }
 
-    private void initIntent(Class<?> activity) {
+    private void initPull(boolean isToast) {
+        final Map<String, Object> params = new HashMap<String, Object>();
+        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
+        params.put("page", page);
+        okHttpRequestWrap.get(CartAddaress.MEMBERS_LIST + shopId, isToast, "请稍候", params, new OnHttpRequest() {
+            @Override
+            public void onOkHttpResponse(String response, int id) {
+                Log.e(TAG, "---onOkHttpResponse---会员列表---" + response);
+                if (srlMembershipPull != null) {
+                    isPull = true;
+                    srlMembershipPull.setEnabled(true);
+                    srlMembershipPull.setRefreshing(false);
+                }
+                JSONObject resultJSON = JSON.parseObject(response);
+                int error_code = resultJSON.getInteger("code");
+                String msg = resultJSON.getString("message");
+                switch (error_code) {
+                    //获取成功
+                    case 204:
+                    case 201:
+                    case 200:
+                        page = 2;
+                        rlOrdersBar.setVisibility(View.GONE);
+                        ptrlMembershipPull.setVisibility(View.VISIBLE);
+                        tvOrdersAbnormal.setVisibility(View.GONE);
+                        String data = resultJSON.getString("data");
+                        cartState.initToast(context, msg, true, 0);
+                        cartState.getMemebersshipList().clear();
+                        List<Memebersship> memebersshipList = gson.fromJson(data, new TypeToken<List<Memebersship>>() {
+                        }.getType());
+                        cartState.setMemebersshipList(memebersshipList);
+                        if (cartState.getMemebersshipList().size() <= 0) {
+                            rlOrdersBar.setVisibility(View.GONE);
+                            ptrlMembershipPull.setVisibility(View.GONE);
+                            tvOrdersAbnormal.setVisibility(View.VISIBLE);
+                        }
+                        if (membershipAdapter != null) {
+                            membershipAdapter.notifyDataSetInvalidated();
+                        }
+                        break;
+                    default:
+                        rlOrdersBar.setVisibility(View.GONE);
+                        ptrlMembershipPull.setVisibility(View.GONE);
+                        tvOrdersAbnormal.setVisibility(View.VISIBLE);
+                        cartState.initToast(context, msg, true, 0);
+                        break;
+                }
+            }
+
+            @Override
+            public void onOkHttpError(String error) {
+                Log.e(TAG, "---onOkHttpError---" + error);
+                if (srlMembershipPull != null) {
+                    isPull = true;
+                    srlMembershipPull.setEnabled(false);
+                    srlMembershipPull.setRefreshing(false);
+                }
+                rlOrdersBar.setVisibility(View.GONE);
+                ptrlMembershipPull.setVisibility(View.GONE);
+                tvOrdersAbnormal.setVisibility(View.VISIBLE);
+                cartState.initToast(context, error, true, 0);
+            }
+        });
+    }
+
+    private void initIntents(Class<?> activity, int position) {
         Intent intent = new Intent(context, activity);
+        intent.putExtra("position", position);
         startActivity(intent);
     }
 

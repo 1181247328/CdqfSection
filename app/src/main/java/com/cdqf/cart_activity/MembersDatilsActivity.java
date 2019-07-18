@@ -125,6 +125,8 @@ public class MembersDatilsActivity extends BaseActivity {
     @BindView(R.id.tv_details_number)
     public TextView tvDetailsNumber = null;
 
+    private int position;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -163,6 +165,8 @@ public class MembersDatilsActivity extends BaseActivity {
         if (!eventBus.isRegistered(this)) {
             eventBus.register(this);
         }
+        Intent intent = getIntent();
+        position = intent.getIntExtra("position", 0);
     }
 
     private void initView() {

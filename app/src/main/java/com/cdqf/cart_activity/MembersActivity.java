@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
+import com.cdqf.cart_find.MembersDatilsFind;
 import com.cdqf.cart_find.ThroughFind;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;
@@ -162,7 +163,8 @@ public class MembersActivity extends BaseActivity {
     }
 
     private void initBack() {
-
+        tvMembersShop.setText(cartState.getUser().getShopName());
+        initShopId(true);
     }
 
     private void initShopId(boolean isToast) {
@@ -170,7 +172,7 @@ public class MembersActivity extends BaseActivity {
         //门店id
         params.put("shop_id", shopId);
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        okHttpRequestWrap.postString(CartAddaress.CART_SHOP_ID + cartState.getUser().getId(), isToast, "请稍候", params, new OnHttpRequest() {
+        okHttpRequestWrap.postString(CartAddaress.MEMBERS, isToast, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse---会员管理店面---" + response);
@@ -185,8 +187,13 @@ public class MembersActivity extends BaseActivity {
                     case 204:
                     case 201:
                     case 200:
-                        String data = resultJSON.getString("data");
-                        cartState.initToast(context, msg, true, 0);
+                        JSONObject data = resultJSON.getJSONObject("data");
+//                        cartState.initToast(context, msg, true, 0);
+                        tvMembersNumber.setText(data.getString("all_menber"));
+                        tvMembersNumbers.setText(data.getString("shop_menber"));
+                        tvMembersprice.setText("￥" + data.getString("shop_amount"));
+                        tvMembersWith.setText(data.getString("user_amount_money"));
+                        tvMembersLeft.setText(data.getString("user_surplus_money"));
                         break;
                     default:
                         cartState.initToast(context, msg, true, 0);
@@ -213,6 +220,7 @@ public class MembersActivity extends BaseActivity {
     private void initIntent(Class<?> activity, int type) {
         Intent intent = new Intent(context, activity);
         intent.putExtra("type", type);
+        intent.putExtra("shopId", shopId);
         startActivity(intent);
     }
 
@@ -265,13 +273,14 @@ public class MembersActivity extends BaseActivity {
                     public void onItemPicked(int index, String item) {
                         tvMembersShop.setText(item);
                         shopId = cartState.getHomeList().get(index).getId();
+                        initShopId(true);
                     }
                 });
                 pickerSource.show();
                 break;
             //会员总数
             case R.id.ll_members_number:
-                initIntent(MemebershipActivity.class, 1);
+//                initIntent(MemebershipActivity.class, 1);
                 break;
             //下单总数
             case R.id.ll_members_numbers:
@@ -288,6 +297,45 @@ public class MembersActivity extends BaseActivity {
                     cartState.initToast(context, "请输入正确的电话号码", true, 0);
                     return;
                 }
+
+                Map<String, Object> params = new HashMap<String, Object>();
+                //门店id
+                params.put("phone", phone);
+                OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
+                okHttpRequestWrap.postString(CartAddaress.MEMBERS, true, "请稍候", params, new OnHttpRequest() {
+                    @Override
+                    public void onOkHttpResponse(String response, int id) {
+                        Log.e(TAG, "---onOkHttpResponse---会员管理店面---" + response);
+                        if (srlMembersPull != null) {
+                            srlMembersPull.setRefreshing(false);
+                        }
+                        JSONObject resultJSON = JSON.parseObject(response);
+                        int error_code = resultJSON.getInteger("code");
+                        String msg = resultJSON.getString("message");
+                        switch (error_code) {
+                            //获取成功
+                            case 204:
+                            case 201:
+                            case 200:
+                                String data = resultJSON.getString("data");
+                                eventBus.postSticky(new MembersDatilsFind(data));
+//                        cartState.initToast(context, msg, true, 0);
+                                break;
+                            default:
+                                cartState.initToast(context, msg, true, 0);
+                                break;
+                        }
+                    }
+
+                    @Override
+                    public void onOkHttpError(String error) {
+                        Log.e(TAG, "---onOkHttpError---" + error);
+                        if (srlMembersPull != null) {
+                            srlMembersPull.setRefreshing(false);
+                        }
+                        cartState.initToast(context, error, true, 0);
+                    }
+                });
                 break;
         }
     }

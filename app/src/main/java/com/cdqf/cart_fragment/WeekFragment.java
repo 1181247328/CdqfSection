@@ -10,15 +10,29 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
 import com.cdqf.cart_adapter.WeekAdapter;
+import com.cdqf.cart_class.Week;
 import com.cdqf.cart_find.ReoptrPullFind;
 import com.cdqf.cart_find.WeekPullFind;
+import com.cdqf.cart_okhttp.OKHttpRequestWrap;
+import com.cdqf.cart_okhttp.OnHttpRequest;
+import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.jingchen.pulltorefresh.PullToRefreshLayout;
 import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,6 +63,21 @@ public class WeekFragment extends Fragment {
     private ListView lvDailyList = null;
 
     private WeekAdapter weekAdapter = null;
+
+    @BindView(R.id.rl_orders_bar)
+    public RelativeLayout rlOrdersBar = null;
+
+    //订单异常
+    @BindView(R.id.tv_orders_abnormal)
+    public TextView tvOrdersAbnormal = null;
+
+    @BindView(R.id.pb_orders_bar)
+    public ProgressBar pbOrdersBar = null;
+
+    private int page = 1;
+
+    private boolean isPull = false;
+
 
     @Nullable
     @Override
@@ -90,8 +119,59 @@ public class WeekFragment extends Fragment {
             }
 
             @Override
-            public void onLoadMore(PullToRefreshLayout pullToRefreshLayout) {
+            public void onLoadMore(final PullToRefreshLayout pullToRefreshLayout) {
                 //上拉加载
+                //上拉加载
+                Map<String, Object> params = new HashMap<String, Object>();
+                OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
+                //页码
+                params.put("page", page);
+                okHttpRequestWrap.postString(CartAddaress.REPORT, false, "请稍候", params, new OnHttpRequest() {
+                    @Override
+                    public void onOkHttpResponse(String response, int id) {
+                        Log.e(TAG, "---onOkHttpResponse---周报之上拉加载---" + response);
+                        isPull = true;
+                        JSONObject resultJSON = JSON.parseObject(response);
+                        int error_code = resultJSON.getInteger("code");
+                        String msg = resultJSON.getString("message");
+                        switch (error_code) {
+                            //获取成功
+                            case 204:
+                            case 201:
+                            case 200:
+                                page++;
+                                pullToRefreshLayout.refreshFinish(PullToRefreshLayout.SUCCEED);
+
+                                JSONObject data = resultJSON.getJSONObject("data");
+                                String datas = data.getString("data");
+                                cartState.initToast(getContext(), msg, true, 0);
+
+                                List<Week> weekList = gson.fromJson(datas, new TypeToken<List<Week>>() {
+                                }.getType());
+                                cartState.getWeekList().addAll(weekList);
+
+                                if (weekAdapter != null) {
+                                    weekAdapter.notifyDataSetChanged();
+                                }
+                                break;
+                            default:
+                                pullToRefreshLayout.refreshFinish(PullToRefreshLayout.FAIL);
+                                cartState.initToast(getContext(), msg, true, 0);
+                                break;
+                        }
+
+                    }
+
+                    @Override
+                    public void onOkHttpError(String error) {
+                        Log.e(TAG, "---onOkHttpError---" + error);
+                        isPull = true;
+                        rlOrdersBar.setVisibility(View.GONE);
+                        ptrlDailyPull.setVisibility(View.GONE);
+                        tvOrdersAbnormal.setVisibility(View.VISIBLE);
+                        pullToRefreshLayout.refreshFinish(PullToRefreshLayout.FAIL);
+                    }
+                });
             }
         });
 
@@ -106,7 +186,11 @@ public class WeekFragment extends Fragment {
                 View firstView = view.getChildAt(firstVisibleItem);
                 // 当firstVisibleItem是第0位。如果firstView==null说明列表为空，需要刷新;或者top==0说明已经到达列表顶部, 也需要刷新
                 if (firstVisibleItem == 0 && (firstView == null || firstView.getTop() == view.getPaddingTop())) {
-                    eventBus.post(new ReoptrPullFind(false, true));
+                    if (isPull) {
+                        eventBus.post(new ReoptrPullFind(false, true));
+                    } else {
+                        eventBus.post(new ReoptrPullFind(false, false));
+                    }
                 } else {
                     eventBus.post(new ReoptrPullFind(false, false));
                 }
@@ -121,6 +205,73 @@ public class WeekFragment extends Fragment {
 
     private void initBack() {
         ptrlDailyPull.setPullDownEnable(false);
+        initPull(false);
+    }
+
+    private void initPull(boolean isToast) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
+        //页码
+        params.put("page", page);
+        okHttpRequestWrap.postString(CartAddaress.REPORT, isToast, "请稍候", params, new OnHttpRequest() {
+            @Override
+            public void onOkHttpResponse(String response, int id) {
+                Log.e(TAG, "---onOkHttpResponse---周报---" + response);
+                isPull = true;
+                JSONObject resultJSON = JSON.parseObject(response);
+                int error_code = resultJSON.getInteger("code");
+                String msg = resultJSON.getString("message");
+                switch (error_code) {
+                    //获取成功
+                    case 204:
+                    case 201:
+                    case 200:
+                        page = 2;
+                        rlOrdersBar.setVisibility(View.GONE);
+                        ptrlDailyPull.setVisibility(View.VISIBLE);
+                        tvOrdersAbnormal.setVisibility(View.GONE);
+
+                        JSONObject data = resultJSON.getJSONObject("data");
+                        String datas = data.getString("data");
+
+                        cartState.getWeekList().clear();
+                        cartState.initToast(getContext(), msg, true, 0);
+                        eventBus.post(new ReoptrPullFind(false, true));
+
+                        List<Week> weekList = gson.fromJson(datas, new TypeToken<List<Week>>() {
+                        }.getType());
+                        cartState.setWeekList(weekList);
+
+                        if (cartState.getWeekList().size() <= 0) {
+                            rlOrdersBar.setVisibility(View.GONE);
+                            ptrlDailyPull.setVisibility(View.GONE);
+                            tvOrdersAbnormal.setVisibility(View.VISIBLE);
+                        }
+                        if (weekAdapter != null) {
+                            weekAdapter.notifyDataSetChanged();
+                        }
+                        break;
+                    default:
+                        rlOrdersBar.setVisibility(View.GONE);
+                        ptrlDailyPull.setVisibility(View.GONE);
+                        tvOrdersAbnormal.setVisibility(View.VISIBLE);
+                        eventBus.post(new ReoptrPullFind(false, true));
+                        cartState.initToast(getContext(), msg, true, 0);
+                        break;
+                }
+
+            }
+
+            @Override
+            public void onOkHttpError(String error) {
+                Log.e(TAG, "---onOkHttpError---" + error);
+                isPull = true;
+                rlOrdersBar.setVisibility(View.GONE);
+                ptrlDailyPull.setVisibility(View.GONE);
+                tvOrdersAbnormal.setVisibility(View.VISIBLE);
+                eventBus.post(new ReoptrPullFind(false, true));
+            }
+        });
     }
 
     private void initIntent(Class<?> activity) {

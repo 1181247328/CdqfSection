@@ -33,6 +33,7 @@ import com.cdqf.cart_class.Audit;
 import com.cdqf.cart_class.Audits;
 import com.cdqf.cart_class.AuditsJudge;
 import com.cdqf.cart_class.Complete;
+import com.cdqf.cart_class.Daily;
 import com.cdqf.cart_class.Datils;
 import com.cdqf.cart_class.Employees;
 import com.cdqf.cart_class.Entry;
@@ -40,6 +41,8 @@ import com.cdqf.cart_class.Home;
 import com.cdqf.cart_class.LossMan;
 import com.cdqf.cart_class.LossNews;
 import com.cdqf.cart_class.LossStaff;
+import com.cdqf.cart_class.Memebersship;
+import com.cdqf.cart_class.Moth;
 import com.cdqf.cart_class.MyUser;
 import com.cdqf.cart_class.Notice;
 import com.cdqf.cart_class.Position;
@@ -51,6 +54,7 @@ import com.cdqf.cart_class.Through;
 import com.cdqf.cart_class.ThroughsJudge;
 import com.cdqf.cart_class.User;
 import com.cdqf.cart_class.UserGoods;
+import com.cdqf.cart_class.Week;
 import com.cdqf.cart_class.Withdraw;
 import com.cdqf.cart_service.Province;
 import com.google.zxing.BarcodeFormat;
@@ -213,6 +217,18 @@ public class CartState {
 
     //已通过(审核)
     private List<ThroughsJudge> throughsJudgeList = new CopyOnWriteArrayList<>();
+
+    //会员下单总数
+    private List<Memebersship> memebersshipList = new CopyOnWriteArrayList<>();
+
+    //日报
+    private List<Daily> dailyList = new CopyOnWriteArrayList<>();
+
+    //周报
+    private List<Week> weekList = new CopyOnWriteArrayList<>();
+
+    //月报
+    private List<Moth> mothList = new CopyOnWriteArrayList<>();
 
     /**
      * 提示信息
@@ -1145,5 +1161,37 @@ public class CartState {
 
     public void setThroughsJudgeList(List<ThroughsJudge> throughsJudgeList) {
         this.throughsJudgeList = throughsJudgeList;
+    }
+
+    public List<Memebersship> getMemebersshipList() {
+        return memebersshipList;
+    }
+
+    public void setMemebersshipList(List<Memebersship> memebersshipList) {
+        this.memebersshipList = memebersshipList;
+    }
+
+    public List<Daily> getDailyList() {
+        return dailyList;
+    }
+
+    public void setDailyList(List<Daily> dailyList) {
+        this.dailyList = dailyList;
+    }
+
+    public List<Week> getWeekList() {
+        return weekList;
+    }
+
+    public void setWeekList(List<Week> weekList) {
+        this.weekList = weekList;
+    }
+
+    public List<Moth> getMothList() {
+        return mothList;
+    }
+
+    public void setMothList(List<Moth> mothList) {
+        this.mothList = mothList;
     }
 }

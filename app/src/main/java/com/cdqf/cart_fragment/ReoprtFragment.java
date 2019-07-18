@@ -148,7 +148,7 @@ public class ReoprtFragment extends Fragment {
     private void initAdapter() {
         shopFragmentAdapter = new ShopFragmentAdapter(getChildFragmentManager(), orderList);
         vpReportScreen.setAdapter(shopFragmentAdapter);
-        vpReportScreen.setOffscreenPageLimit(3);
+        vpReportScreen.setOffscreenPageLimit(1);
     }
 
     private void initBack() {

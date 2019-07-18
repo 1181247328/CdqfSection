@@ -36,7 +36,7 @@ public class MembershipAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 30;
+        return cartState.getMemebersshipList().size();
     }
 
     @Override
@@ -59,18 +59,30 @@ public class MembershipAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+        viewHolder.tvMembershipItemName.setText(cartState.getMemebersshipList().get(position).getUser_car().getGet_car().getCarnum());
+        viewHolder.tvMembershipItemPhone.setText(cartState.getMemebersshipList().get(position).getUser_car().getPhone());
+        viewHolder.tvMembershipItemTimer.setText(cartState.getMemebersshipList().get(position).getUser_car().getAddtime());
+        viewHolder.tvMembershipItemPrice.setText(cartState.getMemebersshipList().get(position).getBalance());
         return convertView;
     }
 
     class ViewHolder {
 
-        //图片
+        //车牌
         @BindView(R.id.tv_membership_item_name)
         public TextView tvMembershipItemName = null;
 
-        //昵称
+        //手机
         @BindView(R.id.tv_membership_item_phone)
         public TextView tvMembershipItemPhone = null;
+
+        //时间
+        @BindView(R.id.tv_membership_item_timer)
+        public TextView tvMembershipItemTimer = null;
+
+        //余额
+        @BindView(R.id.tv_membership_item_price)
+        public TextView tvMembershipItemPrice = null;
 
         public ViewHolder(View v) {
             ButterKnife.bind(this, v);
