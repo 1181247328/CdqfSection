@@ -19,7 +19,12 @@ import com.cdqf.cart.R;
 import com.cdqf.cart_adapter.AccountDatilsContextAdapter;
 import com.cdqf.cart_adapter.AccountDatilsImageAdapter;
 import com.cdqf.cart_class.AccountDatils;
-import com.cdqf.cart_find.FillAddImageFind;
+import com.cdqf.cart_dilog.WhyDilogFragment;
+import com.cdqf.cart_find.AuditPositionFind;
+import com.cdqf.cart_find.AuditPullFind;
+import com.cdqf.cart_find.AuditsAgreedFind;
+import com.cdqf.cart_find.AuditsDatilsCencalFind;
+import com.cdqf.cart_find.ThroughPullFind;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;
 import com.cdqf.cart_state.BaseActivity;
@@ -112,9 +117,7 @@ public class AuditsDatilsActivity extends BaseActivity {
     @BindView(R.id.tv_datils_credentials)
     public TextView tvDatilsCredentials = null;
 
-    @BindView(R.id.tv_datils_item_state)
-    public TextView tvDatilsItemState = null;
-
+    private AccountDatils accountDatils = null;
 
     private int position;
 
@@ -171,6 +174,12 @@ public class AuditsDatilsActivity extends BaseActivity {
 
             }
         });
+        srlDatilsPull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                initPull(false);
+            }
+        });
     }
 
     private void initBack() {
@@ -216,7 +225,7 @@ public class AuditsDatilsActivity extends BaseActivity {
                     case 200:
                         String data = resultJSON.getString("data");
                         cartState.initToast(context, msg, true, 0);
-                        AccountDatils accountDatils = gson.fromJson(data, AccountDatils.class);
+                        accountDatils = gson.fromJson(data, AccountDatils.class);
                         tvDatilsTitle.setText(accountDatils.getLogin_account());
                         tvDatilsData.setText(finalTimer);
                         accountDatilsContextAdapter.setContext(accountDatils.getShop_new_name(),
@@ -233,7 +242,7 @@ public class AuditsDatilsActivity extends BaseActivity {
                                 states = "已通过";
                                 break;
                         }
-                        tvDatilsItemState.setText(states);
+                        tvDatilsState.setText(states);
                         if (accountDatils.getImg().size() <= 0) {
                             tvDatilsCredentials.setVisibility(View.VISIBLE);
                             mgvDatalsList.setVisibility(View.GONE);
@@ -251,6 +260,10 @@ public class AuditsDatilsActivity extends BaseActivity {
             @Override
             public void onOkHttpError(String error) {
                 Log.e(TAG, "---onOkHttpError---" + error);
+                if (srlDatilsPull != null) {
+                    srlDatilsPull.setRefreshing(false);
+                }
+                cartState.initToast(context, error, true, 0);
             }
         });
     }
@@ -269,9 +282,15 @@ public class AuditsDatilsActivity extends BaseActivity {
                 break;
             //取消
             case R.id.rcrl_datils_cencal:
+                WhyDilogFragment whyDilogFragment = new WhyDilogFragment();
+                whyDilogFragment.setInit(19, "提示", "是否取消当前报销", "否", "是");
+                whyDilogFragment.show(getSupportFragmentManager(), "取消报销");
                 break;
             //同意
             case R.id.rcrl_datils_agreed:
+                WhyDilogFragment whyAgreedDilogFragment = new WhyDilogFragment();
+                whyAgreedDilogFragment.setInit(20, "提示", "是否同意当前报销", "否", "是");
+                whyAgreedDilogFragment.show(getSupportFragmentManager(), "同意报销");
                 break;
         }
     }
@@ -319,11 +338,94 @@ public class AuditsDatilsActivity extends BaseActivity {
     }
 
     /**
+     * 取消报销
+     *
      * @param s
      */
     @Subscribe
-    public void onEventMainThread(FillAddImageFind s) {
+    public void onEventMainThread(AuditsDatilsCencalFind s) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("id", accountDatils.getId());
+        params.put("staff_id", cartState.getUser().getId());
+        params.put("type", 2);
+        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
+        okHttpRequestWrap.postString(CartAddaress.AGRED_AUDITS, true, "拒绝中", params, new OnHttpRequest() {
+            @Override
+            public void onOkHttpResponse(String response, int id) {
+                Log.e(TAG, "---onOkHttpResponse---拒绝报销---" + response);
 
+                JSONObject resultJSON = JSON.parseObject(response);
+                int error_code = resultJSON.getInteger("code");
+                String msg = resultJSON.getString("message");
+                switch (error_code) {
+                    //获取成功
+                    case 204:
+                    case 201:
+                    case 200:
+                        String data = resultJSON.getString("data");
+                        cartState.initToast(context, msg, true, 0);
+                        eventBus.post(new AuditPullFind());
+                        finish();
+                        break;
+                    default:
+                        cartState.initToast(context, msg, true, 0);
+                        break;
+                }
+            }
+
+            @Override
+            public void onOkHttpError(String error) {
+                Log.e(TAG, "---onOkHttpError---" + error);
+
+                cartState.initToast(context, error, true, 0);
+            }
+        });
+    }
+
+    /**
+     * 同意报销
+     *
+     * @param a
+     */
+    @Subscribe
+    public void onEventMainThread(AuditsAgreedFind a) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("id", accountDatils.getId());
+        params.put("staff_id", cartState.getUser().getId());
+        params.put("type", 1);
+        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
+        okHttpRequestWrap.postString(CartAddaress.AGRED_AUDITS, true, "同意中", params, new OnHttpRequest() {
+            @Override
+            public void onOkHttpResponse(String response, int id) {
+                Log.e(TAG, "---onOkHttpResponse---同意报销---" + response);
+                JSONObject resultJSON = JSON.parseObject(response);
+                int error_code = resultJSON.getInteger("code");
+                String msg = resultJSON.getString("message");
+                switch (error_code) {
+                    //获取成功
+                    case 204:
+                    case 201:
+                    case 200:
+                        String data = resultJSON.getString("data");
+                        cartState.initToast(context, msg, true, 0);
+                        eventBus.post(new AuditPullFind());
+                        eventBus.post(new ThroughPullFind());
+                        eventBus.post(new AuditPositionFind(1));
+                        finish();
+                        break;
+                    default:
+                        cartState.initToast(context, msg, true, 0);
+                        break;
+                }
+            }
+
+            @Override
+            public void onOkHttpError(String error) {
+                Log.e(TAG, "---onOkHttpError---" + error);
+                cartState.initToast(context, error, true, 0);
+
+            }
+        });
     }
 
 }

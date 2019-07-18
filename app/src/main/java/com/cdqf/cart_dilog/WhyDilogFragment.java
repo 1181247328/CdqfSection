@@ -20,6 +20,8 @@ import android.widget.TextView;
 import com.cdqf.cart.R;
 import com.cdqf.cart_find.AccountExitFind;
 import com.cdqf.cart_find.AddOrderFind;
+import com.cdqf.cart_find.AuditsAgreedFind;
+import com.cdqf.cart_find.AuditsDatilsCencalFind;
 import com.cdqf.cart_find.DatilsPhoneFind;
 import com.cdqf.cart_find.EmployeesIdFind;
 import com.cdqf.cart_find.ExitFind;
@@ -260,6 +262,14 @@ public class WhyDilogFragment extends DialogFragment {
                     //FillActivity提交报销
                     case 18:
                         eventBus.post(new FillFind());
+                        break;
+                    //AuditsDatilsActivity取消报销
+                    case 19:
+                        eventBus.post(new AuditsDatilsCencalFind());
+                        break;
+                    //AuditsDatilsActivity同意报销
+                    case 20:
+                        eventBus.post(new AuditsAgreedFind());
                         break;
                 }
                 break;

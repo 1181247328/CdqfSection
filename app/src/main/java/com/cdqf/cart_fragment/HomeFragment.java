@@ -228,6 +228,45 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    /**
+     * 修改绑定门店id
+     *
+     * @param
+     */
+    private void initShopId() {
+        Map<String, Object> params = new HashMap<String, Object>();
+        //门店id
+        params.put("shop_id", cartState.getUser().getShopid());
+        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
+        okHttpRequestWrap.postString(CartAddaress.CART_SHOP_ID + cartState.getUser().getId(), true, "请稍候", params, new OnHttpRequest() {
+            @Override
+            public void onOkHttpResponse(String response, int id) {
+                Log.e(TAG, "---onOkHttpResponse---修改绑定门店---" + response);
+                JSONObject resultJSON = JSON.parseObject(response);
+                int error_code = resultJSON.getInteger("code");
+                String msg = resultJSON.getString("message");
+                switch (error_code) {
+                    //获取成功
+                    case 204:
+                    case 201:
+                    case 200:
+                        String data = resultJSON.getString("data");
+                        cartState.initToast(getContext(), msg, true, 0);
+                        break;
+                    default:
+                        cartState.initToast(getContext(), msg, true, 0);
+                        break;
+                }
+            }
+
+            @Override
+            public void onOkHttpError(String error) {
+                Log.e(TAG, "---onOkHttpError---" + error);
+                cartState.initToast(getContext(), error, true, 0);
+            }
+        });
+    }
+
     @OnClick({R.id.ll_homemanager_shop, R.id.tv_homemanager_scan, R.id.rcrl_home_situation})
     public void onClick(View v) {
         switch (v.getId()) {
@@ -274,8 +313,8 @@ public class HomeFragment extends Fragment {
                     public void onItemPicked(int index, String item) {
                         tvHomemanagerShop.setText(cartState.getHomeList().get(index).getShop_new_name());
                         cartState.getUser().setShopid(cartState.getHomeList().get(index).getId() + "");
-                        cartState.getUser().setShopName(cartState.getHomeList().get(index).getShop_new_name())
-                        ;
+                        cartState.getUser().setShopName(cartState.getHomeList().get(index).getShop_new_name());
+                        initShopId();
                     }
                 });
                 pickerSource.show();

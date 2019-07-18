@@ -11,6 +11,9 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -66,6 +69,16 @@ public class ServiceFragment extends Fragment {
 
     @BindView(R.id.ptrl_service_pull)
     public PullToRefreshLayout ptrlServicePull = null;
+
+    @BindView(R.id.rl_orders_bar)
+    public RelativeLayout rlOrdersBar = null;
+
+    //订单异常
+    @BindView(R.id.tv_orders_abnormal)
+    public TextView tvOrdersAbnormal = null;
+
+    @BindView(R.id.pb_orders_bar)
+    public ProgressBar pbOrdersBar = null;
 
     private ListView lvServiceList = null;
 
@@ -136,6 +149,8 @@ public class ServiceFragment extends Fragment {
                         String msg = resultJSON.getString("message");
                         switch (error_code) {
                             //获取成功
+                            case 204:
+                            case 201:
                             case 200:
                                 pullToRefreshLayout.refreshFinish(PullToRefreshLayout.SUCCEED);
                                 JSONObject data = resultJSON.getJSONObject("data");
@@ -200,7 +215,7 @@ public class ServiceFragment extends Fragment {
 
     private void initBack() {
         ptrlServicePull.setPullDownEnable(false);
-        initPull(true);
+        initPull(false);
     }
 
     private void initPull(boolean isToast) {
@@ -223,8 +238,13 @@ public class ServiceFragment extends Fragment {
                 String msg = resultJSON.getString("message");
                 switch (error_code) {
                     //获取成功
+                    case 204:
+                    case 201:
                     case 200:
                         page = 2;
+                        rlOrdersBar.setVisibility(View.GONE);
+                        ptrlServicePull.setVisibility(View.VISIBLE);
+                        tvOrdersAbnormal.setVisibility(View.GONE);
                         JSONObject data = resultJSON.getJSONObject("data");
                         String datas = data.getString("data");
                         cartState.getServiceLis().clear();
@@ -233,11 +253,20 @@ public class ServiceFragment extends Fragment {
                         List<Service> serviceList = gson.fromJson(datas, new TypeToken<List<Service>>() {
                         }.getType());
                         cartState.setServiceLis(serviceList);
+                        if (cartState.getServiceLis().size() <= 0) {
+                            rlOrdersBar.setVisibility(View.GONE);
+                            ptrlServicePull.setVisibility(View.GONE);
+                            tvOrdersAbnormal.setVisibility(View.VISIBLE);
+                        }
                         if (shopAdapter != null) {
                             shopAdapter.notifyDataSetChanged();
                         }
                         cartState.closeKeyboard(getActivity());
+                        break;
                     default:
+                        rlOrdersBar.setVisibility(View.GONE);
+                        ptrlServicePull.setVisibility(View.GONE);
+                        tvOrdersAbnormal.setVisibility(View.VISIBLE);
                         eventBus.post(new SwipePullFind(false, true));
                         cartState.initToast(getContext(), msg, true, 0);
                         break;
@@ -248,6 +277,9 @@ public class ServiceFragment extends Fragment {
             @Override
             public void onOkHttpError(String error) {
                 Log.e(TAG, "---onOkHttpError---" + error);
+                rlOrdersBar.setVisibility(View.GONE);
+                ptrlServicePull.setVisibility(View.GONE);
+                tvOrdersAbnormal.setVisibility(View.VISIBLE);
                 eventBus.post(new SwipePullFind(false, true));
             }
         });

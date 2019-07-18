@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import com.cdqf.cart.R;
 import com.cdqf.cart_adapter.ShopFragmentAdapter;
 import com.cdqf.cart_dilog.WhyDilogFragment;
+import com.cdqf.cart_find.AuditPositionFind;
 import com.cdqf.cart_find.AuditPullFind;
 import com.cdqf.cart_find.RefusedFind;
 import com.cdqf.cart_find.RefusedTwoFind;
@@ -286,6 +287,17 @@ public class AuditActivity extends BaseActivity {
     @Subscribe
     public void onEventMainThread(RefusedTwoFind r) {
 
+    }
+
+    /**
+     * 位置
+     *
+     * @param r
+     */
+    @Subscribe
+    public void onEventMainThread(AuditPositionFind r) {
+        position = r.position;
+        vpAuditScreen.setCurrentItem(r.position);
     }
 }
 

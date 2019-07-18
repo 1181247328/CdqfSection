@@ -130,7 +130,7 @@ public class ShopActivity extends BaseActivity {
     private void initAdapter() {
         shopFragmentAdapter = new ShopFragmentAdapter(getSupportFragmentManager(), orderList);
         vpShopScreen.setAdapter(shopFragmentAdapter);
-        vpShopScreen.setOffscreenPageLimit(3);
+        vpShopScreen.setOffscreenPageLimit(1);
     }
 
     private void initListener() {

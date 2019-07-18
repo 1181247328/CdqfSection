@@ -10,6 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -59,6 +62,16 @@ public class CompleteFragment extends Fragment {
 
     @BindView(R.id.ptrl_service_pull)
     public PullToRefreshLayout ptrlServicePull = null;
+
+    @BindView(R.id.rl_orders_bar)
+    public RelativeLayout rlOrdersBar = null;
+
+    //订单异常
+    @BindView(R.id.tv_orders_abnormal)
+    public TextView tvOrdersAbnormal = null;
+
+    @BindView(R.id.pb_orders_bar)
+    public ProgressBar pbOrdersBar = null;
 
     private ListView lvServiceList = null;
 
@@ -212,6 +225,9 @@ public class CompleteFragment extends Fragment {
                     //获取成功
                     case 200:
                         page = 2;
+                        rlOrdersBar.setVisibility(View.GONE);
+                        ptrlServicePull.setVisibility(View.VISIBLE);
+                        tvOrdersAbnormal.setVisibility(View.GONE);
                         JSONObject data = resultJSON.getJSONObject("data");
                         String datas = data.getString("data");
                         cartState.getCompleteList().clear();
@@ -220,13 +236,20 @@ public class CompleteFragment extends Fragment {
                         List<Complete> completeList = gson.fromJson(datas, new TypeToken<List<Complete>>() {
                         }.getType());
                         cartState.setCompleteList(completeList);
+                        if (cartState.getCompleteList().size() <= 0) {
+                            rlOrdersBar.setVisibility(View.GONE);
+                            ptrlServicePull.setVisibility(View.GONE);
+                            tvOrdersAbnormal.setVisibility(View.VISIBLE);
+                        }
                         if (completeAdapter != null) {
                             completeAdapter.notifyDataSetChanged();
                         }
                         cartState.closeKeyboard(getActivity());
                         break;
                     default:
-
+                        rlOrdersBar.setVisibility(View.GONE);
+                        ptrlServicePull.setVisibility(View.GONE);
+                        tvOrdersAbnormal.setVisibility(View.VISIBLE);
                         eventBus.post(new SwipePullFind(false, true));
                         cartState.initToast(getContext(), msg, true, 0);
                         break;
@@ -237,6 +260,9 @@ public class CompleteFragment extends Fragment {
             @Override
             public void onOkHttpError(String error) {
                 Log.e(TAG, "---onOkHttpError---" + error);
+                rlOrdersBar.setVisibility(View.GONE);
+                ptrlServicePull.setVisibility(View.GONE);
+                tvOrdersAbnormal.setVisibility(View.VISIBLE);
                 eventBus.post(new SwipePullFind(false, true));
             }
         });

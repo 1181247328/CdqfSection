@@ -46,6 +46,11 @@ public class CartAddaress {
     //审核
     public static final String EXAMiNELIST = ADDRESS +"/staff/adminExamineList";
 
+    public static final String CART_SHOP_ID = ADDRESS+"/staff/shops/";
+
+    //同意审核
+    public static final String AGRED_AUDITS = ADDRESS+"/staff/examine";
+
     /****************************************************/
 
     //店总

@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.NestedScrollView;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -13,13 +15,21 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
 import com.cdqf.cart_find.ThroughFind;
+import com.cdqf.cart_okhttp.OKHttpRequestWrap;
+import com.cdqf.cart_okhttp.OnHttpRequest;
 import com.cdqf.cart_state.BaseActivity;
+import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_state.StaturBar;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,6 +58,12 @@ public class MembersActivity extends BaseActivity {
 
     private Gson gson = new Gson();
 
+    @BindView(R.id.srl_members_pull)
+    public SwipeRefreshLayout srlMembersPull = null;
+
+    @BindView(R.id.nsv_members_sc)
+    public NestedScrollView nsvMembersSc = null;
+
     //返回
     @BindView(R.id.rl_members_return)
     public RelativeLayout rlMembersReturn = null;
@@ -61,6 +77,9 @@ public class MembersActivity extends BaseActivity {
     //手机号
     @BindView(R.id.et_members_phone)
     public EditText etMembersPhone = null;
+
+    @BindView(R.id.tv_members_cancel)
+    public TextView tvMembersCancel = null;
 
     //会员总数
     @BindView(R.id.tv_members_number)
@@ -90,6 +109,10 @@ public class MembersActivity extends BaseActivity {
     @BindView(R.id.ll_members_numbers)
     public LinearLayout llMembersNumbers = null;
 
+    private String phone = "";
+
+    private int shopId = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,6 +141,7 @@ public class MembersActivity extends BaseActivity {
         if (!eventBus.isRegistered(this)) {
             eventBus.register(this);
         }
+        shopId = Integer.parseInt(cartState.getUser().getShopid());
     }
 
     private void initView() {
@@ -129,13 +153,57 @@ public class MembersActivity extends BaseActivity {
     }
 
     private void initListener() {
-
+        srlMembersPull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                initShopId(false);
+            }
+        });
     }
 
     private void initBack() {
 
     }
 
+    private void initShopId(boolean isToast) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        //门店id
+        params.put("shop_id", shopId);
+        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
+        okHttpRequestWrap.postString(CartAddaress.CART_SHOP_ID + cartState.getUser().getId(), isToast, "请稍候", params, new OnHttpRequest() {
+            @Override
+            public void onOkHttpResponse(String response, int id) {
+                Log.e(TAG, "---onOkHttpResponse---会员管理店面---" + response);
+                if (srlMembersPull != null) {
+                    srlMembersPull.setRefreshing(false);
+                }
+                JSONObject resultJSON = JSON.parseObject(response);
+                int error_code = resultJSON.getInteger("code");
+                String msg = resultJSON.getString("message");
+                switch (error_code) {
+                    //获取成功
+                    case 204:
+                    case 201:
+                    case 200:
+                        String data = resultJSON.getString("data");
+                        cartState.initToast(context, msg, true, 0);
+                        break;
+                    default:
+                        cartState.initToast(context, msg, true, 0);
+                        break;
+                }
+            }
+
+            @Override
+            public void onOkHttpError(String error) {
+                Log.e(TAG, "---onOkHttpError---" + error);
+                if (srlMembersPull != null) {
+                    srlMembersPull.setRefreshing(false);
+                }
+                cartState.initToast(context, error, true, 0);
+            }
+        });
+    }
 
     private void initIntent(Class<?> activity) {
         Intent intent = new Intent(context, activity);
@@ -148,7 +216,7 @@ public class MembersActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    @OnClick({R.id.rl_members_return, R.id.ll_members_shop, R.id.ll_members_number, R.id.ll_members_numbers})
+    @OnClick({R.id.rl_members_return, R.id.ll_members_shop, R.id.ll_members_number, R.id.ll_members_numbers, R.id.tv_members_cancel})
     public void onClick(View v) {
         switch (v.getId()) {
             //返回
@@ -157,9 +225,14 @@ public class MembersActivity extends BaseActivity {
                 break;
             //店名
             case R.id.ll_members_shop:
-                SinglePicker<String> pickerSource = new SinglePicker<String>(MembersActivity.this, new String[]{
-                        "浅水半岛店"
-                });
+                if (cartState.getHomeList().size() <= 0) {
+                    return;
+                }
+                String[] homeName = new String[cartState.getHomeList().size()];
+                for (int i = 0; i < cartState.getHomeList().size(); i++) {
+                    homeName[i] = cartState.getHomeList().get(i).getShop_new_name();
+                }
+                SinglePicker<String> pickerSource = new SinglePicker<String>(MembersActivity.this, homeName);
                 LineConfig configSource = new LineConfig();
                 configSource.setColor(ContextCompat.getColor(context, R.color.addstore_one));//线颜色
                 configSource.setThick(ConvertUtils.toPx(context, 1));//线粗
@@ -191,6 +264,7 @@ public class MembersActivity extends BaseActivity {
                     @Override
                     public void onItemPicked(int index, String item) {
                         tvMembersShop.setText(item);
+                        shopId = cartState.getHomeList().get(index).getId();
                     }
                 });
                 pickerSource.show();
@@ -202,6 +276,18 @@ public class MembersActivity extends BaseActivity {
             //下单总数
             case R.id.ll_members_numbers:
                 initIntent(MemebershipActivity.class, 2);
+                break;
+            //确定
+            case R.id.tv_members_cancel:
+                phone = etMembersPhone.getText().toString();
+                if (phone.length() <= 0) {
+                    cartState.initToast(context, "请输入电话号码", true, 0);
+                    return;
+                }
+                if (!cartState.isMobile(phone)) {
+                    cartState.initToast(context, "请输入正确的电话号码", true, 0);
+                    return;
+                }
                 break;
         }
     }

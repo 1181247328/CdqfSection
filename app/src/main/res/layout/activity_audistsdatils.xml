@@ -120,7 +120,7 @@
                             android:gravity="center"
                             android:paddingTop="@dimen/dp_8"
                             android:paddingBottom="@dimen/dp_8"
-                            android:text="取消"
+                            android:text="拒绝"
                             android:textColor="@color/white"
                             android:textSize="@dimen/sp_14" />
 
