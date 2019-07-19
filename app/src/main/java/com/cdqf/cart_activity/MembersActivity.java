@@ -142,7 +142,7 @@ public class MembersActivity extends BaseActivity {
         if (!eventBus.isRegistered(this)) {
             eventBus.register(this);
         }
-        shopId = Integer.parseInt(cartState.getUser().getShopid());
+        shopId = Integer.parseInt(cartState.getUser().getShopid()+"");
     }
 
     private void initView() {

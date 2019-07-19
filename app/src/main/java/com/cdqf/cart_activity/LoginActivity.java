@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -18,6 +17,7 @@ import com.cdqf.cart_class.User;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;
 import com.cdqf.cart_state.BaseActivity;
+import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartPreferences;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_state.ScreenUtils;
@@ -120,7 +120,7 @@ public class LoginActivity extends BaseActivity {
         //判断是有登录的
         if (CartPreferences.getUser(context) != null) {
             cartState.setUser(CartPreferences.getUser(context));
-            etLoginAccount.setText(cartState.getUser().getLogin_account());
+            etLoginAccount.setText(cartState.getUser().getUsername());
             xetLoginPasswrod.setText(cartState.getUser().getPassword());
             String account = etLoginAccount.getText().toString();
             if (account.length() <= 0) {
@@ -152,41 +152,44 @@ public class LoginActivity extends BaseActivity {
 
     private void loing(String account, final String password) {
         Map<String, Object> params = new HashMap<String, Object>();
-        String accountPasswrod = loginAccPass(account, password);
+        params.put("username", account);
+        params.put("password", password);
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        okHttpRequestWrap.post(accountPasswrod, true, "登录中", params, new OnHttpRequest() {
+        okHttpRequestWrap.post(CartAddaress.LOGIN_NEW, true, "登录中", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse登录---" + response);
 
                 JSONObject resultJSON = JSON.parseObject(response);
-                int error_code = resultJSON.getInteger("ret");
-                String msg = resultJSON.getString("msg");
+                int error_code = resultJSON.getInteger("code");
+                String msg = resultJSON.getString("message");
                 switch (error_code) {
                     //获取成功
+                    case 204:
+                    case 201:
                     case 200:
                         String data = resultJSON.getString("data");
                         User user = gson.fromJson(data, User.class);
                         user.setPassword(password);
                         cartState.setUser(user);
                         CartPreferences.setUser(context, user);
-                        if (TextUtils.equals(user.getState(), "1")) {
-                            //审核通过
-                            if (TextUtils.equals(user.getType(), "1")) {
-                                //员工
-                                initIntent(MainActivity.class);
-                            } else if (TextUtils.equals(user.getType(), "2")) {
-                                //店长
+//                        if (TextUtils.equals(user.getState(), "1")) {
+//                            //审核通过
+//                            if (TextUtils.equals(user.getType(), "1")) {
+//                                //员工
+//                                initIntent(MainActivity.class);
+//                            } else if (TextUtils.equals(user.getType(), "2")) {
+//                                //店长
                                 initIntent(MainManagerActivity.class);
-                            } else {
-                                //TODO
-                            }
-                        } else if (TextUtils.equals(user.getState(), "0")) {
-                            //审核未通过
-                            cartState.initToast(context, "审核未通过", true, 0);
-                        } else {
-                            //TODO
-                        }
+//                            } else {
+//                                //TODO
+//                            }
+//                        } else if (TextUtils.equals(user.getState(), "0")) {
+//                            //审核未通过
+//                            cartState.initToast(context, "审核未通过", true, 0);
+//                        } else {
+//                            //TODO
+//                        }
                         finish();
                         break;
                     default:

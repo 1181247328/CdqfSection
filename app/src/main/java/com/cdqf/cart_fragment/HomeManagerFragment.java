@@ -128,6 +128,7 @@ public class HomeManagerFragment extends Fragment {
     }
 
     private void initAgo() {
+        imageLoader = cartState.getImageLoader(getContext());
         ButterKnife.bind(this, view);
     }
 
@@ -217,7 +218,7 @@ public class HomeManagerFragment extends Fragment {
                         for (Home h : homeList) {
                             if (h.getStatus() == 1) {
                                 tvHomemanagerShop.setText(h.getShop_new_name());
-                                cartState.getUser().setShopid(h.getId() + "");
+                                cartState.getUser().setShopid(h.getId());
                                 cartState.getUser().setShopName(h.getShop_new_name());
                             }
                         }
@@ -320,7 +321,7 @@ public class HomeManagerFragment extends Fragment {
                     @Override
                     public void onItemPicked(int index, String item) {
                         tvHomemanagerShop.setText(cartState.getHomeList().get(index).getShop_new_name());
-                        cartState.getUser().setShopid(cartState.getHomeList().get(index).getId() + "");
+                        cartState.getUser().setShopid(cartState.getHomeList().get(index).getId());
                         cartState.getUser().setShopName(cartState.getHomeList().get(index).getShop_new_name());
                         initShopId();
                     }

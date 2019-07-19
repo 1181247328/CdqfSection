@@ -30,7 +30,7 @@ public class MothAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 5;
+        return cartState.getMothList().size();
     }
 
     @Override
@@ -53,6 +53,22 @@ public class MothAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+        //日期
+        viewHolder.tvDailyItemTimer.setText(cartState.getMothList().get(position).getStart_time());
+        //下单次数
+        viewHolder.tvDailyItemPlace.setText(cartState.getMothList().get(position).getService_number() + "");
+        //服务次数
+        viewHolder.tvDailyItemService.setText(cartState.getMothList().get(position).getStaff_service_number()+"");
+        //实收/成本
+        viewHolder.tvDailyItemProportion.setText(cartState.getMothList().get(position).getTurnover() + "/" + cartState.getMothList().get(position).getCost_price());
+        //比率
+        viewHolder.tvDailyItemRate.setText(cartState.getDailyList().get(position).getTrend() == 1 ?
+                "+" + cartState.getMothList().get(position).getCompare_val() + "%" :
+                "-" + cartState.getMothList().get(position).getCompare_val() + "%");
+        //服务金额
+        viewHolder.tvDailyItemPrice.setText(cartState.getMothList().get(position).getTurnover());
+        //提成
+        viewHolder.tvDailyItemCommission.setText(cartState.getMothList().get(position).getGet_money());
         return convertView;
     }
 

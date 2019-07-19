@@ -459,8 +459,8 @@ public class LossNewsActivity extends BaseActivity {
         OkHttpUtils
                 .post()
                 .url(LOSS_NEWS)
-                .addParams("id", cartState.getUser().getId()) //用户id
-                .addParams("shopid", cartState.getUser().getShopid()) //店铺id
+                .addParams("id", cartState.getUser().getId()+"") //用户id
+                .addParams("shopid", cartState.getUser().getShopid()+"") //店铺id
                 .addParams("data", loss) //选择申请的商品
                 .build()
                 .execute(new StringCallback() {

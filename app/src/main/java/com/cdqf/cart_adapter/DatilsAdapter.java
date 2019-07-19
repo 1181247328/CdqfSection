@@ -33,7 +33,7 @@ public class DatilsAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 20;
+        return cartState.getNumberList().size();
     }
 
     @Override
@@ -56,6 +56,20 @@ public class DatilsAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+        viewHolder.tvDatilsItemNumber.setText(cartState.getNumberList().get(position).getCarnum());
+        String pay = "";
+        switch (cartState.getNumberList().get(position).getPay_type()) {
+            case 1:
+                pay = "平台";
+                break;
+            case 2:
+                pay = "现金";
+                break;
+            case 3:
+                pay = "农商";
+                break;
+        }
+        viewHolder.tvDatilsItemPay.setText(pay);
         return convertView;
     }
 

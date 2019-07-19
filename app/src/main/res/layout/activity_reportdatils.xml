@@ -417,10 +417,10 @@
 
                                         <TextView
                                             android:id="@+id/tv_datils_platform"
-                                            android:layout_width="wrap_content"
+                                            android:layout_width="@dimen/dp_50"
                                             android:layout_height="match_parent"
-                                            android:gravity="left"
-                                            android:paddingLeft="@dimen/dp_8"
+                                            android:gravity="center"
+
                                             android:text="100"
                                             android:textColor="@color/tab_main_text_default"
                                             android:textSize="@dimen/sp_12" />
@@ -453,10 +453,9 @@
 
                                         <TextView
                                             android:id="@+id/tv_datils_cash"
-                                            android:layout_width="wrap_content"
+                                            android:layout_width="@dimen/dp_50"
                                             android:layout_height="wrap_content"
-                                            android:gravity="left"
-                                            android:paddingLeft="@dimen/dp_8"
+                                            android:gravity="center"
                                             android:text="100"
                                             android:textColor="@color/tab_main_text_default"
                                             android:textSize="@dimen/sp_12" />
@@ -489,10 +488,10 @@
 
                                         <TextView
                                             android:id="@+id/tv_datils_agri"
-                                            android:layout_width="wrap_content"
+                                            android:layout_width="@dimen/dp_50"
                                             android:layout_height="wrap_content"
-                                            android:gravity="left"
-                                            android:paddingLeft="@dimen/dp_8"
+                                            android:gravity="center"
+
                                             android:text="100"
                                             android:textColor="@color/tab_main_text_default"
                                             android:textSize="@dimen/sp_12" />
@@ -532,8 +531,8 @@
 
                             <LinearLayout
                                 android:layout_width="match_parent"
-                                android:background="@android:color/transparent"
-                                android:layout_height="wrap_content">
+                                android:layout_height="wrap_content"
+                                android:background="@android:color/transparent">
 
                                 <com.cdqf.cart_view.ListViewForScrollView
                                     android:id="@+id/lvfsv_datils_list"

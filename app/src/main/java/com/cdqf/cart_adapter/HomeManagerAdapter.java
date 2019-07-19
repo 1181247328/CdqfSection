@@ -9,6 +9,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cdqf.cart.R;
+import com.cdqf.cart_state.CartState;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -18,6 +20,10 @@ public class HomeManagerAdapter extends BaseAdapter {
     private String TAG = HomeManagerAdapter.class.getSimpleName();
 
     private Context context = null;
+
+    private CartState cartState = CartState.getCartState();
+
+    private ImageLoader imageLoader = ImageLoader.getInstance();
 
     private int[] image = {
             R.mipmap.home_loss,
@@ -49,7 +55,7 @@ public class HomeManagerAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return image.length;
+        return cartState.getUser().getMenu().size();
     }
 
     @Override
@@ -72,7 +78,8 @@ public class HomeManagerAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        viewHolder.ivHomeItemLoss.setImageResource(image[position]);
+        imageLoader.displayImage(cartState.getUser().getMenu().get(position).getIcon(), viewHolder.ivHomeItemLoss, cartState.getImageLoaderOptions(R.mipmap.not_loaded, R.mipmap.not_loaded, R.mipmap.not_loaded));
+//        viewHolder.ivHomeItemLoss.setImageResource(image[position]);
 //        if (position == 1) {
 //            String shop = "店总" + "(10)";
 //            SpannableString styledText = new SpannableString(shop);
@@ -80,7 +87,7 @@ public class HomeManagerAdapter extends BaseAdapter {
 //            styledText.setSpan(new TextAppearanceSpan(context, R.style.style_two), 2, shop.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 //            viewHolder.tvHomeItemName.setText(styledText, TextView.BufferType.SPANNABLE);
 //        } else {
-        viewHolder.tvHomeItemName.setText(name[position]);
+        viewHolder.tvHomeItemName.setText(cartState.getUser().getMenu().get(position).getTitle());
 //        }
         return convertView;
     }

@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
+import com.cdqf.cart_activity.ReportDatilsActivity;
 import com.cdqf.cart_adapter.MothAdapter;
 import com.cdqf.cart_class.Moth;
 import com.cdqf.cart_find.MothPullFind;
@@ -123,9 +125,14 @@ public class MothFragment extends Fragment {
                 //上拉加载
                 Map<String, Object> params = new HashMap<String, Object>();
                 OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
+                //店铺id
+//        params.put("shop_id", cartState.getUser().getShopid());
+                params.put("shop_id", "107");
+                //类型1 = 月
+                params.put("type", 3);
                 //页码
                 params.put("page", page);
-                okHttpRequestWrap.postString(CartAddaress.REPORT, false, "请稍候", params, new OnHttpRequest() {
+                okHttpRequestWrap.get(CartAddaress.REPORT, false, "请稍候", params, new OnHttpRequest() {
                     @Override
                     public void onOkHttpResponse(String response, int id) {
                         Log.e(TAG, "---onOkHttpResponse---月报之上拉加载---" + response);
@@ -141,8 +148,7 @@ public class MothFragment extends Fragment {
                                 page++;
                                 pullToRefreshLayout.refreshFinish(PullToRefreshLayout.SUCCEED);
 
-                                JSONObject data = resultJSON.getJSONObject("data");
-                                String datas = data.getString("data");
+                                String datas = resultJSON.getString("data");
 
                                 cartState.initToast(getContext(), msg, true, 0);
 
@@ -196,6 +202,13 @@ public class MothFragment extends Fragment {
                 }
             }
         });
+
+        lvDailyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                initIntent(ReportDatilsActivity.class, position);
+            }
+        });
     }
 
     private void initAdapter() {
@@ -209,11 +222,17 @@ public class MothFragment extends Fragment {
     }
 
     private void initPull(boolean isToast) {
+        page = 1;
         Map<String, Object> params = new HashMap<String, Object>();
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
+        //店铺id
+//        params.put("shop_id", cartState.getUser().getShopid());
+        params.put("shop_id", "107");
+        //类型1 = 月
+        params.put("type", 3);
         //页码
         params.put("page", page);
-        okHttpRequestWrap.postString(CartAddaress.REPORT, isToast, "请稍候", params, new OnHttpRequest() {
+        okHttpRequestWrap.get(CartAddaress.REPORT, isToast, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse---月报---" + response);
@@ -231,8 +250,7 @@ public class MothFragment extends Fragment {
                         ptrlDailyPull.setVisibility(View.VISIBLE);
                         tvOrdersAbnormal.setVisibility(View.GONE);
 
-                        JSONObject data = resultJSON.getJSONObject("data");
-                        String datas = data.getString("data");
+                        String datas = resultJSON.getString("data");
 
                         cartState.getMothList().clear();
                         cartState.initToast(getContext(), msg, true, 0);
@@ -274,8 +292,10 @@ public class MothFragment extends Fragment {
         });
     }
 
-    private void initIntent(Class<?> activity) {
+    private void initIntent(Class<?> activity, int position) {
         Intent intent = new Intent(getContext(), activity);
+        intent.putExtra("type", 3);
+        intent.putExtra("position", position);
         startActivity(intent);
     }
 

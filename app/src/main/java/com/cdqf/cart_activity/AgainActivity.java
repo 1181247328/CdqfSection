@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -170,6 +171,8 @@ public class AgainActivity extends BaseActivity {
                     //经度
                     double longitude = location.getLongitude();
                     Log.e(TAG, "---纬度---" + latitude + "---经度---" + longitude);
+                    String addree = location.getProvider();
+                    tvAgainAddress.setText(addree);
                     //代表定位当前
                     latLng = new LatLng(latitude, longitude);
                     aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
@@ -178,11 +181,13 @@ public class AgainActivity extends BaseActivity {
         });
 
         //打卡的位置
-        LatLng latLngTwo = new LatLng(30.672024, 104.085349);
+        double latitude = Double.parseDouble(cartState.getClock().getShop().getLatitude());
+        double longitude = Double.parseDouble(cartState.getClock().getShop().getLongitude());
+        LatLng latLngTwo = new LatLng(latitude, longitude);
         cirCle = aMap.addCircle(new CircleOptions().
                 center(latLngTwo).
                 radius(300).
-                fillColor(Color.BLUE).
+                fillColor(ContextCompat.getColor(context, R.color.login_select)).
                 strokeColor(Color.TRANSPARENT));
         final Marker marker = aMap.addMarker(new MarkerOptions().position(latLngTwo).title("成都启锋科技有限公司"));
     }

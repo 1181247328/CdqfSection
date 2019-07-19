@@ -23,6 +23,8 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
@@ -35,8 +37,12 @@ import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.cdqf.cart.R;
+import com.cdqf.cart_class.Clock;
 import com.cdqf.cart_find.ThroughFind;
+import com.cdqf.cart_okhttp.OKHttpRequestWrap;
+import com.cdqf.cart_okhttp.OnHttpRequest;
 import com.cdqf.cart_state.BaseActivity;
+import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartCalender;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_state.StaturBar;
@@ -48,6 +54,8 @@ import com.zxy.tiny.callback.FileCallback;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -187,6 +195,8 @@ public class ClockActivity extends BaseActivity {
 
     private String photoUriOn = "";
 
+    private boolean isCard = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -217,15 +227,7 @@ public class ClockActivity extends BaseActivity {
         if (!eventBus.isRegistered(this)) {
             eventBus.register(this);
         }
-        //打卡的位置
-        LatLng latLngTwo = new LatLng(30.672024, 104.085349);
-        AMap aMap = new MapView(this).getMap();
-        cirCle = aMap.addCircle(new CircleOptions().
-                center(latLngTwo).
-                radius(300).
-                fillColor(Color.BLUE).
-                strokeColor(Color.TRANSPARENT));
-        final Marker marker = aMap.addMarker(new MarkerOptions().position(latLngTwo).title("成都启锋科技有限公司"));
+
     }
 
     private void initView() {
@@ -253,6 +255,11 @@ public class ClockActivity extends BaseActivity {
             }
         });
 
+        initPull(true);
+
+    }
+
+    private void initOption() {
         mlocationClient = new AMapLocationClient(this);
         //初始化定位参数
         mLocationOption = new AMapLocationClientOption();
@@ -291,34 +298,11 @@ public class ClockActivity extends BaseActivity {
                         tvClockStateTimer.setText(hours + ":" + minutes + ":" + seconds);
                         //状态
                         //打卡范围到了
-                        boolean isCard = cirCle.contains(latLng);
+                        isCard = cirCle.contains(latLng);
                         if (isCard) {
                             tvClockScope.setText("已进入打卡范围");
                         } else {
                             tvClockScope.setText("未进入打卡范围");
-                        }
-                        //此阶段为正常打卡
-                        if (hour >= 6 && hour < 9) {
-                            isCart = true;
-                            //是不是到了打卡范围了
-                            if (isCard) {
-                                tvClockState.setText("上班打卡");
-                            } else {
-                                tvClockState.setText("外勤打卡");
-                            }
-                        } else if (hour >= 9 && hour < 18) {
-                            isCart = true;
-                            tvClockState.setText("迟到打卡");
-                        } else if (hour >= 18 && hour < 0) {
-                            isCart = true;
-                            if (isCard) {
-                                tvClockState.setText("下班打卡");
-                            } else {
-                                tvClockState.setText("外勤打卡");
-                            }
-                        } else {
-                            isCart = false;
-                            tvClockState.setText("不能打卡");
                         }
                     } else {
                         //显示错误信息ErrCode是错误码，errInfo是错误信息，详见错误码表。
@@ -339,13 +323,59 @@ public class ClockActivity extends BaseActivity {
 // 在单次定位情况下，定位无论成功与否，都无需调用stopLocation()方法移除请求，定位sdk内部会移除
         //启动定位
         mlocationClient.startLocation();
-
-        initPull(true);
-
-
     }
 
     private void initPull(boolean isToast) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
+        okHttpRequestWrap.get(CartAddaress.CLOCK + cartState.getUser().getShopid(), true, "请稍候", params, new OnHttpRequest() {
+            @Override
+            public void onOkHttpResponse(String response, int id) {
+                Log.e(TAG, "---onOkHttpResponse---打卡---" + response);
+                JSONObject resultJSON = JSON.parseObject(response);
+                int error_code = resultJSON.getInteger("code");
+                String msg = resultJSON.getString("message");
+                switch (error_code) {
+                    //获取成功
+                    case 200:
+                        String data = resultJSON.getString("data");
+                        Clock clock = gson.fromJson(data, Clock.class);
+                        cartState.setClock(clock);
+                        //姓名
+                        tvClockName.setText(cartState.getUser().getUsername());
+                        //店名
+                        tvClockAddress.setText(clock.getShop().getName());
+                        //时间
+                        Date date = new Date(clock.getDisplay_time() * 1000);
+                        String timer = getTimeOne(date);
+                        tvClockTimer.setText(timer);
+                        //打卡状态
+                        tvClockState.setText(clock.getTips());
+                        //打卡的位置
+                        double latitude = Double.parseDouble(clock.getShop().getLatitude());
+                        double longitude = Double.parseDouble(clock.getShop().getLongitude());
+                        LatLng latLngTwo = new LatLng(latitude, longitude);
+                        AMap aMap = new MapView(ClockActivity.this).getMap();
+                        cirCle = aMap.addCircle(new CircleOptions().
+                                center(latLngTwo).
+                                radius(300).
+                                fillColor(Color.BLUE).
+                                strokeColor(Color.TRANSPARENT));
+                        final Marker marker = aMap.addMarker(new MarkerOptions().position(latLngTwo).title("成都启锋科技有限公司"));
+                        initOption();
+                        break;
+                    default:
+                        cartState.initToast(context, msg, true, 0);
+                        break;
+                }
+            }
+
+            @Override
+            public void onOkHttpError(String error) {
+                Log.e(TAG, "---onOkHttpError---" + error);
+                cartState.initToast(context, error, true, 0);
+            }
+        });
     }
 
     /**
@@ -360,6 +390,11 @@ public class ClockActivity extends BaseActivity {
         photoUriOne = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUriOne);
         startActivityForResult(intent, REQUEST_CODE_TAKE_PICTURE);
+    }
+
+    private String getTimeOne(Date date) {//可根据需要自行截取数据显示
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        return format.format(date);
     }
 
     private void initIntent(Class<?> activity) {
@@ -380,11 +415,11 @@ public class ClockActivity extends BaseActivity {
                     cartState.initToast(context, "努力定位中", true, 0);
                     return;
                 }
-                //判断是不是到了打卡时间
-                if (!isCart) {
-                    cartState.initToast(context, "未到打卡时间", true, 0);
-                    return;
-                }
+//                //判断是不是到了打卡时间
+//                if (!isCart) {
+//                    cartState.initToast(context, "未到打卡时间", true, 0);
+//                    return;
+//                }
                 //判断是不是拍了上班打卡门店照片
                 if (!isImageOne) {
                     cartState.initToast(context, "请拍摄门店照片", true, 0);

@@ -33,7 +33,7 @@ public class DailyAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 5;
+        return cartState.getDailyList().size();
     }
 
     @Override
@@ -57,6 +57,22 @@ public class DailyAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+        //日期
+        viewHolder.tvDailyItemTimer.setText(cartState.getDailyList().get(position).getStart_time());
+        //下单次数
+        viewHolder.tvDailyItemPlace.setText(cartState.getDailyList().get(position).getService_number() + "");
+        //服务次数
+        viewHolder.tvDailyItemService.setText(cartState.getDailyList().get(position).getStaff_service_number()+"");
+        //实收/成本
+        viewHolder.tvDailyItemProportion.setText(cartState.getDailyList().get(position).getTurnover() + "/" + cartState.getDailyList().get(position).getCost_price());
+        //比率
+        viewHolder.tvDailyItemRate.setText(cartState.getDailyList().get(position).getTrend() == 1 ?
+                "+" + cartState.getDailyList().get(position).getCompare_val() + "%" :
+                "-" + cartState.getDailyList().get(position).getCompare_val() + "%");
+        //服务金额
+        viewHolder.tvDailyItemPrice.setText(cartState.getDailyList().get(position).getTurnover());
+        //提成
+        viewHolder.tvDailyItemCommission.setText(cartState.getDailyList().get(position).getGet_money());
         return convertView;
     }
 

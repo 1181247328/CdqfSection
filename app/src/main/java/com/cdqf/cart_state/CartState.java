@@ -32,6 +32,7 @@ import com.cdqf.cart_ble.Ble;
 import com.cdqf.cart_class.Audit;
 import com.cdqf.cart_class.Audits;
 import com.cdqf.cart_class.AuditsJudge;
+import com.cdqf.cart_class.Clock;
 import com.cdqf.cart_class.Complete;
 import com.cdqf.cart_class.Daily;
 import com.cdqf.cart_class.Datils;
@@ -45,6 +46,7 @@ import com.cdqf.cart_class.Memebersship;
 import com.cdqf.cart_class.Moth;
 import com.cdqf.cart_class.MyUser;
 import com.cdqf.cart_class.Notice;
+import com.cdqf.cart_class.Number;
 import com.cdqf.cart_class.Position;
 import com.cdqf.cart_class.Record;
 import com.cdqf.cart_class.Service;
@@ -180,6 +182,8 @@ public class CartState {
     //图片选择
     private List<String> imagePathsList = new CopyOnWriteArrayList<>();
 
+    private Clock clock = new Clock();
+
 
     /*************************************/
     //店名
@@ -229,6 +233,9 @@ public class CartState {
 
     //月报
     private List<Moth> mothList = new CopyOnWriteArrayList<>();
+
+    //车牌
+    private List<Number> numberList = new CopyOnWriteArrayList<>();
 
     /**
      * 提示信息
@@ -1193,5 +1200,21 @@ public class CartState {
 
     public void setMothList(List<Moth> mothList) {
         this.mothList = mothList;
+    }
+
+    public List<Number> getNumberList() {
+        return numberList;
+    }
+
+    public void setNumberList(List<Number> numberList) {
+        this.numberList = numberList;
+    }
+
+    public Clock getClock() {
+        return clock;
+    }
+
+    public void setClock(Clock clock) {
+        this.clock = clock;
     }
 }

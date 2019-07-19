@@ -61,7 +61,19 @@ public class CartAddaress {
     public static final String MEMBERS_PHONE = ADDRESS + "";
 
     //报表
-    public static final String REPORT = ADDRESS + "";
+    public static final String REPORT = ADDRESS + "/staff/getReport";
+
+    //登录
+    public static final String LOGIN_NEW = ADDRESS + "/admin/login";
+
+    //报表详情
+    public static final String REPORT_DATILS = ADDRESS + "/staff/getReportEcharts/";
+
+    //报表详情
+    public static final String REPORT_DATILS_LIST = ADDRESS + "/staff/getReport/";
+
+    //打卡
+    public static final String CLOCK = ADDRESS + "/staff/attedanceShop/";
 
     /****************************************************/
 

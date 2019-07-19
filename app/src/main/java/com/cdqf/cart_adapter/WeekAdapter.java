@@ -30,7 +30,7 @@ public class WeekAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 5;
+        return cartState.getWeekList().size();
     }
 
     @Override
@@ -45,7 +45,7 @@ public class WeekAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-      ViewHolder viewHolder = null;
+        ViewHolder viewHolder = null;
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.item_daily, null);
             viewHolder = new ViewHolder(convertView);
@@ -53,6 +53,22 @@ public class WeekAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+        //日期
+        viewHolder.tvDailyItemTimer.setText(cartState.getWeekList().get(position).getStart_time() + "-" + cartState.getWeekList().get(position).getEnd_time());
+        //下单次数
+        viewHolder.tvDailyItemPlace.setText(cartState.getWeekList().get(position).getService_number() + "");
+        //服务次数
+        viewHolder.tvDailyItemService.setText(cartState.getWeekList().get(position).getStaff_service_number() + "");
+        //实收/成本
+        viewHolder.tvDailyItemProportion.setText(cartState.getWeekList().get(position).getTurnover() + "/" + cartState.getWeekList().get(position).getCost_price());
+        //比率
+        viewHolder.tvDailyItemRate.setText(cartState.getWeekList().get(position).getTrend() == 1 ?
+                "+" + cartState.getWeekList().get(position).getCompare_val() + "%" :
+                "-" + cartState.getWeekList().get(position).getCompare_val() + "%");
+        //服务金额
+        viewHolder.tvDailyItemPrice.setText(cartState.getWeekList().get(position).getTurnover());
+        //提成
+        viewHolder.tvDailyItemCommission.setText(cartState.getWeekList().get(position).getGet_money());
         return convertView;
     }
 

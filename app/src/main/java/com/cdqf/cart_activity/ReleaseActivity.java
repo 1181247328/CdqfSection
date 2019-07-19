@@ -221,7 +221,7 @@ public class ReleaseActivity extends BaseActivity {
     public void onEventMainThread(ReleaseFind r) {
         Map<String, Object> params = new HashMap<String, Object>();
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        String shopService = shopService(content, cartState.getUser().getId(), "1");
+        String shopService = shopService(content, cartState.getUser().getId()+"", "1");
         okHttpRequestWrap.post(shopService, true, "发布中", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {

@@ -67,7 +67,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingLeft="@dimen/dp_10"
-                    android:text="我的位置(在考勤范围内)"
+                    android:text="我的位置"
                     android:textColor="@color/tab_main_text_default"
                     android:textSize="@dimen/sp_14" />
 
@@ -85,6 +85,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@color/tab_main_text_icon"
+                        android:visibility="gone"
                         app:clip_background="true"
                         app:round_corner="@dimen/dp_20">
 
@@ -107,7 +108,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
-                        android:paddingLeft="@dimen/dp_10"
                         android:text="太升大厦2103"
                         android:textColor="@color/clock_one"
                         android:textSize="@dimen/sp_12" />

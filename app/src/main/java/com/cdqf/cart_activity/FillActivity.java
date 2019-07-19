@@ -188,7 +188,7 @@ public class FillActivity extends BaseActivity {
     private void initBack() {
         //店铺
         fillContextAdapter.setShopName(cartState.getUser().getShopName());
-        shopId = Integer.parseInt(cartState.getUser().getShopid());
+        shopId = Integer.parseInt(cartState.getUser().getShopid()+"");
         //类别
         fillId = 1;
         fillContextAdapter.setType("耗材");

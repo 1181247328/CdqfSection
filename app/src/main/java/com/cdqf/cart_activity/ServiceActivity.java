@@ -185,7 +185,7 @@ public class ServiceActivity extends BaseActivity {
 
     private void initPullData(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
-        String shop = shop(cartState.getUser().getShopid());
+        String shop = shop(cartState.getUser().getShopid()+"");
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
         okHttpRequestWrap.post(shop, isToast, "请稍候", params, new OnHttpRequest() {
             @Override
@@ -231,7 +231,7 @@ public class ServiceActivity extends BaseActivity {
 
     private void initPull(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
-        String shop = shop(cartState.getUser().getShopid());
+        String shop = shop(cartState.getUser().getShopid()+"");
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
         okHttpRequestWrap.post(shop, isToast, "请稍候", params, new OnHttpRequest() {
             @Override
@@ -409,7 +409,7 @@ public class ServiceActivity extends BaseActivity {
     public void onEventMainThread(ServiceTwoFind s) {
         Map<String, Object> params = new HashMap<String, Object>();
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        String shopService = shopService(cartState.getShopList().get(s.position).getOrdernum(), cartState.getUser().getId());
+        String shopService = shopService(cartState.getShopList().get(s.position).getOrdernum(), cartState.getUser().getId()+"");
         okHttpRequestWrap.post(shopService, true, "领取中", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {

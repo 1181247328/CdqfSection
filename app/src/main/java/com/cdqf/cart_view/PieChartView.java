@@ -65,7 +65,7 @@ public class PieChartView extends ChartView implements Runnable {
         try {
 
             //设置绘图区默认缩进px值
-            int [] ltrb = getPieDefaultSpadding();
+            int[] ltrb = getPieDefaultSpadding();
             chart.setPadding(ltrb[0], ltrb[1], ltrb[2], ltrb[3]);
 
             //设置起始偏移角度(即第一个扇区从哪个角度开始绘制)
@@ -107,10 +107,11 @@ public class PieChartView extends ChartView implements Runnable {
 		chartData.add(new PieData("EMC","40%",40,(int)Color.rgb(60, 173, 213),false));
 		*/
 
-        chartData.add(new PieData("closed", "30%", 30, Color.rgb(155, 187, 90)));
-        chartData.add(new PieData("inspect", "35%", 35, Color.rgb(191, 79, 75)));
-        chartData.add(new PieData("open", "35%", 35, Color.rgb(242, 167, 69)));
+//        chartData.add(new PieData("closed", "30%", 30, Color.rgb(155, 187, 90)));
+//        chartData.add(new PieData("inspect", "35%", 35, Color.rgb(191, 79, 75)));
+//        chartData.add(new PieData("open", "35%", 35, Color.rgb(242, 167, 69)));
     }
+
 
     @Override
     public void render(Canvas canvas) {
@@ -278,11 +279,11 @@ public class PieChartView extends ChartView implements Runnable {
 
     public void setChartData(ArrayList<PieData> chartData) {
         this.chartData = chartData;
+        initView();
     }
 
-    protected int[] getPieDefaultSpadding()
-    {
-        int [] ltrb = new int[4];
+    protected int[] getPieDefaultSpadding() {
+        int[] ltrb = new int[4];
         ltrb[0] = DensityUtil.dip2px(getContext(), 8); //left
         ltrb[1] = DensityUtil.dip2px(getContext(), 8); //top
         ltrb[2] = DensityUtil.dip2px(getContext(), 8); //right

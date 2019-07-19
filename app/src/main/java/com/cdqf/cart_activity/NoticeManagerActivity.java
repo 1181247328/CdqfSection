@@ -141,18 +141,18 @@ public class NoticeManagerActivity extends BaseActivity {
     }
 
     private void initBack() {
-        if(Integer.parseInt(cartState.getUser().getType() )== 1){
-            tvNoticemanagerRelease.setVisibility(View.GONE);
-        } else {
-            tvNoticemanagerRelease.setVisibility(View.VISIBLE);
-        }
+//        if(Integer.parseInt(cartState.getUser().getType() )== 1){
+//            tvNoticemanagerRelease.setVisibility(View.GONE);
+//        } else {
+//            tvNoticemanagerRelease.setVisibility(View.VISIBLE);
+//        }
         initPull(true);
     }
 
     private void initPull(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        String notice = notice(cartState.getUser().getId(), cartState.getUser().getShopid());
+        String notice = notice(cartState.getUser().getId()+"", cartState.getUser().getShopid()+"");
         okHttpRequestWrap.post(notice, isToast, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {

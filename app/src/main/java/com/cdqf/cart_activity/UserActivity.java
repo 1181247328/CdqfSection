@@ -369,7 +369,7 @@ public class UserActivity extends BaseActivity {
         //用户id
         int userid = cartState.getDatils().getUserid();
         //店铺id
-        String shopid = cartState.getUser().getShopid();
+        String shopid = cartState.getUser().getShopid()+"";
         //车牌号
         String carnum = cartState.getDatils().getCarnum();
         //用户电话
