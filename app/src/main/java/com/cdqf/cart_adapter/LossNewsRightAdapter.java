@@ -53,7 +53,7 @@ public class LossNewsRightAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return cartState.getLossNewsList().get(type).getData().size();
+        return cartState.getLossNewsList().get(type).getChildren().size();
     }
 
     @Override
@@ -77,12 +77,12 @@ public class LossNewsRightAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         //商品名称
-        viewHolder.tvUsersItemName.setText(cartState.getLossNewsList().get(type).getData().get(position).getName());
+        viewHolder.tvUsersItemName.setText(cartState.getLossNewsList().get(type).getChildren().get(position).getName());
         //库存
-        viewHolder.tvUsersItemNumber.setText("库存:" + cartState.getLossNewsList().get(type).getData().get(position).getNumber());
+        viewHolder.tvUsersItemNumber.setText("库存:" + cartState.getLossNewsList().get(type).getChildren().get(position).getStock());
         //申请的数量有就显示，没有就隐藏
-        boolean isSelete = cartState.getLossNewsList().get(type).getData().get(position).isSelete();
-        int umberSelete = cartState.getLossNewsList().get(type).getData().get(position).getNumberSelete();
+        boolean isSelete = cartState.getLossNewsList().get(type).getChildren().get(position).isSelete();
+        int umberSelete = cartState.getLossNewsList().get(type).getChildren().get(position).getNumberSelete();
         if (isSelete) {
             viewHolder.tvUserItemAdd.setVisibility(View.VISIBLE);
             viewHolder.tvUserItemPrice.setVisibility(View.VISIBLE);
@@ -107,7 +107,7 @@ public class LossNewsRightAdapter extends BaseAdapter {
         viewHolder.llUserItemPrice.setOnClickListener(new OnAddNumberListener(position));
         //是否选择
         lightConnectMap.put(viewHolder.cbUsersItemCheckbox, position);
-        viewHolder.cbUsersItemCheckbox.setChecked(cartState.getLossNewsList().get(type).getData().get(position).isSelete());
+        viewHolder.cbUsersItemCheckbox.setChecked(cartState.getLossNewsList().get(type).getChildren().get(position).isSelete());
         viewHolder.cbUsersItemCheckbox.setOnCheckedChangeListener(new OnCartCheckedChangeListener(position));
         return convertView;
     }
@@ -142,11 +142,11 @@ public class LossNewsRightAdapter extends BaseAdapter {
             }
             if (isChecked) {
                 lightCheckMap.put(lightConnectMap.get(buttonView), isChecked);
-                cartState.getLossNewsList().get(type).getData().get(position).setSelete(true);
+                cartState.getLossNewsList().get(type).getChildren().get(position).setSelete(true);
             } else {
                 lightCheckMap.remove(lightConnectMap.get(buttonView));
-                cartState.getLossNewsList().get(type).getData().get(position).setSelete(false);
-                cartState.getLossNewsList().get(type).getData().get(position).setNumberSelete(0);
+                cartState.getLossNewsList().get(type).getChildren().get(position).setSelete(false);
+                cartState.getLossNewsList().get(type).getChildren().get(position).setNumberSelete(0);
             }
             notifyDataSetChanged();
         }

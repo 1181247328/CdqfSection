@@ -162,9 +162,9 @@ public class LossManagerActivity extends BaseActivity {
 
     private void initPull(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("s", "TotalGoods.lists");
+        params.put("id", cartState.getUser().getShopid());
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        okHttpRequestWrap.post(CartAddaress.SHOP_TOTAL, isToast, "请稍候", params, new OnHttpRequest() {
+        okHttpRequestWrap.post(CartAddaress.LOSS_NEW, isToast, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse耗材列表---" + response);

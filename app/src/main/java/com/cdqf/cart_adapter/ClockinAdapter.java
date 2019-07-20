@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.cdqf.cart.R;
+import com.cdqf.cart_state.CartState;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -21,13 +22,15 @@ public class ClockinAdapter extends BaseAdapter {
 
     private Context context = null;
 
+    private CartState cartState = CartState.getCartState();
+
     public ClockinAdapter(Context context) {
         this.context = context;
     }
 
     @Override
     public int getCount() {
-        return 5;
+        return cartState.getClockinList().size();
     }
 
     @Override
@@ -50,6 +53,17 @@ public class ClockinAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+        viewHolder.tvClockinItemTimer.setText(cartState.getClockinList().get(position).getAttendance_date());
+        String state = "";
+        switch (cartState.getClockinList().get(position).getStatus()) {
+            case 1:
+                state = "上班";
+                break;
+            default:
+                state = "休假";
+                break;
+        }
+        viewHolder.tvClockinItemState.setText(state);
         return convertView;
     }
 

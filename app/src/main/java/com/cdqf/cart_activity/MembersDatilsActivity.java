@@ -3,7 +3,6 @@ package com.cdqf.cart_activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
@@ -11,18 +10,30 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
+import com.cdqf.cart_adapter.MembersDatilsAdapter;
+import com.cdqf.cart_class.MembersDatils;
+import com.cdqf.cart_dilog.WhyDilogFragment;
+import com.cdqf.cart_find.ShopServiceOneFind;
+import com.cdqf.cart_find.ShopServiceTwoFind;
 import com.cdqf.cart_find.ThroughFind;
+import com.cdqf.cart_okhttp.OKHttpRequestWrap;
+import com.cdqf.cart_okhttp.OnHttpRequest;
 import com.cdqf.cart_state.BaseActivity;
+import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
-import com.cdqf.cart_state.StatusBarCompat;
-import com.gcssloop.widget.RCRelativeLayout;
+import com.cdqf.cart_state.StaturBar;
+import com.cdqf.cart_view.ListViewForScrollView;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -77,33 +88,44 @@ public class MembersDatilsActivity extends BaseActivity {
     @BindView(R.id.tv_detils_next)
     public TextView tvDetilsNext = null;
 
-    //平台
-    @BindView(R.id.tv_details_way)
-    public TextView tvDetailsWay = null;
+    /**
+     * 是否有订单
+     */
+    @BindView(R.id.tv_datils_order)
+    public TextView tvDatilsOrder = null;
 
-    //价格
-    @BindView(R.id.tv_details_price)
-    public TextView tvDetailsPrice = null;
+    @BindView(R.id.lvfsv_datails_list)
+    public ListViewForScrollView lvfsvDatailsList = null;
 
-    //车牌
-    @BindView(R.id.tv_details_plate)
-    public TextView tvDetailsPlate = null;
+    private MembersDatilsAdapter membersDatilsAdapter = null;
 
-    //车型
-    @BindView(R.id.tv_details_type)
-    public TextView tvDetailsType = null;
-
-    //服务
-    @BindView(R.id.rcrl_details_claim)
-    public RCRelativeLayout rcrlDetailsClaim = null;
-
-    //加订单
-    @BindView(R.id.rcrl_details_addorder)
-    public RCRelativeLayout rcrlDetailsAddorder = null;
-
-    //下单时间
-    @BindView(R.id.tv_details_timer)
-    public TextView tvDetailsTimer = null;
+//    //平台
+//    @BindView(R.id.tv_details_way)
+//    public TextView tvDetailsWay = null;
+//
+//    //价格
+//    @BindView(R.id.tv_details_price)
+//    public TextView tvDetailsPrice = null;
+//
+//    //车牌
+//    @BindView(R.id.tv_details_plate)
+//    public TextView tvDetailsPlate = null;
+//
+//    //车型
+//    @BindView(R.id.tv_details_type)
+//    public TextView tvDetailsType = null;
+//
+//    //服务
+//    @BindView(R.id.rcrl_details_claim)
+//    public RCRelativeLayout rcrlDetailsClaim = null;
+//
+//    //加订单
+//    @BindView(R.id.rcrl_details_addorder)
+//    public RCRelativeLayout rcrlDetailsAddorder = null;
+//
+//    //下单时间
+//    @BindView(R.id.tv_details_timer)
+//    public TextView tvDetailsTimer = null;
 
     //备注
     @BindView(R.id.tv_datils_note)
@@ -132,20 +154,10 @@ public class MembersDatilsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        //API19以下用于沉侵式菜单栏
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        }
-
         //加载布局
         setContentView(R.layout.activity_memebersdatils);
 
-        //API>=20以上用于沉侵式菜单栏
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-            //沉侵
-            StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.black));
-        }
+        StaturBar.setStatusBar(this, R.color.tab_main_text_icon);
 
         initAgo();
 
@@ -174,15 +186,80 @@ public class MembersDatilsActivity extends BaseActivity {
     }
 
     private void initAdapter() {
-
+        membersDatilsAdapter = new MembersDatilsAdapter(context);
+        lvfsvDatailsList.setAdapter(membersDatilsAdapter);
     }
 
     private void initListener() {
-
+        srlDatilspull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                initPull(false);
+            }
+        });
     }
 
     private void initBack() {
+        initPull(true);
+    }
 
+    private void initPull(boolean isToast) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("id", cartState.getMemebersshipList().get(position).getUserid());
+        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
+        okHttpRequestWrap.postString(CartAddaress.MEMBERS_DATILS, isToast, "请稍候", params, new OnHttpRequest() {
+            @Override
+            public void onOkHttpResponse(String response, int id) {
+                Log.e(TAG, "---onOkHttpResponse---会员详情---" + response);
+                if (srlDatilspull != null) {
+                    srlDatilspull.setRefreshing(false);
+                }
+                JSONObject resultJSON = JSON.parseObject(response);
+                int error_code = resultJSON.getInteger("code");
+                String msg = resultJSON.getString("message");
+                switch (error_code) {
+                    //获取成功
+                    case 200:
+                        String data = resultJSON.getString("data");
+                        MembersDatils membersDatils = gson.fromJson(data, MembersDatils.class);
+                        cartState.setMembersDatils(membersDatils);
+                        if (membersDatils.getService().size() <= 0) {
+                            tvDatilsOrder.setVisibility(View.VISIBLE);
+                            lvfsvDatailsList.setVisibility(View.GONE);
+                        } else {
+                            tvDatilsOrder.setVisibility(View.GONE);
+                            lvfsvDatailsList.setVisibility(View.VISIBLE);
+                        }
+                        if (membersDatilsAdapter != null) {
+                            membersDatilsAdapter.notifyDataSetChanged();
+                        }
+                        tvDetailsPhone.setText(membersDatils.getPhone());
+                        if (membersDatils.getGet_cars().size() > 0) {
+                            tvDetilsNext.setText(membersDatils.getGet_cars().get(0).getCarnum());
+                        } else {
+                            tvDetilsNext.setText("请下拉刷新获取");
+                        }
+                        tvDetailsMonery.setText("￥" + membersDatils.getBalance_price());
+                        tvDetailsWith.setText("￥" + membersDatils.getPayment_price());
+                        tvDetailsRemaining.setText("￥" + membersDatils.getUse_price());
+                        //下单次数
+//                        tvDetailsNumber.setText(membersDatils+"次");
+                        break;
+                    default:
+                        cartState.initToast(context, msg, true, 0);
+                        break;
+                }
+            }
+
+            @Override
+            public void onOkHttpError(String error) {
+                Log.e(TAG, "---onOkHttpError---" + error);
+                if (srlDatilspull != null) {
+                    srlDatilspull.setRefreshing(false);
+                }
+                cartState.initToast(context, error, true, 0);
+            }
+        });
     }
 
     private void initIntent(Class<?> activity) {
@@ -190,7 +267,7 @@ public class MembersDatilsActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    @OnClick({R.id.rl_datils_return, R.id.rl_detils_next, R.id.rcrl_details_claim, R.id.rcrl_details_addorder})
+    @OnClick({R.id.rl_datils_return, R.id.rl_detils_next})
     public void onClick(View v) {
         switch (v.getId()) {
             //返回
@@ -199,9 +276,14 @@ public class MembersDatilsActivity extends BaseActivity {
                 break;
             //车牌号
             case R.id.rl_detils_next:
-                SinglePicker<String> pickerSource = new SinglePicker<String>(MembersDatilsActivity.this, new String[]{
-                        "浅水半岛店"
-                });
+                if (cartState.getMembersDatils().getGet_cars().size() <= 0) {
+                    return;
+                }
+                String[] datils = new String[cartState.getMembersDatils().getGet_cars().size()];
+                for (int i = 0; i < cartState.getMembersDatils().getGet_cars().size(); i++) {
+                    datils[i] = cartState.getMembersDatils().getGet_cars().get(i).getCarnum();
+                }
+                SinglePicker<String> pickerSource = new SinglePicker<String>(MembersDatilsActivity.this, datils);
                 LineConfig configSource = new LineConfig();
                 configSource.setColor(ContextCompat.getColor(context, R.color.addstore_one));//线颜色
                 configSource.setThick(ConvertUtils.toPx(context, 1));//线粗
@@ -237,13 +319,13 @@ public class MembersDatilsActivity extends BaseActivity {
                 });
                 pickerSource.show();
                 break;
-            //服务
-            case R.id.rcrl_details_claim:
-                break;
-            //加订单
-            case R.id.rcrl_details_addorder:
-                initIntent(AddOrderActivity.class);
-                break;
+//            //服务
+//            case R.id.rcrl_details_claim:
+//                break;
+//            //加订单
+//            case R.id.rcrl_details_addorder:
+//                initIntent(AddOrderActivity.class);
+//                break;
 
         }
     }
@@ -296,6 +378,57 @@ public class MembersDatilsActivity extends BaseActivity {
     @Subscribe
     public void onEventMainThread(ThroughFind t) {
 
+    }
+
+    /**
+     * 服务第一次，用于提示
+     *
+     * @param s
+     */
+    @Subscribe
+    public void onEventMainThread(ShopServiceOneFind s) {
+        WhyDilogFragment whyDilogFragment = new WhyDilogFragment();
+        whyDilogFragment.setInit(1, "提示", "是否领取", "否", "是", s.position);
+        whyDilogFragment.show(getSupportFragmentManager(), "领取订单");
+    }
+
+    /**
+     * 服务第二次
+     *
+     * @param s
+     */
+    @Subscribe
+    public void onEventMainThread(ShopServiceTwoFind s) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
+        params.put("order_num", cartState.getMembersDatils().getService().get(position).getOrdernum());
+        params.put("staff_id", cartState.getUser().getId());
+        okHttpRequestWrap.postString(CartAddaress.USER_SERVICE, true, "领取中", params, new OnHttpRequest() {
+            @Override
+            public void onOkHttpResponse(String response, int id) {
+                Log.e(TAG, "---onOkHttpResponse---服务---" + response);
+                JSONObject resultJSON = JSON.parseObject(response);
+                int ret = resultJSON.getInteger("code");
+                String msg = resultJSON.getString("message");
+                switch (ret) {
+                    case 201:
+                    case 204:
+                    case 200:
+                        String data = resultJSON.getString("data");
+                        initPull(true);
+                        cartState.initToast(context, "接单成功", true, 0);
+                        break;
+                    default:
+                        cartState.initToast(context, msg, true, 0);
+                        break;
+                }
+            }
+
+            @Override
+            public void onOkHttpError(String error) {
+                Log.e(TAG, "---onOkHttpError---" + error);
+            }
+        });
     }
 
 }

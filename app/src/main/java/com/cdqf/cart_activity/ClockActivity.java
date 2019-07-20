@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -13,6 +14,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -36,6 +38,11 @@ import com.amap.api.maps.model.CircleOptions;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
+import com.amap.api.services.core.LatLonPoint;
+import com.amap.api.services.geocoder.GeocodeResult;
+import com.amap.api.services.geocoder.GeocodeSearch;
+import com.amap.api.services.geocoder.RegeocodeQuery;
+import com.amap.api.services.geocoder.RegeocodeResult;
 import com.cdqf.cart.R;
 import com.cdqf.cart_class.Clock;
 import com.cdqf.cart_find.ThroughFind;
@@ -50,8 +57,10 @@ import com.gcssloop.widget.RCRelativeLayout;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.zxy.tiny.Tiny;
+import com.zxy.tiny.callback.BitmapCallback;
 import com.zxy.tiny.callback.FileCallback;
 
+import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -153,6 +162,9 @@ public class ClockActivity extends BaseActivity {
     @BindView(R.id.tv_clock_after)
     public TextView tvClockAfter = null;
 
+    @BindView(R.id.ll_clock_two)
+    public LinearLayout llClockTwo = null;
+
     //下班打卡时间
     @BindView(R.id.tv_clock_fixedafterafter)
     public TextView tvClockFixedafterafter = null;
@@ -167,6 +179,12 @@ public class ClockActivity extends BaseActivity {
     @BindView(R.id.iv_clock_imageafter)
     public ImageView ivClockImageafter = null;
 
+    //上班的拍摄图片
+    @BindView(R.id.tv_clock_image_one)
+    public TextView tvClockImageOne = null;
+
+    @BindView(R.id.tv_clock_two)
+    public TextView tvClockTwo = null;
 
     @BindView(R.id.tv_clock_id)
     public TextView tvClockId = null;
@@ -177,10 +195,13 @@ public class ClockActivity extends BaseActivity {
     //声明mLocationOption对象
     public AMapLocationClientOption mLocationOption = null;
 
+    private String image;
 
     private Circle cirCle = null;
 
     private LatLng latLng = null;
+
+    private boolean isWork = true;
 
     //是否已经定位
     private boolean isClock = false;
@@ -190,12 +211,23 @@ public class ClockActivity extends BaseActivity {
 
     //是不是拍了上班门店照片
     private boolean isImageOne = false;
+
     //上班门店照片Uri
     private Uri photoUriOne = null;
 
     private String photoUriOn = "";
 
     private boolean isCard = false;
+
+    private String address = "";
+
+    //是不是可以点击拍摄照片
+    private boolean isImagesone = true;
+
+    //是不是拍摄了下班打卡的门店照片
+    private boolean isImageTwo = false;
+
+    private int work = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -242,7 +274,7 @@ public class ClockActivity extends BaseActivity {
         srlClockPull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                srlClockPull.setRefreshing(false);
+                initPull(false);
             }
         });
     }
@@ -272,6 +304,27 @@ public class ClockActivity extends BaseActivity {
                         //定位成功回调信息，设置相关消息
                         double latiude = aMapLocation.getLatitude();//获取纬度
                         double longitude = aMapLocation.getLongitude();//获取经度
+                        GeocodeSearch geocoderSearch = new GeocodeSearch(ClockActivity.this);
+                        LatLonPoint latLonPoint = new LatLonPoint(latiude, longitude);
+                        RegeocodeQuery query = new RegeocodeQuery(latLonPoint, 300, GeocodeSearch.AMAP);
+                        geocoderSearch.getFromLocationAsyn(query);
+                        geocoderSearch.setOnGeocodeSearchListener(new GeocodeSearch.OnGeocodeSearchListener() {
+                            @Override
+                            public void onRegeocodeSearched(RegeocodeResult regeocodeResult, int i) {
+                                if (i == 1000) {
+                                    address = regeocodeResult.getRegeocodeAddress().getProvince() +
+                                            regeocodeResult.getRegeocodeAddress().getCity() +
+                                            regeocodeResult.getRegeocodeAddress().getDistrict() +
+                                            regeocodeResult.getRegeocodeAddress().getTownship();
+                                }
+                            }
+
+                            @Override
+                            public void onGeocodeSearched(GeocodeResult geocodeResult, int i) {
+
+                            }
+                        });
+                        address = "";
                         Log.e(TAG, "---纬度---" + latiude + "---经度---" + longitude);
                         latLng = new LatLng(latiude, longitude);
                         isClock = true;
@@ -327,8 +380,10 @@ public class ClockActivity extends BaseActivity {
 
     private void initPull(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
+        params.put("staff_id", cartState.getUser().getId());
+        params.put("shop_id", cartState.getUser().getShopid());
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        okHttpRequestWrap.get(CartAddaress.CLOCK + cartState.getUser().getShopid(), true, "请稍候", params, new OnHttpRequest() {
+        okHttpRequestWrap.postString(CartAddaress.CLOCK, isToast, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse---打卡---" + response);
@@ -346,8 +401,7 @@ public class ClockActivity extends BaseActivity {
                         //店名
                         tvClockAddress.setText(clock.getShop().getName());
                         //时间
-                        Date date = new Date(clock.getDisplay_time() * 1000);
-                        String timer = getTimeOne(date);
+                        String timer = getFetureDate(clock.getDisplay_time());
                         tvClockTimer.setText(timer);
                         //打卡状态
                         tvClockState.setText(clock.getTips());
@@ -362,6 +416,48 @@ public class ClockActivity extends BaseActivity {
                                 fillColor(Color.BLUE).
                                 strokeColor(Color.TRANSPARENT));
                         final Marker marker = aMap.addMarker(new MarkerOptions().position(latLngTwo).title("成都启锋科技有限公司"));
+
+                        if (clock.getGo_work().size() <= 0) {
+                            isWork = true;
+                        } else {
+                            isWork = false;
+                        }
+
+                        //是否上班
+                        if (clock.getGo_work().size() <= 0) {
+                            llClockOnTimer.setVisibility(View.GONE);
+                            tvClockImageOne.setVisibility(View.VISIBLE);
+                            isImagesone = true;
+                            isImageOne = false;
+                            llClockUnder.setVisibility(View.GONE);
+                        } else {
+                            work = 1;
+                            isImagesone = false;
+                            isImageOne = true;
+                            llClockUnder.setVisibility(View.VISIBLE);
+                            llClockTwo.setVisibility(View.GONE);
+                            llClockOnTimer.setVisibility(View.VISIBLE);
+                            tvClockImageOne.setVisibility(View.GONE);
+                            tvClockWorkon.setText(clock.getGo_work().get(0).getCreated_at());
+                            tvClockAddresson.setText(clock.getShop().getName());
+                            imageLoader.displayImage(clock.getGo_work().get(0).getImage(), ivClockImageon);
+                        }
+
+                        //是否下班
+                        if (clock.getLeave_work().size() <= 0) {
+                            llClockTwo.setVisibility(View.GONE);
+                            tvClockTwo.setVisibility(View.VISIBLE);
+                            isImagesone = true;
+                        } else {
+                            work = 2;
+                            llClockTwo.setVisibility(View.VISIBLE);
+                            tvClockTwo.setVisibility(View.GONE);
+                            isImagesone = false;
+                            tvClockFixedafterafter.setText(clock.getLeave_work().get(0).getCreated_at());
+                            tvClockAddressafter.setText(clock.getShop().getName());
+                            imageLoader.displayImage(clock.getLeave_work().get(0).getImage(), ivClockImageafter);
+                        }
+
                         initOption();
                         break;
                     default:
@@ -392,9 +488,43 @@ public class ClockActivity extends BaseActivity {
         startActivityForResult(intent, REQUEST_CODE_TAKE_PICTURE);
     }
 
+    public static String bitmapToBase64(Bitmap bitmap) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 40, bos);//参数100表示不压缩
+        byte[] bytes = bos.toByteArray();
+        //转换来的base64码需要加前缀，必须是NO_WRAP参数，表示没有空格。
+        return "data:image/png;base64," + Base64.encodeToString(bytes, Base64.NO_WRAP);
+        //转换来的base64码不需要需要加前缀，必须是NO_WRAP参数，表示没有空格。
+        //return "data:image/jpeg;base64," + Base64.encodeToString(bytes, Base64.NO_WRAP);
+    }
+
+    /**
+     * 将base64的头去掉
+     *
+     * @param base64
+     * @return
+     */
+    public static String base64ToNoHeaderBase64(String base64) {
+        return base64.replace("data:image/png;base64,", "");
+    }
+
     private String getTimeOne(Date date) {//可根据需要自行截取数据显示
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         return format.format(date);
+    }
+
+    public static String getFetureDate(long expire) {
+        //PHP和Java时间戳存在三位位差，用000补齐
+        if (String.valueOf(expire).length() == 10) {
+            expire = expire * 1000;
+        }
+        Date date = new Date(expire);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        String result = format.format(date);
+        if (result.startsWith("0")) {
+            result = result.substring(1);
+        }
+        return result;
     }
 
     private void initIntent(Class<?> activity) {
@@ -402,7 +532,7 @@ public class ClockActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    @OnClick({R.id.rl_clock_return, R.id.rcrl_clock_state, R.id.tv_clock_positioning, R.id.rcrl_clock_imageon, R.id.tv_clock_id})
+    @OnClick({R.id.rl_clock_return, R.id.rcrl_clock_state, R.id.tv_clock_positioning, R.id.rcrl_clock_imageon, R.id.tv_clock_id, R.id.rcrl_clock_imageafter})
     public void onClick(View v) {
         switch (v.getId()) {
             //返回
@@ -410,6 +540,9 @@ public class ClockActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.rcrl_clock_state:
+                if(work == 2){
+                    return;
+                }
                 //判断是不是定位了
                 if (!isClock) {
                     cartState.initToast(context, "努力定位中", true, 0);
@@ -420,22 +553,73 @@ public class ClockActivity extends BaseActivity {
 //                    cartState.initToast(context, "未到打卡时间", true, 0);
 //                    return;
 //                }
-                //判断是不是拍了上班打卡门店照片
-                if (!isImageOne) {
-                    cartState.initToast(context, "请拍摄门店照片", true, 0);
-                    return;
+                if (isWork) {
+                    //判断是不是拍了上班打卡门店照片
+                    if (!isImageOne) {
+                        cartState.initToast(context, "请拍摄上班门店照片", true, 0);
+                        return;
+                    }
+                } else {
+                    if (!isImageTwo) {
+                        cartState.initToast(context, "请拍摄下班门店照片", true, 0);
+                        return;
+                    }
                 }
                 //判断是不是打过卡了
 
-
                 //判断是不是正常上班打卡
+                Map<String, Object> params = new HashMap<String, Object>();
+                params.put("staff_id", cartState.getUser().getId());
+                params.put("shop_id", cartState.getUser().getShopid());
+                params.put("amap_lng", latLng.longitude);
+                params.put("amap_lat", latLng.latitude);
+                if (isCard) {
+                    params.put("position_status", 1);
+                } else {
+                    params.put("position_status", 2);
+                }
+                params.put("image", image);
+                params.put("address", address);
+                OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
+                okHttpRequestWrap.postString(CartAddaress.CLOCK_IN, true, "请稍候", params, new OnHttpRequest() {
+                    @Override
+                    public void onOkHttpResponse(String response, int id) {
+                        Log.e(TAG, "---onOkHttpResponse---打卡---" + response);
+                        JSONObject resultJSON = JSON.parseObject(response);
+                        int error_code = resultJSON.getInteger("code");
+                        String msg = resultJSON.getString("message");
+                        switch (error_code) {
+                            //获取成功
+                            case 204:
+                            case 201:
+                            case 200:
+                                cartState.initToast(context, msg, true, 0);
+                                initPull(true);
+                                break;
+                            default:
+                                cartState.initToast(context, msg, true, 0);
+                                break;
+                        }
+                    }
+
+                    @Override
+                    public void onOkHttpError(String error) {
+                        Log.e(TAG, "---onOkHttpError---" + error);
+                        cartState.initToast(context, error, true, 0);
+                    }
+                });
+
                 break;
             //重新定位
             case R.id.tv_clock_positioning:
                 initIntent(AgainActivity.class);
                 break;
             //上班打卡图片
+            case R.id.rcrl_clock_imageafter:
             case R.id.rcrl_clock_imageon:
+                if (!isImagesone) {
+                    return;
+                }
                 if (Build.VERSION.SDK_INT >= 23) {
                     if (ContextCompat.checkSelfPermission(ClockActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                         ActivityCompat.requestPermissions(ClockActivity.this, new String[]{Manifest.permission.CAMERA}, 8);
@@ -472,8 +656,23 @@ public class ClockActivity extends BaseActivity {
                     public void callback(boolean isSuccess, String outfile, Throwable t) {
                         Log.e(TAG, "---员工使用扫一扫---" + outfile);
                         isImageOne = true;
+                        isImageTwo = true;
                         photoUriOn = outfile;
-                        imageLoader.displayImage("file:/" + outfile, ivClockImageon);
+                        if (isWork) {
+                            imageLoader.displayImage("file:/" + outfile, ivClockImageon);
+                        } else {
+                            imageLoader.displayImage("file:/" + outfile, ivClockImageafter);
+                        }
+                    }
+                });
+
+                Tiny.getInstance().source(uri).asBitmap().withOptions(options).compress(new BitmapCallback() {
+                    @Override
+                    public void callback(boolean isSuccess, Bitmap bitmap, Throwable t) {
+                        Log.e(TAG, "---门店图片---");
+                        isImageOne = true;
+                        isImageTwo = true;
+                        image = bitmapToBase64(bitmap);
                     }
                 });
                 break;

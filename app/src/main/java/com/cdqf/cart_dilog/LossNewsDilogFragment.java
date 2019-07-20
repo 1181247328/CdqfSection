@@ -135,14 +135,14 @@ public class LossNewsDilogFragment extends DialogFragment {
                 String numbers = xetLossDilogContext.getText().toString();
                 int number = Integer.parseInt(numbers);
                 int nubmerTwo = Integer.parseInt(this.number);
-                if (numbers.length() <= 0) {
-                    cartState.initToast(getContext(), "请选择要领取的数量", true, 0);
-                    return;
-                }
-                if (number > nubmerTwo) {
-                    cartState.initToast(getContext(), "不得超过库存数量", true, 0);
-                    return;
-                }
+//                if (numbers.length() <= 0) {
+//                    cartState.initToast(getContext(), "请选择要领取的数量", true, 0);
+//                    return;
+//                }
+//                if (number > nubmerTwo) {
+//                    cartState.initToast(getContext(), "不得超过库存数量", true, 0);
+//                    return;
+//                }
                 eventBus.post(new LossManagerNumberFind(position, number));
                 break;
         }

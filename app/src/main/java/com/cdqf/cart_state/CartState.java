@@ -33,6 +33,7 @@ import com.cdqf.cart_class.Audit;
 import com.cdqf.cart_class.Audits;
 import com.cdqf.cart_class.AuditsJudge;
 import com.cdqf.cart_class.Clock;
+import com.cdqf.cart_class.Clockin;
 import com.cdqf.cart_class.Complete;
 import com.cdqf.cart_class.Daily;
 import com.cdqf.cart_class.Datils;
@@ -42,6 +43,7 @@ import com.cdqf.cart_class.Home;
 import com.cdqf.cart_class.LossMan;
 import com.cdqf.cart_class.LossNews;
 import com.cdqf.cart_class.LossStaff;
+import com.cdqf.cart_class.MembersDatils;
 import com.cdqf.cart_class.Memebersship;
 import com.cdqf.cart_class.Moth;
 import com.cdqf.cart_class.MyUser;
@@ -236,6 +238,12 @@ public class CartState {
 
     //车牌
     private List<Number> numberList = new CopyOnWriteArrayList<>();
+
+    //打卡记录
+    private List<Clockin> clockinList = new CopyOnWriteArrayList<>();
+
+    //会员详情
+    private MembersDatils membersDatils = new MembersDatils();
 
     /**
      * 提示信息
@@ -1216,5 +1224,21 @@ public class CartState {
 
     public void setClock(Clock clock) {
         this.clock = clock;
+    }
+
+    public List<Clockin> getClockinList() {
+        return clockinList;
+    }
+
+    public void setClockinList(List<Clockin> clockinList) {
+        this.clockinList = clockinList;
+    }
+
+    public MembersDatils getMembersDatils() {
+        return membersDatils;
+    }
+
+    public void setMembersDatils(MembersDatils membersDatils) {
+        this.membersDatils = membersDatils;
     }
 }

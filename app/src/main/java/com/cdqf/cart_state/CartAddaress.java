@@ -73,7 +73,22 @@ public class CartAddaress {
     public static final String REPORT_DATILS_LIST = ADDRESS + "/staff/getReport/";
 
     //打卡
-    public static final String CLOCK = ADDRESS + "/staff/attedanceShop/";
+    public static final String CLOCK = ADDRESS + "/staff/attedanceShop";
+
+    //开始打卡
+    public static final String CLOCK_IN = ADDRESS + "/staff/attendance";
+
+    //打卡记录
+    public static final String CLOCK_RECORD = ADDRESS + "/staff/";
+
+    //会员详情
+    public static final String MEMBERS_DATILS = ADDRESS + "/staff/menberinfo";
+
+    //损耗品
+    public static final String LOSS_NEW = ADDRESS + "/staff/consumablesShop/";
+
+    //出入库
+    public static final String CONSUMABLES = ADDRESS + "/staff/consumables";
 
     /****************************************************/
 

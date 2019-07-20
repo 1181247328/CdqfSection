@@ -398,9 +398,11 @@ public class ServiceFragment extends Fragment {
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse---服务---" + response);
                 JSONObject resultJSON = JSON.parseObject(response);
-                int ret = resultJSON.getInteger("ret");
-                String msg = resultJSON.getString("msg");
+                int ret = resultJSON.getInteger("code");
+                String msg = resultJSON.getString("message");
                 switch (ret) {
+                    case 201:
+                    case 204:
                     case 200:
                         String data = resultJSON.getString("data");
                         initPull(true);
