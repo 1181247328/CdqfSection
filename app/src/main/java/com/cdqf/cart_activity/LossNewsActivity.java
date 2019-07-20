@@ -311,7 +311,6 @@ public class LossNewsActivity extends BaseActivity {
                 if (isSelete) {
                     isShopSelete = true;
                     Loss loss = new Loss(
-                            cartState.getLossNewsList().get(i).getId(),
                             cartState.getLossNewsList().get(i).getChildren().get(j).getId(),
                             cartState.getLossNewsList().get(i).getChildren().get(j).getConsumables_id(),
                             cartState.getLossNewsList().get(i).getChildren().get(j).getNumberSelete());
@@ -330,7 +329,7 @@ public class LossNewsActivity extends BaseActivity {
         params.put("staff_id", cartState.getUser().getId());
         params.put("status", state);
         params.put("shop_id", cartState.getUser().getShopid());
-        params.put("data", loss);
+        params.put("data", lossList);
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
         okHttpRequestWrap.postString(CartAddaress.CONSUMABLES, true, "请稍候", params, new OnHttpRequest() {
             @Override
@@ -408,7 +407,6 @@ public class LossNewsActivity extends BaseActivity {
     }
 
     class Loss {
-        private int id_layer;
 
         private int id;
 
@@ -416,8 +414,7 @@ public class LossNewsActivity extends BaseActivity {
 
         private int number;
 
-        public Loss(int id_layer, int id, int consumables_id, int number) {
-            this.id_layer = id_layer;
+        public Loss(int id, int consumables_id, int number) {
             this.id = id;
             this.consumables_id = consumables_id;
             this.number = number;
