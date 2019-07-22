@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.cdqf.cart.R;
 import com.cdqf.cart_find.AccountExitFind;
 import com.cdqf.cart_find.AddOrderFind;
+import com.cdqf.cart_find.AllEmployeesFind;
 import com.cdqf.cart_find.AuditsAgreedFind;
 import com.cdqf.cart_find.AuditsDatilsCencalFind;
 import com.cdqf.cart_find.DatilsPhoneFind;
@@ -270,6 +271,10 @@ public class WhyDilogFragment extends DialogFragment {
                     //AuditsDatilsActivity同意报销
                     case 20:
                         eventBus.post(new AuditsAgreedFind());
+                        break;
+                    //WhyDilogFragment提交订单
+                    case 21:
+                        eventBus.post(new AllEmployeesFind());
                         break;
                 }
                 break;

@@ -33,7 +33,7 @@ public class AllemployeesAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 5;
+        return cartState.getAllEmployeesList().size();
     }
 
     @Override
@@ -56,12 +56,33 @@ public class AllemployeesAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+        viewHolder.tvAllemployeesItemShopname.setText(cartState.getUser().getShopName());
+        viewHolder.tvAllemployeesItemName.setText(cartState.getAllEmployeesList().get(position).getName());
+        viewHolder.tvAllemployeesItemPosition.setText(cartState.getAllEmployeesList().get(position).getPosition());
+        viewHolder.tvAllemployeesItemId.setText(cartState.getAllEmployeesList().get(position).getId() + "");
+        viewHolder.tvAllemployeesItemPhone.setText(cartState.getAllEmployeesList().get(position).getPhone());
+        viewHolder.tvAllemployeesItemUrgentname.setText(cartState.getAllEmployeesList().get(position).getUrgent_name());
+        String status = "";
+        switch (cartState.getAllEmployeesList().get(position).getStatus()) {
+            case 0:
+                status = "未知";
+                break;
+            case 1:
+                status = "上班中";
+                break;
+            case 2:
+                status = "休假";
+                break;
+            default:
+                break;
+        }
+        viewHolder.tvAllemployeesItemState.setText(status);
         return convertView;
     }
 
     class ViewHolder {
 
-        //车牌号
+        //店名
         @BindView(R.id.tv_allemployees_item_shopname)
         public TextView tvAllemployeesItemShopname = null;
 

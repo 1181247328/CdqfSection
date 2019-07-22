@@ -10,15 +10,29 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
 import com.cdqf.cart_adapter.WorkAdapter;
+import com.cdqf.cart_class.Work;
 import com.cdqf.cart_find.EmployeesPullFind;
 import com.cdqf.cart_find.WorkPullFind;
+import com.cdqf.cart_okhttp.OKHttpRequestWrap;
+import com.cdqf.cart_okhttp.OnHttpRequest;
+import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.jingchen.pulltorefresh.PullToRefreshLayout;
 import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -46,9 +60,23 @@ public class WorkFragment extends Fragment {
     @BindView(R.id.ptrl_allemployees_pull)
     public PullToRefreshLayout ptrlAllemployeesPull = null;
 
+    @BindView(R.id.rl_orders_bar)
+    public RelativeLayout rlOrdersBar = null;
+
+    //订单异常
+    @BindView(R.id.tv_orders_abnormal)
+    public TextView tvOrdersAbnormal = null;
+
+    @BindView(R.id.pb_orders_bar)
+    public ProgressBar pbOrdersBar = null;
+
     private ListView lvAllemployeesList = null;
 
     private WorkAdapter workAdapter = null;
+
+    private int page = 1;
+
+    private boolean isPull = false;
 
     @Nullable
     @Override
@@ -90,8 +118,54 @@ public class WorkFragment extends Fragment {
             }
 
             @Override
-            public void onLoadMore(PullToRefreshLayout pullToRefreshLayout) {
+            public void onLoadMore(final PullToRefreshLayout pullToRefreshLayout) {
                 //上拉加载
+                Map<String, Object> params = new HashMap<String, Object>();
+                OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
+                params.put("staff_id", cartState.getUser().getId());
+                params.put("shop_id", cartState.getUser().getShopid());
+                //0=全部
+                params.put("status", 0);
+                //页码
+                params.put("page", page);
+                okHttpRequestWrap.post(CartAddaress.EMPLOYEES, false, "请稍候", params, new OnHttpRequest() {
+                    @Override
+                    public void onOkHttpResponse(String response, int id) {
+                        Log.e(TAG, "---onOkHttpResponse---全部---" + response);
+                        JSONObject resultJSON = JSON.parseObject(response);
+                        int error_code = resultJSON.getInteger("code");
+                        String msg = resultJSON.getString("message");
+                        switch (error_code) {
+                            //获取成功
+                            case 204:
+                            case 201:
+                            case 200:
+                                page++;
+                                pullToRefreshLayout.refreshFinish(PullToRefreshLayout.SUCCEED);
+                                JSONObject data = resultJSON.getJSONObject("data");
+                                String datas = data.getString("data");
+                                cartState.initToast(getContext(), msg, true, 0);
+                                List<Work> workList = gson.fromJson(datas, new TypeToken<List<Work>>() {
+                                }.getType());
+                                cartState.getWorkList().addAll(workList);
+                                if (workAdapter != null) {
+                                    workAdapter.notifyDataSetChanged();
+                                }
+                                break;
+                            default:
+                                pullToRefreshLayout.refreshFinish(PullToRefreshLayout.FAIL);
+                                cartState.initToast(getContext(), msg, true, 0);
+                                break;
+                        }
+                    }
+
+                    @Override
+                    public void onOkHttpError(String error) {
+                        Log.e(TAG, "---onOkHttpError---" + error);
+                        pullToRefreshLayout.refreshFinish(PullToRefreshLayout.FAIL);
+                        eventBus.post(new EmployeesPullFind(false, false));
+                    }
+                });
             }
         });
         lvAllemployeesList.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -105,7 +179,11 @@ public class WorkFragment extends Fragment {
                 View firstView = view.getChildAt(firstVisibleItem);
                 // 当firstVisibleItem是第0位。如果firstView==null说明列表为空，需要刷新;或者top==0说明已经到达列表顶部, 也需要刷新
                 if (firstVisibleItem == 0 && (firstView == null || firstView.getTop() == view.getPaddingTop())) {
-                    eventBus.post(new EmployeesPullFind(false, true));
+                    if (isPull) {
+                        eventBus.post(new EmployeesPullFind(false, true));
+                    } else {
+                        eventBus.post(new EmployeesPullFind(false, false));
+                    }
                 } else {
                     eventBus.post(new EmployeesPullFind(false, false));
                 }
@@ -120,6 +198,69 @@ public class WorkFragment extends Fragment {
 
     private void initBack() {
         ptrlAllemployeesPull.setPullDownEnable(false);
+        ptrlAllemployeesPull.setPullUpEnable(false);
+        initPull(false);
+    }
+
+    private void initPull(boolean isToast) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
+//        params.put("shop_id", cartState.getUser().getShopid());
+        params.put("shop_id", 116);
+        //0=全部
+        params.put("type", 1);
+        okHttpRequestWrap.postString(CartAddaress.EMPLOYEES, isToast, "请稍候", params, new OnHttpRequest() {
+            @Override
+            public void onOkHttpResponse(String response, int id) {
+                Log.e(TAG, "---onOkHttpResponse---上班中---" + response);
+                JSONObject resultJSON = JSON.parseObject(response);
+                int error_code = resultJSON.getInteger("code");
+                String msg = resultJSON.getString("message");
+                switch (error_code) {
+                    //获取成功
+                    case 204:
+                    case 201:
+                    case 200:
+                        page = 2;
+                        isPull = true;
+                        rlOrdersBar.setVisibility(View.GONE);
+                        ptrlAllemployeesPull.setVisibility(View.VISIBLE);
+                        tvOrdersAbnormal.setVisibility(View.GONE);
+                        String datas = resultJSON.getString("data");
+                        cartState.getWorkList().clear();
+                        cartState.initToast(getContext(), msg, true, 0);
+                        eventBus.post(new EmployeesPullFind(false, true));
+                        List<Work> workList = gson.fromJson(datas, new TypeToken<List<Work>>() {
+                        }.getType());
+                        cartState.setWorkList(workList);
+                        if (cartState.getWorkList().size() <= 0) {
+                            rlOrdersBar.setVisibility(View.GONE);
+                            ptrlAllemployeesPull.setVisibility(View.GONE);
+                            tvOrdersAbnormal.setVisibility(View.VISIBLE);
+                        }
+                        if (workAdapter != null) {
+                            workAdapter.notifyDataSetChanged();
+                        }
+                        break;
+                    default:
+                        rlOrdersBar.setVisibility(View.GONE);
+                        ptrlAllemployeesPull.setVisibility(View.GONE);
+                        tvOrdersAbnormal.setVisibility(View.VISIBLE);
+                        eventBus.post(new EmployeesPullFind(false, true));
+                        cartState.initToast(getContext(), msg, true, 0);
+                        break;
+                }
+            }
+
+            @Override
+            public void onOkHttpError(String error) {
+                Log.e(TAG, "---onOkHttpError---" + error);
+                rlOrdersBar.setVisibility(View.GONE);
+                ptrlAllemployeesPull.setVisibility(View.GONE);
+                tvOrdersAbnormal.setVisibility(View.VISIBLE);
+                eventBus.post(new EmployeesPullFind(false, false));
+            }
+        });
     }
 
     private void forIntent(Class<?> activity) {
@@ -167,6 +308,7 @@ public class WorkFragment extends Fragment {
 
     @Subscribe
     public void onEventMainThread(WorkPullFind a) {
-
+        page = 1;
+        initPull(false);
     }
 }

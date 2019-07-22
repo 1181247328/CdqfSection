@@ -33,7 +33,7 @@ public class WorkAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 5;
+        return cartState.getWorkList().size();
     }
 
     @Override
@@ -56,6 +56,27 @@ public class WorkAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+        viewHolder.tvAllemployeesItemShopname.setText(cartState.getUser().getShopName());
+        viewHolder.tvAllemployeesItemName.setText(cartState.getWorkList().get(position).getName());
+        viewHolder.tvAllemployeesItemPosition.setText(cartState.getWorkList().get(position).getPosition());
+        viewHolder.tvAllemployeesItemId.setText(cartState.getWorkList().get(position).getId() + "");
+        viewHolder.tvAllemployeesItemPhone.setText(cartState.getWorkList().get(position).getPhone());
+        viewHolder.tvAllemployeesItemUrgentname.setText(cartState.getWorkList().get(position).getUrgent_name());
+        String status = "";
+        switch (cartState.getWorkList().get(position).getStatus()) {
+            case 0:
+                status = "未知";
+                break;
+            case 1:
+                status = "上班中";
+                break;
+            case 2:
+                status = "休假";
+                break;
+            default:
+                break;
+        }
+        viewHolder.tvAllemployeesItemState.setText(status);
         return convertView;
     }
 

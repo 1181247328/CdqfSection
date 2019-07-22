@@ -65,6 +65,7 @@ public class OKHttpRequestWrap {
         postFormBuilder.build().execute(new OKHttpStringCallback(context, isDialog, them, new OnOkHttpResponseHandler() {
             @Override
             public void onOkHttpResponse(String response, int id) {
+                Log.e(TAG, "---JSON---" + response);
                 if (!WIFIGpRs.isNetworkConnected(context)) {
                     Log.e(TAG, "---无网---");
                     Toast.makeText(context, "请检查网络", Toast.LENGTH_SHORT).show();
@@ -125,6 +126,7 @@ public class OKHttpRequestWrap {
         getBuilder.build().execute(new OKHttpStringCallback(context, isDialog, them, new OnOkHttpResponseHandler() {
             @Override
             public void onOkHttpResponse(String response, int id) {
+                Log.e(TAG, "---JSON---" + response);
                 if (!WIFIGpRs.isNetworkConnected(context)) {
                     Log.e(TAG, "---无网---");
                     Toast.makeText(context, "请检查网络", Toast.LENGTH_SHORT).show();
@@ -218,6 +220,7 @@ public class OKHttpRequestWrap {
                 .execute(new OKHttpStringCallback(context, isDialog, them, new OnOkHttpResponseHandler() {
                     @Override
                     public void onOkHttpResponse(String response, int id) {
+                        Log.e(TAG, "---JSON---" + response);
                         if (!WIFIGpRs.isNetworkConnected(context)) {
                             Log.e(TAG, "---无网---");
                             Toast.makeText(context, "请检查网络", Toast.LENGTH_SHORT).show();

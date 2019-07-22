@@ -90,6 +90,15 @@ public class CartAddaress {
     //出入库
     public static final String CONSUMABLES = ADDRESS + "/staff/consumables";
 
+    //店员管理
+    public static final String EMPLOYEES = ADDRESS + "/staff/shopStaff";
+
+    //职位
+    public static final String ROLL = ADDRESS + "/staff/roll";
+
+    //添加员工
+    public static final String ADD_ROLL = ADDRESS + "/staff/createStaff";
+
     /****************************************************/
 
     //店总

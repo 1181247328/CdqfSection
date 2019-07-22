@@ -23,7 +23,7 @@ public class User {
     private String shopName;
     private int is_shop_manage;
     private String password;
-    private List<UserRoles> user_roles = new CopyOnWriteArrayList<>();
+    private UserRoles user_roles = null;
     private List<String> permission = new CopyOnWriteArrayList<>();
     private List<Menu> menu = new CopyOnWriteArrayList<>();
 
@@ -171,11 +171,11 @@ public class User {
         this.is_shop_manage = is_shop_manage;
     }
 
-    public List<UserRoles> getUser_roles() {
+    public UserRoles getUser_roles() {
         return user_roles;
     }
 
-    public void setUser_roles(List<UserRoles> user_roles) {
+    public void setUser_roles(UserRoles user_roles) {
         this.user_roles = user_roles;
     }
 

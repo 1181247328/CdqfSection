@@ -29,6 +29,7 @@ import android.widget.Toast;
 import com.apkfuns.xprogressdialog.XProgressDialog;
 import com.cdqf.cart.R;
 import com.cdqf.cart_ble.Ble;
+import com.cdqf.cart_class.AllEmployees;
 import com.cdqf.cart_class.Audit;
 import com.cdqf.cart_class.Audits;
 import com.cdqf.cart_class.AuditsJudge;
@@ -50,6 +51,7 @@ import com.cdqf.cart_class.MyUser;
 import com.cdqf.cart_class.Notice;
 import com.cdqf.cart_class.Number;
 import com.cdqf.cart_class.Position;
+import com.cdqf.cart_class.PositionEmployees;
 import com.cdqf.cart_class.Record;
 import com.cdqf.cart_class.Service;
 import com.cdqf.cart_class.ServiceOrder;
@@ -58,8 +60,10 @@ import com.cdqf.cart_class.Through;
 import com.cdqf.cart_class.ThroughsJudge;
 import com.cdqf.cart_class.User;
 import com.cdqf.cart_class.UserGoods;
+import com.cdqf.cart_class.Vaction;
 import com.cdqf.cart_class.Week;
 import com.cdqf.cart_class.Withdraw;
+import com.cdqf.cart_class.Work;
 import com.cdqf.cart_service.Province;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -244,6 +248,18 @@ public class CartState {
 
     //会员详情
     private MembersDatils membersDatils = new MembersDatils();
+
+    //全部
+    private List<AllEmployees> allEmployeesList = new CopyOnWriteArrayList<>();
+
+    //上班中
+    private List<Work> workList = new CopyOnWriteArrayList<>();
+
+    //休假
+    private List<Vaction> vactionList = new CopyOnWriteArrayList<>();
+
+    //职位
+    private List<PositionEmployees> positionEmployeesList = new CopyOnWriteArrayList<>();
 
     /**
      * 提示信息
@@ -890,6 +906,14 @@ public class CartState {
         }
     }
 
+    public List<AllEmployees> getAllEmployeesList() {
+        return allEmployeesList;
+    }
+
+    public void setAllEmployeesList(List<AllEmployees> allEmployeesList) {
+        this.allEmployeesList = allEmployeesList;
+    }
+
     public Bitmap getHeadBitmap() {
         return headBitmap;
     }
@@ -1240,5 +1264,29 @@ public class CartState {
 
     public void setMembersDatils(MembersDatils membersDatils) {
         this.membersDatils = membersDatils;
+    }
+
+    public List<Work> getWorkList() {
+        return workList;
+    }
+
+    public void setWorkList(List<Work> workList) {
+        this.workList = workList;
+    }
+
+    public List<Vaction> getVactionList() {
+        return vactionList;
+    }
+
+    public void setVactionList(List<Vaction> vactionList) {
+        this.vactionList = vactionList;
+    }
+
+    public List<PositionEmployees> getPositionEmployeesList() {
+        return positionEmployeesList;
+    }
+
+    public void setPositionEmployeesList(List<PositionEmployees> positionEmployeesList) {
+        this.positionEmployeesList = positionEmployeesList;
     }
 }

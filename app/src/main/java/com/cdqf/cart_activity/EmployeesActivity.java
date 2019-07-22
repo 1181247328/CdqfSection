@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 
 import com.cdqf.cart.R;
 import com.cdqf.cart_adapter.ShopFragmentAdapter;
+import com.cdqf.cart_find.AddEmployessPullFind;
 import com.cdqf.cart_find.AllEmployeesPullFind;
 import com.cdqf.cart_find.DatilsPullFind;
 import com.cdqf.cart_find.EmployeesPullFind;
@@ -118,7 +119,7 @@ public class EmployeesActivity extends BaseActivity {
     private void initAdapter() {
         shopFragmentAdapter = new ShopFragmentAdapter(getSupportFragmentManager(), orderList);
         vpEmployeesScreen.setAdapter(shopFragmentAdapter);
-        vpEmployeesScreen.setOffscreenPageLimit(4);
+        vpEmployeesScreen.setOffscreenPageLimit(1);
     }
 
     private void initListener() {
@@ -147,11 +148,6 @@ public class EmployeesActivity extends BaseActivity {
             public void onPageSelected(int i) {
                 Log.e(TAG, "---当前为2---" + i);
                 position = i;
-                srlShopPull.setEnabled(true);
-                if (position == 3) {
-                    Log.e(TAG, "---当前为4---" + position);
-                    srlShopPull.setEnabled(false);
-                }
             }
 
             @Override
@@ -163,7 +159,6 @@ public class EmployeesActivity extends BaseActivity {
         srlShopPull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                srlShopPull.setRefreshing(false);
                 switch (position) {
                     case 0:
                         //全部
@@ -178,6 +173,8 @@ public class EmployeesActivity extends BaseActivity {
                         eventBus.post(new VacationPullFind());
                         break;
                     case 3:
+                        //添加员工
+                        eventBus.post(new AddEmployessPullFind());
                         break;
                 }
             }
@@ -185,7 +182,7 @@ public class EmployeesActivity extends BaseActivity {
     }
 
     private void initBack() {
-
+        srlShopPull.setEnabled(true);
     }
 
     private void initIntent(Class<?> activity) {
@@ -247,7 +244,7 @@ public class EmployeesActivity extends BaseActivity {
 
     @Subscribe
     public void onEventMainThread(DatilsPullFind r) {
-
+        vpEmployeesScreen.setCurrentItem(r.position);
     }
 
     /**
@@ -260,9 +257,5 @@ public class EmployeesActivity extends BaseActivity {
         Log.e(TAG, "---是否刷新和禁用---" + s.isRefreshing + "---" + s.isEnabled);
         srlShopPull.setRefreshing(s.isRefreshing);
         srlShopPull.setEnabled(s.isEnabled);
-        if(position == 3){
-            srlShopPull.setEnabled(false);
-        }
     }
-
 }
