@@ -391,7 +391,7 @@ public class AddEmployeesFragment extends Fragment {
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
         params.put("shop_id", shopId);
         params.put("name", name);
-        params.put("role_id ", positionId);
+        params.put("role_id", positionId);
         params.put("phone", phone);
         okHttpRequestWrap.postString(CartAddaress.ADD_ROLL, true, "请稍候", params, new OnHttpRequest() {
             @Override
