@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -91,6 +92,19 @@ public class UserActivity extends BaseActivity {
     public ListViewForScrollView lvUserList = null;
 
     private UserAdapter userAdapter = null;
+
+    @BindView(R.id.rl_orders_bar)
+    public RelativeLayout rlOrdersBar = null;
+
+    //订单异常
+    @BindView(R.id.tv_orders_abnormal)
+    public TextView tvOrdersAbnormal = null;
+
+    @BindView(R.id.pb_orders_bar)
+    public ProgressBar pbOrdersBar = null;
+
+    @BindView(R.id.rl_datils_pull)
+    public RelativeLayout rlDatilsPull = null;
 
     private int position = 0;
 
@@ -176,7 +190,8 @@ public class UserActivity extends BaseActivity {
 
     private void initBack() {
         tvUserName.setText(cartState.getDatils().getCarnum());
-        initPull(true);
+        srlUserPull.setEnabled(false);
+        initPull(false);
     }
 
     private void initPull(boolean isToast) {
@@ -187,6 +202,7 @@ public class UserActivity extends BaseActivity {
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse追加的商品---" + response);
                 if (srlUserPull != null) {
+                    srlUserPull.setEnabled(true);
                     srlUserPull.setRefreshing(false);
                 }
                 JSONObject resultJSON = JSON.parseObject(response);
@@ -195,6 +211,9 @@ public class UserActivity extends BaseActivity {
                 switch (error_code) {
                     //获取成功
                     case 200:
+                        rlOrdersBar.setVisibility(View.GONE);
+                        rlDatilsPull.setVisibility(View.VISIBLE);
+                        tvOrdersAbnormal.setVisibility(View.GONE);
                         String data = resultJSON.getString("data");
                         tvUserPrice.setText("总计:￥0.0");
                         cartState.getUserGoodsList().clear();
@@ -210,6 +229,9 @@ public class UserActivity extends BaseActivity {
                         userAdapter.setPosition(0);
                         break;
                     default:
+                        rlOrdersBar.setVisibility(View.GONE);
+                        rlDatilsPull.setVisibility(View.GONE);
+                        tvOrdersAbnormal.setVisibility(View.VISIBLE);
                         cartState.initToast(context, msg, true, 0);
                         break;
                 }
@@ -218,6 +240,13 @@ public class UserActivity extends BaseActivity {
             @Override
             public void onOkHttpError(String error) {
                 Log.e(TAG, "---onOkHttpError---" + error);
+                rlOrdersBar.setVisibility(View.GONE);
+                rlDatilsPull.setVisibility(View.GONE);
+                tvOrdersAbnormal.setVisibility(View.VISIBLE);
+                if (srlUserPull != null) {
+                    srlUserPull.setEnabled(true);
+                    srlUserPull.setRefreshing(false);
+                }
             }
         });
     }
@@ -369,7 +398,7 @@ public class UserActivity extends BaseActivity {
         //用户id
         int userid = cartState.getDatils().getUserid();
         //店铺id
-        String shopid = cartState.getUser().getShopid()+"";
+        String shopid = cartState.getUser().getShopid() + "";
         //车牌号
         String carnum = cartState.getDatils().getCarnum();
         //用户电话

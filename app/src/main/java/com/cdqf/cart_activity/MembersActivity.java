@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -114,6 +115,16 @@ public class MembersActivity extends BaseActivity {
 
     private int shopId = 0;
 
+    @BindView(R.id.rl_orders_bar)
+    public RelativeLayout rlOrdersBar = null;
+
+    //订单异常
+    @BindView(R.id.tv_orders_abnormal)
+    public TextView tvOrdersAbnormal = null;
+
+    @BindView(R.id.pb_orders_bar)
+    public ProgressBar pbOrdersBar = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -142,7 +153,7 @@ public class MembersActivity extends BaseActivity {
         if (!eventBus.isRegistered(this)) {
             eventBus.register(this);
         }
-        shopId = Integer.parseInt(cartState.getUser().getShopid()+"");
+        shopId = Integer.parseInt(cartState.getUser().getShopid() + "");
     }
 
     private void initView() {
@@ -164,7 +175,8 @@ public class MembersActivity extends BaseActivity {
 
     private void initBack() {
         tvMembersShop.setText(cartState.getUser().getShopName());
-        initShopId(true);
+        srlMembersPull.setEnabled(false);
+        initShopId(false);
     }
 
     private void initShopId(boolean isToast) {
@@ -177,6 +189,7 @@ public class MembersActivity extends BaseActivity {
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse---会员管理店面---" + response);
                 if (srlMembersPull != null) {
+                    srlMembersPull.setEnabled(true);
                     srlMembersPull.setRefreshing(false);
                 }
                 JSONObject resultJSON = JSON.parseObject(response);
@@ -187,6 +200,9 @@ public class MembersActivity extends BaseActivity {
                     case 204:
                     case 201:
                     case 200:
+                        rlOrdersBar.setVisibility(View.GONE);
+                        nsvMembersSc.setVisibility(View.VISIBLE);
+                        tvOrdersAbnormal.setVisibility(View.GONE);
                         JSONObject data = resultJSON.getJSONObject("data");
 //                        cartState.initToast(context, msg, true, 0);
                         tvMembersNumber.setText(data.getString("all_menber"));
@@ -196,6 +212,9 @@ public class MembersActivity extends BaseActivity {
                         tvMembersLeft.setText(data.getString("user_surplus_money"));
                         break;
                     default:
+                        rlOrdersBar.setVisibility(View.GONE);
+                        nsvMembersSc.setVisibility(View.GONE);
+                        tvOrdersAbnormal.setVisibility(View.VISIBLE);
                         cartState.initToast(context, msg, true, 0);
                         break;
                 }
@@ -204,7 +223,11 @@ public class MembersActivity extends BaseActivity {
             @Override
             public void onOkHttpError(String error) {
                 Log.e(TAG, "---onOkHttpError---" + error);
+                rlOrdersBar.setVisibility(View.GONE);
+                nsvMembersSc.setVisibility(View.GONE);
+                tvOrdersAbnormal.setVisibility(View.VISIBLE);
                 if (srlMembersPull != null) {
+                    srlMembersPull.setEnabled(true);
                     srlMembersPull.setRefreshing(false);
                 }
                 cartState.initToast(context, error, true, 0);

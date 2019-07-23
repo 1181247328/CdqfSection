@@ -6,12 +6,15 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.NestedScrollView;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -71,13 +74,8 @@ public class HomeManagerFragment extends Fragment {
 
     private View view = null;
 
-//    //名称
-//    @BindView(R.id.tv_home_name)
-//    public TextView tvHomeName = null;
-//
-//    //内容
-//    @BindView(R.id.tv_home_context)
-//    public TextView tvHomeContext = null;
+    @BindView(R.id.srl_home_pull)
+    public SwipeRefreshLayout srlHomePull = null;
 
     //选择店
     @BindView(R.id.ll_homemanager_shop)
@@ -106,7 +104,19 @@ public class HomeManagerFragment extends Fragment {
     @BindView(R.id.tv_homemanager_money)
     public TextView tvHomemanagerMoney = null;
 
-    private int s = 0;
+    @BindView(R.id.rl_orders_bar)
+    public RelativeLayout rlOrdersBar = null;
+
+    //订单异常
+    @BindView(R.id.tv_orders_abnormal)
+    public TextView tvOrdersAbnormal = null;
+
+    @BindView(R.id.pb_orders_bar)
+    public ProgressBar pbOrdersBar = null;
+
+    //滑动
+    @BindView(R.id.nsv_home_scroll)
+    public NestedScrollView nsvHomeScroll = null;
 
     @Nullable
     @Override
@@ -133,45 +143,51 @@ public class HomeManagerFragment extends Fragment {
     }
 
     private void initListener() {
+        srlHomePull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                initShopPull();
+            }
+        });
         mgvHomeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                switch (position) {
+                String name = cartState.getUser().getMenu().get(position).getTitle();
+                switch (name) {
                     //损耗品
-                    case 0:
+                    case "耗材管理":
                         initIntent(LossNewsActivity.class);
-//                        cartState.initToast(getContext(), "暂未开通", true, 0);
                         break;
                     //服务
-                    case 1:
+                    case "服务":
                         initIntent(ShopActivity.class);
                         break;
                     //通知
-                    case 2:
+                    case "通知":
                         initIntent(NoticeManagerActivity.class);
                         break;
                     //审核
-                    case 3:
+                    case "审核":
                         initIntent(AuditActivity.class);
                         break;
                     //会员
-                    case 4:
+                    case "会员":
                         initIntent(MembersActivity.class);
                         break;
                     //任务
-                    case 5:
+                    case "任务":
                         initIntent(OtherActivity.class);
                         break;
                     //店员管理
-                    case 6:
+                    case "店员管理":
                         initIntent(EmployeesActivity.class);
                         break;
                     //考勤打卡
-                    case 7:
+                    case "考勤打卡":
                         initIntent(ClockActivity.class);
                         break;
                     //报销
-                    case 8:
+                    case "报销":
                         initIntent(AccountActivity.class);
                         break;
                 }
@@ -185,7 +201,7 @@ public class HomeManagerFragment extends Fragment {
     }
 
     private void initBack() {
-
+        srlHomePull.setEnabled(false);
         initShopPull();
     }
 
@@ -199,31 +215,53 @@ public class HomeManagerFragment extends Fragment {
         params.put("staff_id", cartState.getUser().getId());
         Log.e(TAG, "---主页---" + cartState.getUser().getId());
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
-        okHttpRequestWrap.postString(CartAddaress.HOME, true, "请稍候", params, new OnHttpRequest() {
+        okHttpRequestWrap.postString(CartAddaress.HOME, false, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse---主页---(店员)---" + response);
+                if (srlHomePull != null) {
+                    srlHomePull.setEnabled(true);
+                    srlHomePull.setRefreshing(false);
+                }
                 JSONObject resultJSON = JSON.parseObject(response);
                 int error_code = resultJSON.getInteger("code");
                 String msg = resultJSON.getString("message");
                 switch (error_code) {
                     //获取成功
+                    case 204:
+                    case 201:
                     case 200:
+                        rlOrdersBar.setVisibility(View.GONE);
+                        tvOrdersAbnormal.setVisibility(View.GONE);
+                        nsvHomeScroll.setVisibility(View.VISIBLE);
                         String data = resultJSON.getString("data");
                         cartState.initToast(getContext(), msg, true, 0);
                         cartState.getHomeList().clear();
                         List<Home> homeList = gson.fromJson(data, new TypeToken<List<Home>>() {
                         }.getType());
                         cartState.setHomeList(homeList);
+
+                        //判断是不是有默认的
+                        boolean isHome = false;
                         for (Home h : homeList) {
                             if (h.getStatus() == 1) {
+                                isHome = true;
                                 tvHomemanagerShop.setText(h.getShop_new_name());
                                 cartState.getUser().setShopid(h.getId());
                                 cartState.getUser().setShopName(h.getShop_new_name());
+                                break;
                             }
+                        }
+                        if (!isHome) {
+                            tvHomemanagerShop.setText(homeList.get(0).getShop_new_name());
+                            cartState.getUser().setShopid(homeList.get(0).getId());
+                            cartState.getUser().setShopName(homeList.get(0).getShop_new_name());
                         }
                         break;
                     default:
+                        rlOrdersBar.setVisibility(View.GONE);
+                        tvOrdersAbnormal.setVisibility(View.VISIBLE);
+                        nsvHomeScroll.setVisibility(View.GONE);
                         cartState.initToast(getContext(), msg, true, 0);
                         break;
                 }
@@ -232,6 +270,13 @@ public class HomeManagerFragment extends Fragment {
             @Override
             public void onOkHttpError(String error) {
                 Log.e(TAG, "---onOkHttpError---" + error);
+                if (srlHomePull != null) {
+                    srlHomePull.setEnabled(true);
+                    srlHomePull.setRefreshing(false);
+                }
+                rlOrdersBar.setVisibility(View.GONE);
+                tvOrdersAbnormal.setVisibility(View.VISIBLE);
+                nsvHomeScroll.setVisibility(View.GONE);
                 cartState.initToast(getContext(), error, true, 0);
             }
         });

@@ -84,6 +84,34 @@
                 </RelativeLayout>
             </RelativeLayout>
 
+            <RelativeLayout
+                android:id="@+id/rl_orders_bar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/service_bak"
+                android:visibility="visible">
+
+                <ProgressBar
+                    android:id="@+id/pb_orders_bar"
+                    style="@android:style/Widget.ProgressBar.Inverse"
+                    android:layout_width="@dimen/dp_20"
+                    android:layout_height="@dimen/dp_20"
+                    android:layout_centerInParent="true"
+                    android:background="@android:color/transparent" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tv_orders_abnormal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:text="暂无~"
+                android:textColor="@color/house_eight"
+                android:textSize="@dimen/sp_14"
+                android:visibility="gone" />
+
             <android.support.v4.widget.NestedScrollView
                 android:id="@+id/nsv_members_sc"
                 android:layout_width="match_parent"
@@ -129,7 +157,7 @@
                                 android:background="@android:color/transparent"
                                 android:paddingLeft="@dimen/dp_5"
                                 android:paddingRight="@dimen/dp_5"
-                                android:text="浅水半岛店"
+                                android:text=""
                                 android:textColor="@color/tab_main_text_default"
                                 android:textSize="@dimen/sp_13" />
 
@@ -238,10 +266,11 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:background="@android:color/transparent"
+                                android:ellipsize="middle"
                                 android:gravity="center"
                                 android:paddingTop="@dimen/dp_3"
                                 android:paddingBottom="@dimen/dp_30"
-
+                                android:singleLine="true"
                                 android:textColor="@color/tab_main_text_default"
                                 android:textSize="@dimen/sp_25"
                                 android:textStyle="bold" />
@@ -272,9 +301,11 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:background="@android:color/transparent"
+                                android:ellipsize="middle"
                                 android:gravity="center"
                                 android:paddingTop="@dimen/dp_3"
                                 android:paddingBottom="@dimen/dp_30"
+                                android:singleLine="true"
                                 android:textColor="@color/tab_main_text_default"
                                 android:textSize="@dimen/sp_25"
                                 android:textStyle="bold" />
@@ -315,9 +346,11 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:background="@android:color/transparent"
+                                android:ellipsize="middle"
                                 android:gravity="center"
                                 android:paddingTop="@dimen/dp_3"
                                 android:paddingBottom="@dimen/dp_30"
+                                android:singleLine="true"
                                 android:textColor="@color/tab_main_text_default"
                                 android:textSize="@dimen/sp_25"
                                 android:textStyle="bold" />
@@ -362,7 +395,9 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:background="@android:color/transparent"
+                                        android:ellipsize="middle"
                                         android:gravity="center"
+                                        android:singleLine="true"
                                         android:textColor="@color/tab_main_text_default"
                                         android:textSize="@dimen/sp_18"
                                         android:textStyle="bold" />
@@ -397,7 +432,9 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:background="@android:color/transparent"
+                                        android:ellipsize="middle"
                                         android:gravity="center"
+                                        android:singleLine="true"
                                         android:textColor="@color/tab_main_text_default"
                                         android:textSize="@dimen/sp_18"
                                         android:textStyle="bold" />

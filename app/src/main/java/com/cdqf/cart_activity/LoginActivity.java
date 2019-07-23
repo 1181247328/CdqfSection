@@ -3,7 +3,9 @@ package com.cdqf.cart_activity;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
@@ -91,17 +93,7 @@ public class LoginActivity extends BaseActivity {
         context = this;
         ButterKnife.bind(this);
         Log.e(TAG, "---宽度---" + ScreenUtils.getScreenWidth(context) + "---高度---" + ScreenUtils.getScreenHeight(context));
-//        cartState.permission(this);
-        //请求权限
-        ActivityCompat.requestPermissions(this,
-                new String[]{
-                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.READ_PHONE_STATE,
-                },
-                1);
+        permissions();
     }
 
     private void initView() {
@@ -131,23 +123,7 @@ public class LoginActivity extends BaseActivity {
                 return;
             }
             loing(account, passwrod);
-//            if (TextUtils.equals(cartState.getUser().getType(), "1")) {
-//                //员工
-//                initIntent(MainActivity.class);
-//            } else if (TextUtils.equals(cartState.getUser().getType(), "2")) {
-//                //店长
-//                initIntent(MainManagerActivity.class);
-//            } else {
-//                //TODO
-//            }
         }
-    }
-
-    private String loginAccPass(String account, String password) {
-        String result = "";
-        result = "https://tgapi.baodi520.com/?s=Staff.login&account=" + account + "&password=" + password;
-        Log.e(TAG, "---登录---" + result);
-        return result;
     }
 
     private void loing(String account, final String password) {
@@ -159,7 +135,6 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse登录---" + response);
-
                 JSONObject resultJSON = JSON.parseObject(response);
                 int error_code = resultJSON.getInteger("code");
                 String msg = resultJSON.getString("message");
@@ -168,28 +143,17 @@ public class LoginActivity extends BaseActivity {
                     case 204:
                     case 201:
                     case 200:
+                        cartState.initToast(context, "登录成功", true, 0);
                         String data = resultJSON.getString("data");
                         User user = gson.fromJson(data, User.class);
+                        if (user.getMenu().size() <= 0) {
+                            cartState.initToast(context, "权限操作为空,请重新登录获取", true, 0);
+                            return;
+                        }
                         user.setPassword(password);
                         cartState.setUser(user);
                         CartPreferences.setUser(context, user);
-//                        if (TextUtils.equals(user.getState(), "1")) {
-//                            //审核通过
-//                            if (TextUtils.equals(user.getType(), "1")) {
-//                                //员工
-//                                initIntent(MainActivity.class);
-//                            } else if (TextUtils.equals(user.getType(), "2")) {
-//                                //店长
-                                initIntent(MainManagerActivity.class);
-//                            } else {
-//                                //TODO
-//                            }
-//                        } else if (TextUtils.equals(user.getState(), "0")) {
-//                            //审核未通过
-//                            cartState.initToast(context, "审核未通过", true, 0);
-//                        } else {
-//                            //TODO
-//                        }
+                        initIntent(MainManagerActivity.class);
                         finish();
                         break;
                     default:
@@ -201,14 +165,27 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onOkHttpError(String error) {
                 Log.e(TAG, "---onOkHttpError---" + error);
+                cartState.initToast(context, error, true, 0);
             }
         });
+    }
+
+    //请求权限
+    private void permissions() {
+        ActivityCompat.requestPermissions(this,
+                new String[]{
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_PHONE_STATE,
+                },
+                1);
     }
 
     private void initIntent(Class<?> activity) {
         Intent intent = new Intent(context, activity);
         startActivity(intent);
-        finish();
     }
 
     @OnClick({R.id.rcrl_login_sumbit})
@@ -226,6 +203,25 @@ public class LoginActivity extends BaseActivity {
                     return;
                 }
                 loing(account, passwrod);
+                break;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case 1:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[2] == PackageManager.PERMISSION_GRANTED && grantResults[3] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[4] == PackageManager.PERMISSION_GRANTED) {
+                    //授权能过
+                } else {
+                    //授权拒绝，如果拒绝将提示关闭程序功能
+                    exit();
+                }
+                break;
+            default:
                 break;
         }
     }

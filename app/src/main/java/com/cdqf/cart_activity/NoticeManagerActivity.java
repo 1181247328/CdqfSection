@@ -3,13 +3,13 @@ package com.cdqf.cart_activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.AbsListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -71,26 +71,19 @@ public class NoticeManagerActivity extends BaseActivity {
     @BindView(R.id.lv_notice_list)
     public ListViewForScrollView lvNoticeList = null;
 
+    private NoticeAdapter noticeAdapter = null;
+
+    @BindView(R.id.rl_orders_bar)
+    public RelativeLayout rlOrdersBar = null;
+
+    //订单异常
     @BindView(R.id.tv_noticemanager_no)
     public TextView tvNoticemanagerNo = null;
 
-    private NoticeAdapter noticeAdapter = null;
+    @BindView(R.id.pb_orders_bar)
+    public ProgressBar pbOrdersBar = null;
 
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 0x001:
-                    lvNoticeList.setVisibility(View.VISIBLE);
-                    tvNoticemanagerNo.setVisibility(View.GONE);
-                    break;
-                case 0x002:
-                    lvNoticeList.setVisibility(View.GONE);
-                    tvNoticemanagerNo.setVisibility(View.VISIBLE);
-                    break;
-            }
-        }
-    };
+    private boolean isPull = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,6 +125,29 @@ public class NoticeManagerActivity extends BaseActivity {
     }
 
     private void initListener() {
+
+        lvNoticeList.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                View firstView = view.getChildAt(firstVisibleItem);
+                // 当firstVisibleItem是第0位。如果firstView==null说明列表为空，需要刷新;或者top==0说明已经到达列表顶部, 也需要刷新
+                if (firstVisibleItem == 0 && (firstView == null || firstView.getTop() == view.getPaddingTop())) {
+                    if(isPull) {
+                        srlNoticePull.setEnabled(true);
+                    } else {
+                        srlNoticePull.setEnabled(false);
+                    }
+                } else {
+                    srlNoticePull.setEnabled(false);
+                }
+            }
+        });
+
         srlNoticePull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -141,23 +157,21 @@ public class NoticeManagerActivity extends BaseActivity {
     }
 
     private void initBack() {
-//        if(Integer.parseInt(cartState.getUser().getType() )== 1){
-//            tvNoticemanagerRelease.setVisibility(View.GONE);
-//        } else {
-//            tvNoticemanagerRelease.setVisibility(View.VISIBLE);
-//        }
-        initPull(true);
+        srlNoticePull.setRefreshing(false);
+        initPull(false);
     }
 
     private void initPull(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        String notice = notice(cartState.getUser().getId()+"", cartState.getUser().getShopid()+"");
+        String notice = notice(cartState.getUser().getId() + "", cartState.getUser().getShopid() + "");
         okHttpRequestWrap.post(notice, isToast, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse通知---" + response);
+                isPull = true;
                 if (srlNoticePull != null) {
+                    srlNoticePull.setEnabled(true);
                     srlNoticePull.setRefreshing(false);
                 }
                 JSONObject resultJSON = JSON.parseObject(response);
@@ -166,11 +180,15 @@ public class NoticeManagerActivity extends BaseActivity {
                 switch (error_code) {
                     //获取成功
                     case 200:
-                        handler.sendEmptyMessage(0x001);
+                        rlOrdersBar.setVisibility(View.GONE);
+                        lvNoticeList.setVisibility(View.VISIBLE);
+                        tvNoticemanagerNo.setVisibility(View.GONE);
                         String data = resultJSON.getString("data");
-                        Log.e(TAG, "---通知---"+data);
-                        if(TextUtils.equals(data, "{}")){
-                            handler.sendEmptyMessage(0x002);
+                        Log.e(TAG, "---通知---" + data);
+                        if (TextUtils.equals(data, "{}")) {
+                            rlOrdersBar.setVisibility(View.GONE);
+                            lvNoticeList.setVisibility(View.GONE);
+                            tvNoticemanagerNo.setVisibility(View.VISIBLE);
                             return;
                         }
                         cartState.getNoticeList().clear();
@@ -182,7 +200,9 @@ public class NoticeManagerActivity extends BaseActivity {
                         }
                         break;
                     default:
-                        handler.sendEmptyMessage(0x002);
+                        rlOrdersBar.setVisibility(View.GONE);
+                        lvNoticeList.setVisibility(View.GONE);
+                        tvNoticemanagerNo.setVisibility(View.VISIBLE);
                         cartState.initToast(context, msg, true, 0);
                         break;
                 }
@@ -191,6 +211,14 @@ public class NoticeManagerActivity extends BaseActivity {
             @Override
             public void onOkHttpError(String error) {
                 Log.e(TAG, "---onOkHttpError---" + error);
+                isPull = true;
+                rlOrdersBar.setVisibility(View.GONE);
+                lvNoticeList.setVisibility(View.GONE);
+                tvNoticemanagerNo.setVisibility(View.VISIBLE);
+                if (srlNoticePull != null) {
+                    srlNoticePull.setEnabled(true);
+                    srlNoticePull.setRefreshing(false);
+                }
             }
         });
     }

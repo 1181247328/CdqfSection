@@ -10,8 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -67,8 +69,17 @@ public class AuditFragment extends Fragment {
 
     private int page = 1;
 
-    @BindView(R.id.ll_audit_list)
-    public LinearLayout llAuditList = null;
+    @BindView(R.id.rl_orders_bar)
+    public RelativeLayout rlOrdersBar = null;
+
+    //订单异常
+    @BindView(R.id.tv_orders_abnormal)
+    public TextView tvOrdersAbnormal = null;
+
+    @BindView(R.id.pb_orders_bar)
+    public ProgressBar pbOrdersBar = null;
+
+    private boolean isPull = false;
 
 
     @Nullable
@@ -138,8 +149,6 @@ public class AuditFragment extends Fragment {
                             case 204:
                             case 201:
                             case 200:
-                                llAuditList.setVisibility(View.GONE);
-                                ptrlServicePull.setVisibility(View.VISIBLE);
                                 page++;
                                 pullToRefreshLayout.refreshFinish(PullToRefreshLayout.SUCCEED);
                                 JSONObject data = resultJSON.getJSONObject("data");
@@ -154,8 +163,6 @@ public class AuditFragment extends Fragment {
                                     auditAccountAdapter.notifyDataSetChanged();
                                 }
                             default:
-                                llAuditList.setVisibility(View.VISIBLE);
-                                ptrlServicePull.setVisibility(View.GONE);
                                 pullToRefreshLayout.refreshFinish(PullToRefreshLayout.FAIL);
                                 eventBus.post(new AccountPullFind(false, true));
                                 cartState.initToast(getContext(), msg, true, 0);
@@ -165,8 +172,6 @@ public class AuditFragment extends Fragment {
 
                     @Override
                     public void onOkHttpError(String error) {
-                        llAuditList.setVisibility(View.VISIBLE);
-                        ptrlServicePull.setVisibility(View.GONE);
                         Log.e(TAG, "---onOkHttpError---" + error);
                         pullToRefreshLayout.refreshFinish(PullToRefreshLayout.FAIL);
                         eventBus.post(new AccountPullFind(false, false));
@@ -185,7 +190,11 @@ public class AuditFragment extends Fragment {
                 View firstView = view.getChildAt(firstVisibleItem);
                 // 当firstVisibleItem是第0位。如果firstView==null说明列表为空，需要刷新;或者top==0说明已经到达列表顶部, 也需要刷新
                 if (firstVisibleItem == 0 && (firstView == null || firstView.getTop() == view.getPaddingTop())) {
-                    eventBus.post(new SwipePullFind(false, true));
+                    if (isPull) {
+                        eventBus.post(new SwipePullFind(false, true));
+                    } else {
+                        eventBus.post(new SwipePullFind(false, false));
+                    }
                 } else {
                     eventBus.post(new SwipePullFind(false, false));
                 }
@@ -223,8 +232,9 @@ public class AuditFragment extends Fragment {
                     case 204:
                     case 201:
                     case 200:
-                        llAuditList.setVisibility(View.GONE);
+                        rlOrdersBar.setVisibility(View.GONE);
                         ptrlServicePull.setVisibility(View.VISIBLE);
+                        tvOrdersAbnormal.setVisibility(View.GONE);
                         page = 2;
                         JSONObject data = resultJSON.getJSONObject("data");
                         String datas = data.getString("data");
@@ -235,16 +245,18 @@ public class AuditFragment extends Fragment {
                         }.getType());
                         cartState.setAuditsList(auditsList);
                         if (cartState.getAuditsList().size() <= 0) {
-                            llAuditList.setVisibility(View.VISIBLE);
+                            rlOrdersBar.setVisibility(View.GONE);
                             ptrlServicePull.setVisibility(View.GONE);
+                            tvOrdersAbnormal.setVisibility(View.VISIBLE);
                         }
                         if (auditAccountAdapter != null) {
                             auditAccountAdapter.notifyDataSetChanged();
                         }
                         break;
                     default:
-                        llAuditList.setVisibility(View.VISIBLE);
+                        rlOrdersBar.setVisibility(View.GONE);
                         ptrlServicePull.setVisibility(View.GONE);
+                        tvOrdersAbnormal.setVisibility(View.VISIBLE);
                         eventBus.post(new AccountPullFind(false, true));
                         cartState.initToast(getContext(), msg, true, 0);
                         break;
@@ -254,8 +266,9 @@ public class AuditFragment extends Fragment {
             @Override
             public void onOkHttpError(String error) {
                 Log.e(TAG, "---onOkHttpError---" + error);
-                llAuditList.setVisibility(View.VISIBLE);
+                rlOrdersBar.setVisibility(View.GONE);
                 ptrlServicePull.setVisibility(View.GONE);
+                tvOrdersAbnormal.setVisibility(View.VISIBLE);
                 eventBus.post(new AccountPullFind(false, false));
             }
         });

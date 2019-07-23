@@ -4,14 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
@@ -63,7 +63,7 @@ public class DatilsActivity extends BaseActivity {
     public SwipeRefreshLayout srlDatilsPull = null;
 
     @BindView(R.id.sv_datils_sc)
-    public ScrollView svDatilsSc = null;
+    public NestedScrollView svDatilsSc = null;
 
     //返回
     @BindView(R.id.rl_datils_return)
@@ -140,6 +140,19 @@ public class DatilsActivity extends BaseActivity {
     @BindView(R.id.lvfsv_datils_list)
     public ListViewForScrollView lvfsvDatilsList = null;
 
+    @BindView(R.id.rl_orders_bar)
+    public RelativeLayout rlOrdersBar = null;
+
+    //订单异常
+    @BindView(R.id.tv_orders_abnormal)
+    public TextView tvOrdersAbnormal = null;
+
+    @BindView(R.id.pb_orders_bar)
+    public ProgressBar pbOrdersBar = null;
+
+    @BindView(R.id.rl_datils_pull)
+    public RelativeLayout rlDatilsPull = null;
+
     private int position = 0;
 
     private int type = 0;
@@ -197,17 +210,11 @@ public class DatilsActivity extends BaseActivity {
                 initPull(false);
             }
         });
-
-        svDatilsSc.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
-            @Override
-            public void onScrollChanged() {
-                srlDatilsPull.setEnabled(svDatilsSc.getScrollY() == 0);
-            }
-        });
     }
 
     private void initBack() {
-        initPull(true);
+        srlDatilsPull.setEnabled(false);
+        initPull(false);
     }
 
     private void initPull(boolean isToast) {
@@ -235,6 +242,7 @@ public class DatilsActivity extends BaseActivity {
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse详情---" + response);
                 if (srlDatilsPull != null) {
+                    srlDatilsPull.setEnabled(true);
                     srlDatilsPull.setRefreshing(false);
                 }
                 JSONObject resultJSON = JSON.parseObject(response);
@@ -243,6 +251,9 @@ public class DatilsActivity extends BaseActivity {
                 switch (error_code) {
                     //获取成功
                     case 200:
+                        rlOrdersBar.setVisibility(View.GONE);
+                        rlDatilsPull.setVisibility(View.VISIBLE);
+                        tvOrdersAbnormal.setVisibility(View.GONE);
                         cartState.initToast(context, msg, true, 0);
                         String data = resultJSON.getString("data");
                         datils = gson.fromJson(data, Datils.class);
@@ -298,6 +309,9 @@ public class DatilsActivity extends BaseActivity {
                         }
                         break;
                     default:
+                        rlOrdersBar.setVisibility(View.GONE);
+                        rlDatilsPull.setVisibility(View.GONE);
+                        tvOrdersAbnormal.setVisibility(View.VISIBLE);
                         cartState.initToast(context, msg, true, 0);
                         break;
                 }
@@ -306,6 +320,13 @@ public class DatilsActivity extends BaseActivity {
             @Override
             public void onOkHttpError(String error) {
                 Log.e(TAG, "---onOkHttpError---" + error);
+                rlOrdersBar.setVisibility(View.GONE);
+                rlDatilsPull.setVisibility(View.GONE);
+                tvOrdersAbnormal.setVisibility(View.VISIBLE);
+                if (srlDatilsPull != null) {
+                    srlDatilsPull.setEnabled(true);
+                    srlDatilsPull.setRefreshing(false);
+                }
             }
         });
     }

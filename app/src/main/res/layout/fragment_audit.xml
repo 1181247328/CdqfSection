@@ -5,22 +5,33 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/ll_audit_list"
+    <RelativeLayout
+        android:id="@+id/rl_orders_bar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/service_bak"
-        android:gravity="center">
+        android:visibility="visible">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="暂无~"
-            android:textColor="@color/black"
-            android:textSize="@dimen/sp_14" />
+        <ProgressBar
+            android:id="@+id/pb_orders_bar"
+            style="@android:style/Widget.ProgressBar.Inverse"
+            android:layout_width="@dimen/dp_20"
+            android:layout_height="@dimen/dp_20"
+            android:layout_centerInParent="true"
+            android:background="@android:color/transparent" />
 
-    </LinearLayout>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_orders_abnormal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:text="暂无~"
+        android:textColor="@color/house_eight"
+        android:textSize="@dimen/sp_14"
+        android:visibility="gone" />
 
     <com.jingchen.pulltorefresh.PullToRefreshLayout
         android:id="@+id/ptrl_service_pull"

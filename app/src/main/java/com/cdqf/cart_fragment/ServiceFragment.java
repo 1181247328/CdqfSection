@@ -160,6 +160,9 @@ public class ServiceFragment extends Fragment {
                                 List<Service> serviceList = gson.fromJson(datas, new TypeToken<List<Service>>() {
                                 }.getType());
                                 cartState.getServiceLis().addAll(serviceList);
+                                if (serviceList.size() <= 0) {
+                                    cartState.initToast(getContext(), "没有更多了", true, 0);
+                                }
                                 if (shopAdapter != null) {
                                     shopAdapter.notifyDataSetChanged();
                                 }
@@ -339,22 +342,6 @@ public class ServiceFragment extends Fragment {
         key = "";
         ptrlServicePull.setPullUpEnable(true);
         initPull(s.isToast);
-//        Map<String, Object> params = new HashMap<String, Object>();
-//        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
-//        params.put("", "");
-//        okHttpRequestWrap.post("", false, "请稍候", params, new OnHttpRequest() {
-//            @Override
-//            public void onOkHttpResponse(String response, int id) {
-//                Log.e(TAG, "---onOkHttpResponse---待服务---" + response);
-//                eventBus.post(new SwipePullFind(false, false));
-//            }
-//
-//            @Override
-//            public void onOkHttpError(String error) {
-//                Log.e(TAG, "---onOkHttpError---" + error);
-//                eventBus.post(new SwipePullFind(false, false));
-//            }
-//        });
     }
 
     /**
@@ -405,6 +392,7 @@ public class ServiceFragment extends Fragment {
                     case 204:
                     case 200:
                         String data = resultJSON.getString("data");
+                        page = 1;
                         initPull(true);
                         cartState.initToast(getContext(), "接单成功", true, 0);
                         break;

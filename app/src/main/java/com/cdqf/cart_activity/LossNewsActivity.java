@@ -7,7 +7,9 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -91,9 +93,26 @@ public class LossNewsActivity extends BaseActivity {
     @BindView(R.id.tv_lossnews_out)
     public TextView tvLossnewsOut = null;
 
+    @BindView(R.id.rl_orders_bar)
+    public RelativeLayout rlOrdersBar = null;
+
+    //订单异常
+    @BindView(R.id.tv_orders_abnormal)
+    public TextView tvOrdersAbnormal = null;
+
+    @BindView(R.id.pb_orders_bar)
+    public ProgressBar pbOrdersBar = null;
+
+    @BindView(R.id.rl_loss_context)
+    public RelativeLayout rlLossContext = null;
+
     private int type = 0;
 
     private int state = 0;
+
+    private boolean isName = false;
+
+    private boolean isList = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,7 +150,6 @@ public class LossNewsActivity extends BaseActivity {
     private void initAdapter() {
         lossNewsLeftAdapter = new LossNewsLeftAdapter(context);
         lvLossnewsName.setAdapter(lossNewsLeftAdapter);
-
     }
 
     private void initListener() {
@@ -150,21 +168,73 @@ public class LossNewsActivity extends BaseActivity {
         srlLossnewsPull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                initPull(false);
+            }
+        });
+
+        lvLossnewsName.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                View firstView = view.getChildAt(firstVisibleItem);
+                // 当firstVisibleItem是第0位。如果firstView==null说明列表为空，需要刷新;或者top==0说明已经到达列表顶部, 也需要刷新
+                if (firstVisibleItem == 0 && (firstView == null || firstView.getTop() == view.getPaddingTop())) {
+                    isName = true;
+                    if (isName && isList) {
+                        srlLossnewsPull.setEnabled(true);
+                    } else {
+                        srlLossnewsPull.setEnabled(false);
+                    }
+                } else {
+                    srlLossnewsPull.setEnabled(false);
+                }
+            }
+        });
+
+        lvLossnewsName.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                View firstView = view.getChildAt(firstVisibleItem);
+                // 当firstVisibleItem是第0位。如果firstView==null说明列表为空，需要刷新;或者top==0说明已经到达列表顶部, 也需要刷新
+                if (firstVisibleItem == 0 && (firstView == null || firstView.getTop() == view.getPaddingTop())) {
+                    isList = true;
+                    if (isName && isList) {
+                        srlLossnewsPull.setEnabled(true);
+                    } else {
+                        srlLossnewsPull.setEnabled(false);
+                    }
+                } else {
+                    srlLossnewsPull.setEnabled(false);
+                }
             }
         });
     }
 
     private void initBack() {
-        initPull();
+        srlLossnewsPull.setEnabled(false);
+        initPull(false);
     }
 
-    private void initPull() {
+    private void initPull(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        okHttpRequestWrap.get(CartAddaress.LOSS_NEW + "107", true, "请稍候", params, new OnHttpRequest() {
+        okHttpRequestWrap.get(CartAddaress.LOSS_NEW + "107", isToast, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse新损耗品---" + response);
+                if (srlLossnewsPull != null) {
+                    srlLossnewsPull.setEnabled(true);
+                    srlLossnewsPull.setRefreshing(false);
+                }
                 JSONObject resultJSON = JSON.parseObject(response);
                 int error_code = resultJSON.getInteger("code");
                 String msg = resultJSON.getString("message");
@@ -173,6 +243,9 @@ public class LossNewsActivity extends BaseActivity {
                     case 201:
                     case 204:
                     case 200:
+                        rlOrdersBar.setVisibility(View.GONE);
+                        tvOrdersAbnormal.setVisibility(View.GONE);
+                        rlLossContext.setVisibility(View.VISIBLE);
                         String data = resultJSON.getString("data");
                         cartState.getLossNewsList().clear();
                         List<LossNews> lossNewsList = gson.fromJson(data, new TypeToken<List<LossNews>>() {
@@ -188,6 +261,9 @@ public class LossNewsActivity extends BaseActivity {
                         }
                         break;
                     default:
+                        rlOrdersBar.setVisibility(View.GONE);
+                        tvOrdersAbnormal.setVisibility(View.VISIBLE);
+                        rlLossContext.setVisibility(View.GONE);
                         cartState.initToast(context, msg, true, 0);
                         break;
                 }
@@ -196,6 +272,13 @@ public class LossNewsActivity extends BaseActivity {
             @Override
             public void onOkHttpError(String error) {
                 Log.e(TAG, "---onOkHttpError---" + error);
+                rlOrdersBar.setVisibility(View.GONE);
+                tvOrdersAbnormal.setVisibility(View.VISIBLE);
+                rlLossContext.setVisibility(View.GONE);
+                if (srlLossnewsPull != null) {
+                    srlLossnewsPull.setEnabled(true);
+                    srlLossnewsPull.setRefreshing(false);
+                }
             }
         });
     }
@@ -343,7 +426,7 @@ public class LossNewsActivity extends BaseActivity {
                     case 201:
                     case 204:
                     case 200:
-                        initPull();
+                        initPull(true);
                         break;
                     default:
                         cartState.initToast(context, msg, true, 0);

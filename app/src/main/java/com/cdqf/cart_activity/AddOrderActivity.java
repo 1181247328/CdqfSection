@@ -26,6 +26,7 @@ import com.cdqf.cart_find.AddOrderFind;
 import com.cdqf.cart_find.OtherFind;
 import com.cdqf.cart_find.ServiceOrderFind;
 import com.cdqf.cart_find.ServicePullFind;
+import com.cdqf.cart_find.ShopPositionFind;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;
 import com.cdqf.cart_state.BaseActivity;
@@ -592,6 +593,7 @@ public class AddOrderActivity extends BaseActivity {
                     //获取成功
                     case 200:
                         cartState.initToast(context, msg, true, 0);
+                        eventBus.post(new ShopPositionFind(0));
                         eventBus.post(new ServicePullFind(true));
                         finish();
                         break;

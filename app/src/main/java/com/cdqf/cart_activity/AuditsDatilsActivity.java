@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -123,6 +124,19 @@ public class AuditsDatilsActivity extends BaseActivity {
 
     private int type = 0;
 
+    @BindView(R.id.rl_orders_bar)
+    public RelativeLayout rlOrdersBar = null;
+
+    //订单异常
+    @BindView(R.id.tv_orders_abnormal)
+    public TextView tvOrdersAbnormal = null;
+
+    @BindView(R.id.pb_orders_bar)
+    public ProgressBar pbOrdersBar = null;
+
+    @BindView(R.id.rl_datils_pull)
+    public RelativeLayout rlDatilsPull = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -183,7 +197,8 @@ public class AuditsDatilsActivity extends BaseActivity {
     }
 
     private void initBack() {
-        initPull(true);
+        srlDatilsPull.setEnabled(false);
+        initPull(false);
     }
 
     private void initPull(boolean isToast) {
@@ -213,6 +228,7 @@ public class AuditsDatilsActivity extends BaseActivity {
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse---审核详情---" + response);
                 if (srlDatilsPull != null) {
+                    srlDatilsPull.setEnabled(true);
                     srlDatilsPull.setRefreshing(false);
                 }
                 JSONObject resultJSON = JSON.parseObject(response);
@@ -223,6 +239,9 @@ public class AuditsDatilsActivity extends BaseActivity {
                     case 204:
                     case 201:
                     case 200:
+                        rlOrdersBar.setVisibility(View.GONE);
+                        rlDatilsPull.setVisibility(View.VISIBLE);
+                        tvOrdersAbnormal.setVisibility(View.GONE);
                         String data = resultJSON.getString("data");
                         cartState.initToast(context, msg, true, 0);
                         accountDatils = gson.fromJson(data, AccountDatils.class);
@@ -252,6 +271,9 @@ public class AuditsDatilsActivity extends BaseActivity {
                         }
                         break;
                     default:
+                        rlOrdersBar.setVisibility(View.GONE);
+                        rlDatilsPull.setVisibility(View.GONE);
+                        tvOrdersAbnormal.setVisibility(View.VISIBLE);
                         cartState.initToast(context, msg, true, 0);
                         break;
                 }
@@ -261,8 +283,12 @@ public class AuditsDatilsActivity extends BaseActivity {
             public void onOkHttpError(String error) {
                 Log.e(TAG, "---onOkHttpError---" + error);
                 if (srlDatilsPull != null) {
+                    srlDatilsPull.setEnabled(true);
                     srlDatilsPull.setRefreshing(false);
                 }
+                rlOrdersBar.setVisibility(View.GONE);
+                rlDatilsPull.setVisibility(View.GONE);
+                tvOrdersAbnormal.setVisibility(View.VISIBLE);
                 cartState.initToast(context, error, true, 0);
             }
         });
@@ -283,7 +309,7 @@ public class AuditsDatilsActivity extends BaseActivity {
             //取消
             case R.id.rcrl_datils_cencal:
                 WhyDilogFragment whyDilogFragment = new WhyDilogFragment();
-                whyDilogFragment.setInit(19, "提示", "是否取消当前报销", "否", "是");
+                whyDilogFragment.setInit(19, "提示", "是否拒绝当前报销", "否", "是");
                 whyDilogFragment.show(getSupportFragmentManager(), "取消报销");
                 break;
             //同意

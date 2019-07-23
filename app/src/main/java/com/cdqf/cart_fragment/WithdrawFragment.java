@@ -10,8 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -58,8 +60,15 @@ public class WithdrawFragment extends Fragment {
 
     private View view = null;
 
-    @BindView(R.id.ll_audit_list)
-    public LinearLayout llAuditList = null;
+    @BindView(R.id.rl_orders_bar)
+    public RelativeLayout rlOrdersBar = null;
+
+    //订单异常
+    @BindView(R.id.tv_orders_abnormal)
+    public TextView tvOrdersAbnormal = null;
+
+    @BindView(R.id.pb_orders_bar)
+    public ProgressBar pbOrdersBar = null;
 
     @BindView(R.id.ptrl_service_pull)
     public PullToRefreshLayout ptrlServicePull = null;
@@ -69,6 +78,8 @@ public class WithdrawFragment extends Fragment {
     private WithdrawAccountAdapter withdrawAccountAdapter = null;
 
     private int page = 1;
+
+    private boolean isPull = false;
 
     @Nullable
     @Override
@@ -138,8 +149,6 @@ public class WithdrawFragment extends Fragment {
                             case 201:
                             case 200:
                                 page++;
-                                llAuditList.setVisibility(View.GONE);
-                                ptrlServicePull.setVisibility(View.VISIBLE);
                                 pullToRefreshLayout.refreshFinish(PullToRefreshLayout.SUCCEED);
                                 JSONObject data = resultJSON.getJSONObject("data");
                                 String datas = data.getString("data");
@@ -154,8 +163,6 @@ public class WithdrawFragment extends Fragment {
                                 }
                                 break;
                             default:
-                                llAuditList.setVisibility(View.VISIBLE);
-                                ptrlServicePull.setVisibility(View.GONE);
                                 pullToRefreshLayout.refreshFinish(PullToRefreshLayout.FAIL);
                                 eventBus.post(new AccountPullFind(false, true));
                                 cartState.initToast(getContext(), msg, true, 0);
@@ -165,8 +172,6 @@ public class WithdrawFragment extends Fragment {
 
                     @Override
                     public void onOkHttpError(String error) {
-                        llAuditList.setVisibility(View.VISIBLE);
-                        ptrlServicePull.setVisibility(View.GONE);
                         pullToRefreshLayout.refreshFinish(PullToRefreshLayout.FAIL);
                         Log.e(TAG, "---onOkHttpError---" + error);
                         eventBus.post(new AccountPullFind(false, false));
@@ -185,7 +190,11 @@ public class WithdrawFragment extends Fragment {
                 View firstView = view.getChildAt(firstVisibleItem);
                 // 当firstVisibleItem是第0位。如果firstView==null说明列表为空，需要刷新;或者top==0说明已经到达列表顶部, 也需要刷新
                 if (firstVisibleItem == 0 && (firstView == null || firstView.getTop() == view.getPaddingTop())) {
-                    eventBus.post(new SwipePullFind(false, true));
+                    if(isPull) {
+                        eventBus.post(new SwipePullFind(false, true));
+                    } else {
+                        eventBus.post(new SwipePullFind(false, false));
+                    }
                 } else {
                     eventBus.post(new SwipePullFind(false, false));
                 }
@@ -223,8 +232,9 @@ public class WithdrawFragment extends Fragment {
                     case 204:
                     case 201:
                     case 200:
-                        llAuditList.setVisibility(View.GONE);
+                        rlOrdersBar.setVisibility(View.GONE);
                         ptrlServicePull.setVisibility(View.VISIBLE);
+                        tvOrdersAbnormal.setVisibility(View.GONE);
                         page = 2;
                         JSONObject data = resultJSON.getJSONObject("data");
                         String datas = data.getString("data");
@@ -235,16 +245,18 @@ public class WithdrawFragment extends Fragment {
                         }.getType());
                         cartState.setWithdrawList(withdrawList);
                         if (cartState.getWithdrawList().size() <= 0) {
-                            llAuditList.setVisibility(View.VISIBLE);
+                            rlOrdersBar.setVisibility(View.GONE);
                             ptrlServicePull.setVisibility(View.GONE);
+                            tvOrdersAbnormal.setVisibility(View.VISIBLE);;
                         }
                         if (withdrawAccountAdapter != null) {
                             withdrawAccountAdapter.notifyDataSetChanged();
                         }
                         break;
                     default:
-                        llAuditList.setVisibility(View.VISIBLE);
+                        rlOrdersBar.setVisibility(View.GONE);
                         ptrlServicePull.setVisibility(View.GONE);
+                        tvOrdersAbnormal.setVisibility(View.VISIBLE);
                         eventBus.post(new AccountPullFind(false, true));
                         cartState.initToast(getContext(), msg, true, 0);
                         break;
@@ -253,8 +265,9 @@ public class WithdrawFragment extends Fragment {
 
             @Override
             public void onOkHttpError(String error) {
-                llAuditList.setVisibility(View.VISIBLE);
+                rlOrdersBar.setVisibility(View.GONE);
                 ptrlServicePull.setVisibility(View.GONE);
+                tvOrdersAbnormal.setVisibility(View.VISIBLE);
                 Log.e(TAG, "---onOkHttpError---" + error);
                 eventBus.post(new AccountPullFind(false, false));
             }
