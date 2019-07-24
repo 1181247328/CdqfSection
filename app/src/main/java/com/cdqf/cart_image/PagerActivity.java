@@ -50,6 +50,8 @@ public class PagerActivity extends Activity {
 
     private RelativeLayout rlPageReturn = null;
 
+    private int type = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +84,7 @@ public class PagerActivity extends Activity {
         Intent intent = getIntent();
         pageList = (List<String>) intent.getSerializableExtra("pageList");
         position = intent.getIntExtra("position", 0);
+        type = intent.getIntExtra("type", 0);
         viewCache = new LinkedList<PinchImageView>();
         originOptions = new DisplayImageOptions.Builder().build();
     }
@@ -171,7 +174,13 @@ public class PagerActivity extends Activity {
                 piv = new PinchImageView(PagerActivity.this);
             }
 //                ImageSource image = Global.getTestImage(position);
-            Global.getImageLoader(getApplicationContext()).displayImage("file://" + pageList.get(position), piv, cartState.getImageLoaderOptions(R.mipmap.not_loaded, R.mipmap.not_loaded, R.mipmap.not_loaded));
+            String image = "";
+            if (type == 1) {
+                image = "file://" + pageList.get(position);
+            } else if (type == 2) {
+                image = pageList.get(position);
+            }
+            Global.getImageLoader(getApplicationContext()).displayImage(image, piv, cartState.getImageLoaderOptions(R.mipmap.not_loaded, R.mipmap.not_loaded, R.mipmap.not_loaded));
             container.addView(piv);
             return piv;
         }
@@ -187,7 +196,13 @@ public class PagerActivity extends Activity {
         public void setPrimaryItem(ViewGroup container, int position, Object object) {
             PinchImageView piv = (PinchImageView) object;
 //                ImageSource image = Global.getTestImage(position);
-            Global.getImageLoader(getApplicationContext()).displayImage("file://" + pageList.get(position), piv, originOptions);
+            String image = "";
+            if (type == 1) {
+                image = "file://" + pageList.get(position);
+            } else if (type == 2) {
+                image = pageList.get(position);
+            }
+            Global.getImageLoader(getApplicationContext()).displayImage(image, piv, originOptions);
         }
     }
 }

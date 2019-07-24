@@ -1,23 +1,20 @@
 package com.cdqf.cart_class;
 
 public class Notice {
-    private String id;
+    private String admin_name;
     private String content;
-    private String shopid;
-    private String noticenum;
-    private String shopownerid;
-    private String see;
-    private String type;
-    private String addtime;
-    private String updtime;
-    private String shopowenrname;
+    private String created_at;
+    private int id;
+    private int is_red;
+    private int send_admin_id;
+    private int shop_id;
 
-    public String getId() {
-        return id;
+    public String getAdmin_name() {
+        return admin_name;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setAdmin_name(String admin_name) {
+        this.admin_name = admin_name;
     }
 
     public String getContent() {
@@ -28,67 +25,43 @@ public class Notice {
         this.content = content;
     }
 
-    public String getShopid() {
-        return shopid;
+    public String getCreated_at() {
+        return created_at;
     }
 
-    public void setShopid(String shopid) {
-        this.shopid = shopid;
+    public void setCreated_at(String created_at) {
+        this.created_at = created_at;
     }
 
-    public String getNoticenum() {
-        return noticenum;
+    public int getId() {
+        return id;
     }
 
-    public void setNoticenum(String noticenum) {
-        this.noticenum = noticenum;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public String getShopownerid() {
-        return shopownerid;
+    public int getIs_red() {
+        return is_red;
     }
 
-    public void setShopownerid(String shopownerid) {
-        this.shopownerid = shopownerid;
+    public void setIs_red(int is_red) {
+        this.is_red = is_red;
     }
 
-    public String getSee() {
-        return see;
+    public int getSend_admin_id() {
+        return send_admin_id;
     }
 
-    public void setSee(String see) {
-        this.see = see;
+    public void setSend_admin_id(int send_admin_id) {
+        this.send_admin_id = send_admin_id;
     }
 
-    public String getType() {
-        return type;
+    public int getShop_id() {
+        return shop_id;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getAddtime() {
-        return addtime;
-    }
-
-    public void setAddtime(String addtime) {
-        this.addtime = addtime;
-    }
-
-    public String getUpdtime() {
-        return updtime;
-    }
-
-    public void setUpdtime(String updtime) {
-        this.updtime = updtime;
-    }
-
-    public String getShopowenrname() {
-        return shopowenrname;
-    }
-
-    public void setShopowenrname(String shopowenrname) {
-        this.shopowenrname = shopowenrname;
+    public void setShop_id(int shop_id) {
+        this.shop_id = shop_id;
     }
 }

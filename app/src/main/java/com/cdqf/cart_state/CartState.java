@@ -261,6 +261,10 @@ public class CartState {
     //职位
     private List<PositionEmployees> positionEmployeesList = new CopyOnWriteArrayList<>();
 
+    //报销详情图片
+    private List<String> imageList = new CopyOnWriteArrayList<>();
+
+
     /**
      * 提示信息
      *
@@ -1288,5 +1292,13 @@ public class CartState {
 
     public void setPositionEmployeesList(List<PositionEmployees> positionEmployeesList) {
         this.positionEmployeesList = positionEmployeesList;
+    }
+
+    public List<String> getImageList() {
+        return imageList;
+    }
+
+    public void setImageList(List<String> imageList) {
+        this.imageList = imageList;
     }
 }

@@ -110,14 +110,6 @@ public class ReleaseActivity extends BaseActivity {
 
     }
 
-    //服务订单
-    private String shopService(String content, String staffid, String type) {
-        String result = null;
-        result = CartAddaress.ADDRESS + "/?s=Notice.stenotice&content=" + content + "&staffid=" + staffid + "&type=" + type;
-        Log.e(TAG, "---店长发布通知---" + result);
-        return result;
-    }
-
     private void initIntent(Class<?> activity) {
         Intent intent = new Intent(context, activity);
         startActivity(intent);
@@ -207,20 +199,24 @@ public class ReleaseActivity extends BaseActivity {
     @Subscribe
     public void onEventMainThread(ReleaseFind r) {
         Map<String, Object> params = new HashMap<String, Object>();
+        params.put("staff_id", cartState.getUser().getId());
+        params.put("shop_id", cartState.getUser().getShopid());
+        params.put("content", content);
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        String shopService = shopService(content, cartState.getUser().getId()+"", "1");
-        okHttpRequestWrap.post(shopService, true, "发布中", params, new OnHttpRequest() {
+        okHttpRequestWrap.postString(CartAddaress.RELEASE_NOTICE, true, "发布中", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
-                Log.e(TAG, "---onOkHttpResponse发布通知---" + response);
+                Log.e(TAG, "---onOkHttpResponse---发布通知---" + response);
                 JSONObject resultJSON = JSON.parseObject(response);
-                int error_code = resultJSON.getInteger("ret");
-                String msg = resultJSON.getString("msg");
+                int error_code = resultJSON.getInteger("code");
+                String msg = resultJSON.getString("message");
                 switch (error_code) {
                     //获取成功
+                    case 204:
+                    case 201:
                     case 200:
                         String data = resultJSON.getString("data");
-                        cartState.initToast(context, data, true, 0);
+                        cartState.initToast(context, "通知发布成功", true, 0);
                         eventBus.post(new ReleasePullFind());
                         finish();
                         break;
@@ -233,6 +229,7 @@ public class ReleaseActivity extends BaseActivity {
             @Override
             public void onOkHttpError(String error) {
                 Log.e(TAG, "---onOkHttpError---" + error);
+                cartState.initToast(context, error, true, 0);
             }
         });
     }

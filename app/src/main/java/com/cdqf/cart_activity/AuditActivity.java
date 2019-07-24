@@ -151,7 +151,6 @@ public class AuditActivity extends BaseActivity {
                         eventBus.post(new WithdrawPullFind());
                         break;
                 }
-                srlAuditPull.setRefreshing(false);
             }
         });
         vpAuditScreen.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {

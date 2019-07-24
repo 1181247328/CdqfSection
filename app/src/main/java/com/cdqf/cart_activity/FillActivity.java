@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -51,6 +54,7 @@ import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.picture.lib.tools.PictureFileUtils;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -188,7 +192,7 @@ public class FillActivity extends BaseActivity {
     private void initBack() {
         //店铺
         fillContextAdapter.setShopName(cartState.getUser().getShopName());
-        shopId = Integer.parseInt(cartState.getUser().getShopid()+"");
+        shopId = Integer.parseInt(cartState.getUser().getShopid() + "");
         //类别
         fillId = 1;
         fillContextAdapter.setType("耗材");
@@ -239,6 +243,7 @@ public class FillActivity extends BaseActivity {
     private void initIntent(Class<?> activity, int position) {
         Intent intent = new Intent(context, activity);
         intent.putExtra("position", position);
+        intent.putExtra("type", 1);
         intent.putExtra("pageList", (Serializable) cartState.getImagePathsList());
         startActivity(intent);
     }
@@ -257,6 +262,15 @@ public class FillActivity extends BaseActivity {
                 .forResult(PictureConfig.CHOOSE_REQUEST);
     }
 
+    public static String bitmapToBase64(Bitmap bitmap) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 40, bos);//参数100表示不压缩
+        byte[] bytes = bos.toByteArray();
+        //转换来的base64码需要加前缀，必须是NO_WRAP参数，表示没有空格。
+        return "data:image/png;base64," + Base64.encodeToString(bytes, Base64.NO_WRAP);
+        //转换来的base64码不需要需要加前缀，必须是NO_WRAP参数，表示没有空格。
+        //return "data:image/jpeg;base64," + Base64.encodeToString(bytes, Base64.NO_WRAP);
+    }
 
     @OnClick({R.id.rl_fill_return, R.id.ll_fill_add, R.id.tv_fill_account})
     public void onClick(View v) {
@@ -539,7 +553,12 @@ public class FillActivity extends BaseActivity {
         //备注说明
         params.put("describe", describe);
         //图片
-//        params.put("img", cartState.getImagePathsList());
+        String[] imageBase64 = new String[cartState.getImagePathsList().size()];
+        for (int i = 0; i < cartState.getImagePathsList().size(); i++) {
+            Bitmap bitmap = BitmapFactory.decodeFile(cartState.getImagePathsList().get(i));
+            imageBase64[i] = bitmapToBase64(bitmap);
+        }
+        params.put("img", imageBase64);
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
         okHttpRequestWrap.postString(CartAddaress.FILL, true, "请稍候", params, new OnHttpRequest() {
             @Override

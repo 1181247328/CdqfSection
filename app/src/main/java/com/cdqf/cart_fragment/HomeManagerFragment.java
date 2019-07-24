@@ -96,13 +96,23 @@ public class HomeManagerFragment extends Fragment {
 
     private HomeManagerAdapter homeManagerAdapter = null;
 
-    //数量
+    //今日下单
+    @BindView(R.id.tv_homemanager_order)
+    public TextView tvHomemanagerOrder = null;
+
+    //今日营业额
+    @BindView(R.id.tv_homemanager_ordermoney)
+    public TextView tvHomemanagerOrdermoney = null;
+
+    //今日服务
     @BindView(R.id.tv_homemanager_number)
     public TextView tvHomemanagerNumber = null;
 
-    //营业额
+    //当日营业
     @BindView(R.id.tv_homemanager_money)
     public TextView tvHomemanagerMoney = null;
+
+    /**********************/
 
     @BindView(R.id.rl_orders_bar)
     public RelativeLayout rlOrdersBar = null;
@@ -117,6 +127,12 @@ public class HomeManagerFragment extends Fragment {
     //滑动
     @BindView(R.id.nsv_home_scroll)
     public NestedScrollView nsvHomeScroll = null;
+
+    private int bar = 0;
+
+    private int pull = 0;
+
+    private boolean isPull = false;
 
     @Nullable
     @Override
@@ -146,7 +162,9 @@ public class HomeManagerFragment extends Fragment {
         srlHomePull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                isPull = true;
                 initShopPull();
+//                initShopDatils(false);
             }
         });
         mgvHomeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -203,11 +221,7 @@ public class HomeManagerFragment extends Fragment {
     private void initBack() {
         srlHomePull.setEnabled(false);
         initShopPull();
-    }
-
-    private void initIntent(Class<?> activity) {
-        Intent intent = new Intent(getContext(), activity);
-        startActivity(intent);
+//        initShopDatils(false);
     }
 
     private void initShopPull() {
@@ -219,10 +233,15 @@ public class HomeManagerFragment extends Fragment {
             @Override
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse---主页---(店员)---" + response);
-                if (srlHomePull != null) {
-                    srlHomePull.setEnabled(true);
-                    srlHomePull.setRefreshing(false);
-                }
+//                pull++;
+//                if (srlHomePull != null) {
+//                    if (pull == 2) {
+//                        pull = 0;
+//                    srlHomePull.setEnabled(true);
+//                    srlHomePull.setRefreshing(false);
+//                    }
+//            }
+
                 JSONObject resultJSON = JSON.parseObject(response);
                 int error_code = resultJSON.getInteger("code");
                 String msg = resultJSON.getString("message");
@@ -231,9 +250,19 @@ public class HomeManagerFragment extends Fragment {
                     case 204:
                     case 201:
                     case 200:
-                        rlOrdersBar.setVisibility(View.GONE);
-                        tvOrdersAbnormal.setVisibility(View.GONE);
-                        nsvHomeScroll.setVisibility(View.VISIBLE);
+//                        if (!isPull) {
+//                            bar++;
+//                            if (bar <= 1) {
+//                                rlOrdersBar.setVisibility(View.VISIBLE);
+//                                tvOrdersAbnormal.setVisibility(View.GONE);
+//                                nsvHomeScroll.setVisibility(View.GONE);
+//                            } else {
+//                                bar = 0;
+//                                rlOrdersBar.setVisibility(View.GONE);
+//                                tvOrdersAbnormal.setVisibility(View.GONE);
+//                                nsvHomeScroll.setVisibility(View.VISIBLE);
+//                            }
+//                        }
                         String data = resultJSON.getString("data");
                         cartState.initToast(getContext(), msg, true, 0);
                         cartState.getHomeList().clear();
@@ -257,8 +286,11 @@ public class HomeManagerFragment extends Fragment {
                             cartState.getUser().setShopid(homeList.get(0).getId());
                             cartState.getUser().setShopName(homeList.get(0).getShop_new_name());
                         }
+
+                        initShopDatils(false);
                         break;
                     default:
+//                        bar = 0;
                         rlOrdersBar.setVisibility(View.GONE);
                         tvOrdersAbnormal.setVisibility(View.VISIBLE);
                         nsvHomeScroll.setVisibility(View.GONE);
@@ -270,13 +302,99 @@ public class HomeManagerFragment extends Fragment {
             @Override
             public void onOkHttpError(String error) {
                 Log.e(TAG, "---onOkHttpError---" + error);
+//                pull++;
+//                bar = 0;
                 if (srlHomePull != null) {
+//                    if (pull == 2) {
+//                        pull = 0;
                     srlHomePull.setEnabled(true);
                     srlHomePull.setRefreshing(false);
                 }
+//                }
                 rlOrdersBar.setVisibility(View.GONE);
                 tvOrdersAbnormal.setVisibility(View.VISIBLE);
                 nsvHomeScroll.setVisibility(View.GONE);
+                cartState.initToast(getContext(), error, true, 0);
+            }
+        });
+    }
+
+    /**
+     * 店铺情况
+     */
+    private void initShopDatils(boolean isToast) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
+        Log.e(TAG, "---店铺情况---" + CartAddaress.SHOP_SITUATION + cartState.getUser().getShopid());
+        okHttpRequestWrap.get(CartAddaress.SHOP_SITUATION + cartState.getUser().getShopid(), isToast, "请稍候", params, new OnHttpRequest() {
+            @Override
+            public void onOkHttpResponse(String response, int id) {
+                Log.e(TAG, "---onOkHttpResponse---店铺情况---" + response);
+//                pull++;
+                if (srlHomePull != null) {
+//                    if (pull == 2) {
+//                        pull = 0;
+                    srlHomePull.setEnabled(true);
+                    srlHomePull.setRefreshing(false);
+//                    }
+                }
+                JSONObject resultJSON = JSON.parseObject(response);
+                int error_code = resultJSON.getInteger("code");
+                String msg = resultJSON.getString("message");
+                switch (error_code) {
+                    //获取成功
+                    case 204:
+                    case 201:
+                    case 200:
+//                        if (!isPull) {
+//                            bar++;
+//                            if (bar <= 1) {
+//                                rlOrdersBar.setVisibility(View.VISIBLE);
+//                                tvOrdersAbnormal.setVisibility(View.GONE);
+//                                nsvHomeScroll.setVisibility(View.GONE);
+//                            } else {
+//                                bar = 0;
+                        rlOrdersBar.setVisibility(View.GONE);
+                        tvOrdersAbnormal.setVisibility(View.GONE);
+                        nsvHomeScroll.setVisibility(View.VISIBLE);
+//                            }
+//                        }
+                        cartState.initToast(getContext(), msg, true, 0);
+                        JSONObject data = resultJSON.getJSONObject("data");
+                        //今日下单
+                        tvHomemanagerOrder.setText(data.getInteger("order_num") + "次");
+                        //今日营业额
+                        tvHomemanagerOrdermoney.setText(data.getInteger("order_price") + "元");
+                        //今日服务
+                        tvHomemanagerNumber.setText(data.getInteger("service_num") + "辆");
+                        //当日营业
+                        tvHomemanagerMoney.setText(data.getInteger("service_price") + "元");
+                        break;
+                    default:
+//                        bar = 0;
+                        rlOrdersBar.setVisibility(View.GONE);
+                        tvOrdersAbnormal.setVisibility(View.GONE);
+                        tvOrdersAbnormal.setVisibility(View.VISIBLE);
+                        cartState.initToast(getContext(), msg, true, 0);
+                        break;
+                }
+            }
+
+            @Override
+            public void onOkHttpError(String error) {
+                Log.e(TAG, "---onOkHttpError---" + error);
+//                pull++;
+//                bar = 0;
+                if (srlHomePull != null) {
+//                    if (pull == 2) {
+//                        pull = 0;
+                    srlHomePull.setEnabled(true);
+                    srlHomePull.setRefreshing(false);
+                }
+//                }
+                rlOrdersBar.setVisibility(View.GONE);
+                tvOrdersAbnormal.setVisibility(View.GONE);
+                tvOrdersAbnormal.setVisibility(View.VISIBLE);
                 cartState.initToast(getContext(), error, true, 0);
             }
         });
@@ -306,6 +424,7 @@ public class HomeManagerFragment extends Fragment {
                     case 200:
                         String data = resultJSON.getString("data");
                         cartState.initToast(getContext(), msg, true, 0);
+                        initShopDatils(true);
                         break;
                     default:
                         cartState.initToast(getContext(), msg, true, 0);
@@ -319,6 +438,11 @@ public class HomeManagerFragment extends Fragment {
                 cartState.initToast(getContext(), error, true, 0);
             }
         });
+    }
+
+    private void initIntent(Class<?> activity) {
+        Intent intent = new Intent(getContext(), activity);
+        startActivity(intent);
     }
 
     @OnClick({R.id.ll_homemanager_shop, R.id.tv_homemanager_scan, R.id.rcrl_home_situation})
@@ -377,7 +501,7 @@ public class HomeManagerFragment extends Fragment {
             case R.id.tv_homemanager_scan:
                 eventBus.post(new ScanFind());
                 break;
-            //
+            //营业状态
             case R.id.rcrl_home_situation:
                 initIntent(BusinessActivity.class);
                 break;

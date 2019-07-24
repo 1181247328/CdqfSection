@@ -99,6 +99,24 @@ public class CartAddaress {
     //添加员工
     public static final String ADD_ROLL = ADDRESS + "/staff/createStaff";
 
+    //通知
+    public static String STAFF_NOTICE = ADDRESS + "/staff/";
+
+    //发布通知
+    public static String RELEASE_NOTICE = ADDRESS + "/staff/createNotice";
+
+    //任务
+    public static String OTHER = ADDRESS + "/staff/task/";
+
+    //工资
+    public static String POSTIION = ADDRESS + "/staff/confirmTask";
+
+    //店铺情况
+    public static String SHOP_SITUATION = ADDRESS + "/staff/shopSituation/";
+
+    //营业状态
+    public static String SHOP_DATILS = ADDRESS + "/staff/shopSituationInfo/";
+
     /****************************************************/
 
     //店总
@@ -167,9 +185,6 @@ public class CartAddaress {
 
     //员工服务
     public static String STAFF_SHOP = ADDRESS + "/?s=order.staff&shopid=SHOPID";
-
-    //员工通知
-    public static String STAFF_NOTICE = ADDRESS + "/?s=Notice.getnotice&staffid=STAFFID&shopid=SHOPID";
 
 
     /******通用******/

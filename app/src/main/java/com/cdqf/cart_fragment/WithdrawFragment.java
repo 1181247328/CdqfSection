@@ -209,7 +209,7 @@ public class WithdrawFragment extends Fragment {
 
     private void initBack() {
         ptrlServicePull.setPullDownEnable(false);
-        initPull(true);
+        initPull(false);
     }
 
     private void initPull(boolean isToast) {

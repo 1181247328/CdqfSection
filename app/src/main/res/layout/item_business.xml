@@ -11,10 +11,12 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:background="@android:color/transparent"
+        android:ellipsize="middle"
         android:gravity="center"
         android:paddingTop="@dimen/dp_8"
         android:paddingBottom="@dimen/dp_8"
+        android:singleLine="true"
         android:text="车牌"
-        android:textSize="@dimen/sp_14" />
+        android:textSize="@dimen/sp_12" />
 
 </LinearLayout>

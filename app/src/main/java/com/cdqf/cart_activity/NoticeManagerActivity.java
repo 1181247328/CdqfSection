@@ -137,7 +137,7 @@ public class NoticeManagerActivity extends BaseActivity {
                 View firstView = view.getChildAt(firstVisibleItem);
                 // 当firstVisibleItem是第0位。如果firstView==null说明列表为空，需要刷新;或者top==0说明已经到达列表顶部, 也需要刷新
                 if (firstVisibleItem == 0 && (firstView == null || firstView.getTop() == view.getPaddingTop())) {
-                    if(isPull) {
+                    if (isPull) {
                         srlNoticePull.setEnabled(true);
                     } else {
                         srlNoticePull.setEnabled(false);
@@ -164,8 +164,7 @@ public class NoticeManagerActivity extends BaseActivity {
     private void initPull(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        String notice = notice(cartState.getUser().getId() + "", cartState.getUser().getShopid() + "");
-        okHttpRequestWrap.post(notice, isToast, "请稍候", params, new OnHttpRequest() {
+        okHttpRequestWrap.get(CartAddaress.STAFF_NOTICE + cartState.getUser().getId() + "/notice/" + cartState.getUser().getShopid(), isToast, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse通知---" + response);
@@ -175,10 +174,12 @@ public class NoticeManagerActivity extends BaseActivity {
                     srlNoticePull.setRefreshing(false);
                 }
                 JSONObject resultJSON = JSON.parseObject(response);
-                int error_code = resultJSON.getInteger("ret");
-                String msg = resultJSON.getString("msg");
+                int error_code = resultJSON.getInteger("code");
+                String msg = resultJSON.getString("message");
                 switch (error_code) {
                     //获取成功
+                    case 204:
+                    case 201:
                     case 200:
                         rlOrdersBar.setVisibility(View.GONE);
                         lvNoticeList.setVisibility(View.VISIBLE);
@@ -195,6 +196,11 @@ public class NoticeManagerActivity extends BaseActivity {
                         List<Notice> noticeList = gson.fromJson(data, new TypeToken<List<Notice>>() {
                         }.getType());
                         cartState.setNoticeList(noticeList);
+                        if (cartState.getNoticeList().size() <= 0) {
+                            rlOrdersBar.setVisibility(View.GONE);
+                            lvNoticeList.setVisibility(View.GONE);
+                            tvNoticemanagerNo.setVisibility(View.VISIBLE);
+                        }
                         if (noticeAdapter != null) {
                             noticeAdapter.notifyDataSetChanged();
                         }
@@ -223,19 +229,9 @@ public class NoticeManagerActivity extends BaseActivity {
         });
     }
 
-    private String notice(String staffid, String shopid) {
-        String result = null;
-        CartAddaress.SHOP_NOTICE = CartAddaress.SHOP_NOTICE.replace("STAFFID", cartState.urlEnodeUTF8(staffid));
-        CartAddaress.SHOP_NOTICE = CartAddaress.SHOP_NOTICE.replace("SHOPID", cartState.urlEnodeUTF8(shopid));
-        result = CartAddaress.SHOP_NOTICE;
-        Log.e(TAG, "---通知---" + result);
-        return result;
-    }
-
     private void initIntent(Class<?> activity) {
         Intent intent = new Intent(context, activity);
         startActivity(intent);
-//        finish();
     }
 
     @OnClick({R.id.rl_notice_return, R.id.tv_noticemanager_release})

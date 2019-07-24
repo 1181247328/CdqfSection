@@ -209,7 +209,7 @@ public class AuditFragment extends Fragment {
 
     private void initBack() {
         ptrlServicePull.setPullDownEnable(false);
-        initPull(true);
+        initPull(false);
     }
 
     private void initPull(boolean isToast) {
@@ -327,7 +327,7 @@ public class AuditFragment extends Fragment {
     @Subscribe
     public void onEventMainThread(AuditPullFind s) {
         page = 1;
-        initPull(false);
+        initPull(true);
 //        Map<String, Object> params = new HashMap<String, Object>();
 //        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
 //        params.put("", "");

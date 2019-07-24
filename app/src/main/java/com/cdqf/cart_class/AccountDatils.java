@@ -13,7 +13,7 @@ public class AccountDatils {
     private int shop_id;
     private String login_account;
     private String shopname;
-    private List<String> img = new CopyOnWriteArrayList<>();
+    private List<Img> img = new CopyOnWriteArrayList<>();
     private String shop_new_name;
 //    private List<String> examines_img;
 
@@ -98,11 +98,23 @@ public class AccountDatils {
         this.shop_new_name = shop_new_name;
     }
 
-    public List<String> getImg() {
+    public List<Img> getImg() {
         return img;
     }
 
-    public void setImg(List<String> img) {
+    public void setImg(List<Img> img) {
         this.img = img;
+    }
+
+    public class Img {
+        private String image;
+
+        public String getImage() {
+            return image;
+        }
+
+        public void setImage(String image) {
+            this.image = image;
+        }
     }
 }

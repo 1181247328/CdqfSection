@@ -33,7 +33,7 @@ public class AccountDatilsImageAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 0;
+        return cartState.getImageList().size();
     }
 
     @Override
@@ -56,6 +56,9 @@ public class AccountDatilsImageAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+        imageLoader.displayImage(cartState.getImageList().get(position),
+                viewHolder.ivFillItemImage,
+                cartState.getImageLoaderOptions(R.mipmap.not_loaded, R.mipmap.not_loaded, R.mipmap.not_loaded));
         return convertView;
     }
 

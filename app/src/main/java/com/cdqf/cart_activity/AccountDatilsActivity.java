@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -19,6 +20,7 @@ import com.cdqf.cart_adapter.AccountDatilsContextAdapter;
 import com.cdqf.cart_adapter.AccountDatilsImageAdapter;
 import com.cdqf.cart_class.AccountDatils;
 import com.cdqf.cart_find.FillAddImageFind;
+import com.cdqf.cart_image.PagerActivity;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;
 import com.cdqf.cart_state.BaseActivity;
@@ -30,6 +32,7 @@ import com.cdqf.cart_view.MyGridView;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -98,6 +101,19 @@ public class AccountDatilsActivity extends BaseActivity {
 
     private int type = 0;
 
+    @BindView(R.id.rl_orders_bar)
+    public RelativeLayout rlOrdersBar = null;
+
+    //订单异常
+    @BindView(R.id.tv_orders_abnormal)
+    public TextView tvOrdersAbnormal = null;
+
+    @BindView(R.id.pb_orders_bar)
+    public ProgressBar pbOrdersBar = null;
+
+    @BindView(R.id.rl_datils_pull)
+    public RelativeLayout rlDatilsPull = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -152,13 +168,14 @@ public class AccountDatilsActivity extends BaseActivity {
         mgvDatalsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                initIntent(PagerActivity.class, position);
             }
         });
     }
 
     private void initBack() {
-        initPull(true);
+        srlDatilsPull.setEnabled(false);
+        initPull(false);
     }
 
     private void initPull(boolean isToast) {
@@ -191,6 +208,7 @@ public class AccountDatilsActivity extends BaseActivity {
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse---报销详情---" + response);
                 if (srlDatilsPull != null) {
+                    srlDatilsPull.setEnabled(true);
                     srlDatilsPull.setRefreshing(false);
                 }
                 JSONObject resultJSON = JSON.parseObject(response);
@@ -201,6 +219,9 @@ public class AccountDatilsActivity extends BaseActivity {
                     case 204:
                     case 201:
                     case 200:
+                        rlOrdersBar.setVisibility(View.GONE);
+                        rlDatilsPull.setVisibility(View.VISIBLE);
+                        tvOrdersAbnormal.setVisibility(View.GONE);
                         String data = resultJSON.getString("data");
                         cartState.initToast(context, msg, true, 0);
                         AccountDatils accountDatils = gson.fromJson(data, AccountDatils.class);
@@ -224,15 +245,22 @@ public class AccountDatilsActivity extends BaseActivity {
                                 break;
                         }
                         tvDatilsItemState.setText(states);
+                        cartState.getImageList().clear();
                         if (accountDatils.getImg().size() <= 0) {
                             tvDatilsCredentials.setVisibility(View.VISIBLE);
                             mgvDatalsList.setVisibility(View.GONE);
                         } else {
                             tvDatilsCredentials.setVisibility(View.GONE);
                             mgvDatalsList.setVisibility(View.VISIBLE);
+                            for (int i = 0; i < accountDatils.getImg().size(); i++) {
+                                cartState.getImageList().add(accountDatils.getImg().get(i).getImage());
+                            }
                         }
                         break;
                     default:
+                        rlOrdersBar.setVisibility(View.GONE);
+                        rlDatilsPull.setVisibility(View.GONE);
+                        tvOrdersAbnormal.setVisibility(View.VISIBLE);
                         cartState.initToast(context, msg, true, 0);
                         break;
                 }
@@ -241,6 +269,13 @@ public class AccountDatilsActivity extends BaseActivity {
             @Override
             public void onOkHttpError(String error) {
                 Log.e(TAG, "---onOkHttpError---" + error);
+                if (srlDatilsPull != null) {
+                    srlDatilsPull.setEnabled(true);
+                    srlDatilsPull.setRefreshing(false);
+                }
+                rlOrdersBar.setVisibility(View.GONE);
+                rlDatilsPull.setVisibility(View.GONE);
+                tvOrdersAbnormal.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -248,6 +283,14 @@ public class AccountDatilsActivity extends BaseActivity {
 
     private void initIntent(Class<?> activity) {
         Intent intent = new Intent(context, activity);
+        startActivity(intent);
+    }
+
+    private void initIntent(Class<?> activity, int position) {
+        Intent intent = new Intent(context, activity);
+        intent.putExtra("position", position);
+        intent.putExtra("type", 2);
+        intent.putExtra("pageList", (Serializable) cartState.getImageList());
         startActivity(intent);
     }
 

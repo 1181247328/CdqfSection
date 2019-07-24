@@ -99,7 +99,7 @@ public class OKHttpRequestWrap {
     }
 
     /**
-     * post请求
+     * get请求
      *
      * @param url
      * @param params

@@ -116,7 +116,7 @@ public class AccountActivity extends BaseActivity {
     private void initAdapter() {
         shopFragmentAdapter = new ShopFragmentAdapter(getSupportFragmentManager(), orderList);
         vpShopScreen.setAdapter(shopFragmentAdapter);
-        vpShopScreen.setOffscreenPageLimit(3);
+        vpShopScreen.setOffscreenPageLimit(1);
     }
 
     private void initListener() {
@@ -146,7 +146,6 @@ public class AccountActivity extends BaseActivity {
                         eventBus.post(new WithdrawPullFind());
                         break;
                 }
-                srlShopPull.setRefreshing(false);
             }
         });
         vpShopScreen.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {

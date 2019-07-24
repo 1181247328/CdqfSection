@@ -86,7 +86,35 @@
 
             </RelativeLayout>
 
-            <com.cdqf.cart_view.MyGridView
+            <RelativeLayout
+                android:id="@+id/rl_orders_bar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/service_bak"
+                android:visibility="visible">
+
+                <ProgressBar
+                    android:id="@+id/pb_orders_bar"
+                    style="@android:style/Widget.ProgressBar.Inverse"
+                    android:layout_width="@dimen/dp_20"
+                    android:layout_height="@dimen/dp_20"
+                    android:layout_centerInParent="true"
+                    android:background="@android:color/transparent" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tv_orders_abnormal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:text="异常,请刷新~"
+                android:textColor="@color/house_eight"
+                android:textSize="@dimen/sp_14"
+                android:visibility="gone" />
+
+            <com.cdqf.cart_view.LineGridView
                 android:id="@+id/mgv_business_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

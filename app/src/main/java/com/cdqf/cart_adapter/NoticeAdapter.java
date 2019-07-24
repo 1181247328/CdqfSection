@@ -57,9 +57,9 @@ public class NoticeAdapter extends BaseAdapter {
         //内容
         viewHolder.tvNoticeItemContext.setText(cartState.getNoticeList().get(position).getContent());
         //时间
-        viewHolder.tvNoticeItemTimer.setText(cartState.getNoticeList().get(position).getAddtime());
+        viewHolder.tvNoticeItemTimer.setText(cartState.getNoticeList().get(position).getCreated_at());
         //名称
-        viewHolder.tvNoticeItemName.setText("店长：" + cartState.getNoticeList().get(position).getShopowenrname());
+        viewHolder.tvNoticeItemName.setText(cartState.getNoticeList().get(position).getAdmin_name());
         return convertView;
     }
 

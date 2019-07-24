@@ -10,6 +10,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -99,34 +100,6 @@ public class MembersDatilsActivity extends BaseActivity {
 
     private MembersDatilsAdapter membersDatilsAdapter = null;
 
-//    //平台
-//    @BindView(R.id.tv_details_way)
-//    public TextView tvDetailsWay = null;
-//
-//    //价格
-//    @BindView(R.id.tv_details_price)
-//    public TextView tvDetailsPrice = null;
-//
-//    //车牌
-//    @BindView(R.id.tv_details_plate)
-//    public TextView tvDetailsPlate = null;
-//
-//    //车型
-//    @BindView(R.id.tv_details_type)
-//    public TextView tvDetailsType = null;
-//
-//    //服务
-//    @BindView(R.id.rcrl_details_claim)
-//    public RCRelativeLayout rcrlDetailsClaim = null;
-//
-//    //加订单
-//    @BindView(R.id.rcrl_details_addorder)
-//    public RCRelativeLayout rcrlDetailsAddorder = null;
-//
-//    //下单时间
-//    @BindView(R.id.tv_details_timer)
-//    public TextView tvDetailsTimer = null;
-
     //备注
     @BindView(R.id.tv_datils_note)
     public TextView tvDatilsNote = null;
@@ -148,6 +121,19 @@ public class MembersDatilsActivity extends BaseActivity {
     public TextView tvDetailsNumber = null;
 
     private int position;
+
+
+    @BindView(R.id.rl_orders_bar)
+    public RelativeLayout rlOrdersBar = null;
+
+    //订单异常
+    @BindView(R.id.tv_orders_abnormal)
+    public TextView tvOrdersAbnormal = null;
+
+    @BindView(R.id.pb_orders_bar)
+    public ProgressBar pbOrdersBar = null;
+
+    private boolean isPull = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -200,7 +186,8 @@ public class MembersDatilsActivity extends BaseActivity {
     }
 
     private void initBack() {
-        initPull(true);
+        srlDatilspull.setEnabled(false);
+        initPull(false);
     }
 
     private void initPull(boolean isToast) {
@@ -212,6 +199,7 @@ public class MembersDatilsActivity extends BaseActivity {
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse---会员详情---" + response);
                 if (srlDatilspull != null) {
+                    srlDatilspull.setEnabled(true);
                     srlDatilspull.setRefreshing(false);
                 }
                 JSONObject resultJSON = JSON.parseObject(response);
@@ -220,6 +208,9 @@ public class MembersDatilsActivity extends BaseActivity {
                 switch (error_code) {
                     //获取成功
                     case 200:
+                        rlOrdersBar.setVisibility(View.GONE);
+                        srlDatilspull.setVisibility(View.VISIBLE);
+                        tvOrdersAbnormal.setVisibility(View.GONE);
                         String data = resultJSON.getString("data");
                         MembersDatils membersDatils = gson.fromJson(data, MembersDatils.class);
                         cartState.setMembersDatils(membersDatils);
@@ -246,6 +237,9 @@ public class MembersDatilsActivity extends BaseActivity {
 //                        tvDetailsNumber.setText(membersDatils+"次");
                         break;
                     default:
+                        rlOrdersBar.setVisibility(View.GONE);
+                        srlDatilspull.setVisibility(View.GONE);
+                        tvOrdersAbnormal.setVisibility(View.VISIBLE);
                         cartState.initToast(context, msg, true, 0);
                         break;
                 }
@@ -254,7 +248,11 @@ public class MembersDatilsActivity extends BaseActivity {
             @Override
             public void onOkHttpError(String error) {
                 Log.e(TAG, "---onOkHttpError---" + error);
+                rlOrdersBar.setVisibility(View.GONE);
+                srlDatilspull.setVisibility(View.GONE);
+                tvOrdersAbnormal.setVisibility(View.VISIBLE);
                 if (srlDatilspull != null) {
+                    srlDatilspull.setEnabled(true);
                     srlDatilspull.setRefreshing(false);
                 }
                 cartState.initToast(context, error, true, 0);

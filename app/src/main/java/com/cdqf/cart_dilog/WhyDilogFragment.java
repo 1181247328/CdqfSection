@@ -37,6 +37,7 @@ import com.cdqf.cart_find.ShopServiceTwoFind;
 import com.cdqf.cart_find.ShopTwoFind;
 import com.cdqf.cart_find.ThroughTwoFind;
 import com.cdqf.cart_find.UserSumberFind;
+import com.cdqf.cart_find.WithdrawalFind;
 import com.cdqf.cart_state.CartState;
 
 import butterknife.BindView;
@@ -275,6 +276,10 @@ public class WhyDilogFragment extends DialogFragment {
                     //WhyDilogFragment提交订单
                     case 21:
                         eventBus.post(new AllEmployeesFind());
+                        break;
+                    //OtherActivity立即提现
+                    case 22:
+                        eventBus.post(new WithdrawalFind());
                         break;
                 }
                 break;

@@ -128,8 +128,7 @@ public class NoticeActivity extends BaseActivity {
     private void initPull(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        String notice = notice(cartState.getUser().getId() + "", cartState.getUser().getShopid() + "");
-        okHttpRequestWrap.post(notice, isToast, "请稍候", params, new OnHttpRequest() {
+        okHttpRequestWrap.post(CartAddaress.STAFF_NOTICE + cartState.getUser().getId() + "/notice/" + cartState.getUser().getShopid(), isToast, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse通知---" + response);
@@ -141,6 +140,8 @@ public class NoticeActivity extends BaseActivity {
                 String msg = resultJSON.getString("msg");
                 switch (error_code) {
                     //获取成功
+                    case 204:
+                    case 201:
                     case 200:
                         String data = resultJSON.getString("data");
                         cartState.getNoticeList().clear();
@@ -162,15 +163,6 @@ public class NoticeActivity extends BaseActivity {
                 Log.e(TAG, "---onOkHttpError---" + error);
             }
         });
-    }
-
-    private String notice(String staffid, String shopid) {
-        String result = null;
-        CartAddaress.STAFF_NOTICE = CartAddaress.STAFF_NOTICE.replace("STAFFID", cartState.urlEnodeUTF8(staffid));
-        CartAddaress.STAFF_NOTICE = CartAddaress.STAFF_NOTICE.replace("SHOPID", cartState.urlEnodeUTF8(shopid));
-        result = CartAddaress.STAFF_NOTICE;
-        Log.e(TAG, "---通知---" + result);
-        return result;
     }
 
     private void initIntent(Class<?> activity) {
