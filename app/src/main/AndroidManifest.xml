@@ -11,6 +11,7 @@
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -160,6 +161,28 @@
         <service
             android:name="com.cdqf.cart_ble.BleService"
             android:permission="true" />
+
+        <service
+            android:name="com.cdqf.cart_service.DownloadService"
+            android:permission="true" />
+
+        <service
+            android:name="com.cdqf.cart_service.DownloadDilogService"
+            android:enabled="true">
+            <intent-filter android:priority="1000">
+                <action android:name="com.cdqf.cart.myservice" />
+            </intent-filter>
+        </service>
+
+        <receiver android:name="com.cdqf.cart_service.ServiceReceiver">
+            <intent-filter android:priority="2147483647">
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+
+                <category android:name="ANDROID.INTENT.CATEGORY.LAUNCHER" />
+                <action android:name="servicereceiver" />
+            </intent-filter>
+        </receiver>
 
         <receiver android:name="com.cdqf.cart_ble.BleBroadcastReceiver">
             <intent-filter>

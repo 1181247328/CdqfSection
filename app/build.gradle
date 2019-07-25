@@ -18,7 +18,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 28
         versionCode 1
-        versionName "1.0.2.20190606"
+        versionName "1.0.2"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -125,6 +125,7 @@ dependencies {
     implementation 'com.contrarywind:Android-PickerView:4.1.8'
     implementation 'org.xclcharts:lib:2.4'
     implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.2.3'
+    implementation 'com.mylhyl:circleDialog:3.0.10'
 }
 
 

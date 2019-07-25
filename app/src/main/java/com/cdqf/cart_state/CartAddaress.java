@@ -3,7 +3,10 @@ package com.cdqf.cart_state;
 public class CartAddaress {
 
     //线下
-    public static final String ADDRESS = "http://192.168.31.213:8001";
+//    public static final String ADDRESS = "http://192.168.31.213:8001";
+
+    //线上
+    public static final String ADDRESS = "https://api.tuogouchebao.com";
 
     //线上
     public static final String ADDRESS_THE = "https://tgapi.baodi520.com";
@@ -116,6 +119,9 @@ public class CartAddaress {
 
     //营业状态
     public static String SHOP_DATILS = ADDRESS + "/staff/shopSituationInfo/";
+
+    //下载
+    public static String DOWNLOAD = ADDRESS + "/staff/versions";
 
     /****************************************************/
 

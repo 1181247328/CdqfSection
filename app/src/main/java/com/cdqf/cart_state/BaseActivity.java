@@ -17,6 +17,7 @@ public class BaseActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         //将哪个activity保存进管理器
         manager.putActivity(this);
+
     }
 
     /**
@@ -27,20 +28,21 @@ public class BaseActivity extends FragmentActivity {
         super.onDestroy();
         //删除操作
         manager.removeActivity(this);
+
     }
 
     /**
      * 通过它来触发删除所有的actvity
      */
-    public void exit(){
+    public void exit() {
         manager.exit();
     }
 
-    public void remove(Activity activity){
+    public void remove(Activity activity) {
         manager.removeActivity(activity);
     }
 
-    public void remove(String activity){
+    public void remove(String activity) {
         manager.removeActivity(activity);
     }
 }
