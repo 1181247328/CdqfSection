@@ -256,6 +256,9 @@ public class MembersActivity extends BaseActivity {
                 break;
             //店名
             case R.id.ll_members_shop:
+                if (true) {
+                    return;
+                }
                 if (cartState.getHomeList().size() <= 0) {
                     return;
                 }

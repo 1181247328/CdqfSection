@@ -53,7 +53,13 @@ public class ClockinAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        viewHolder.tvClockinItemTimer.setText(cartState.getClockinList().get(position).getAttendance_date());
+        //入住时间
+        String[] ckeckInTime = null;
+        try {
+            ckeckInTime = cartState.getClockinList().get(position).getAttendance_date().split(" ");
+        } catch (NullPointerException e) {
+        }
+        viewHolder.tvClockinItemTimer.setText(ckeckInTime[0]);
         String state = "";
         switch (cartState.getClockinList().get(position).getStatus()) {
             case 1:

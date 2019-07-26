@@ -93,6 +93,8 @@ public class LoginActivity extends BaseActivity {
 
     private File fileApk = null;
 
+    private boolean isAPk = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -180,6 +182,9 @@ public class LoginActivity extends BaseActivity {
                     case 201:
                     case 200:
                         JSONObject data = resultJSON.getJSONObject("data");
+                        if (data == null) {
+                            return;
+                        }
                         //是否强制更新
                         int isForce = data.getInteger("is_force");
                         if (isForce == 1) {
@@ -420,14 +425,9 @@ public class LoginActivity extends BaseActivity {
         builder.setCancelable(false)
                 .setCanceledOnTouchOutside(false)
                 .setTitle("下载")
-                .setNeutral("安装", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                    }
-                })
                 .setProgressText("下载了")
                 .show(getSupportFragmentManager());
+
         OkHttpUtils.get()
                 .url(downloadurl)
                 .build()
@@ -448,6 +448,7 @@ public class LoginActivity extends BaseActivity {
                     public void onResponse(File response, int id) {
                         Log.e(TAG, "---下载成功---");
                         fileApk = response;
+                        isAPk = true;
                         //版本在7.0以上是不能直接通过uri访问的
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                             installApk();

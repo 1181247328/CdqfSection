@@ -150,6 +150,7 @@ public class LossNewsActivity extends BaseActivity {
     private void initAdapter() {
         lossNewsLeftAdapter = new LossNewsLeftAdapter(context);
         lvLossnewsName.setAdapter(lossNewsLeftAdapter);
+
     }
 
     private void initListener() {
@@ -227,7 +228,7 @@ public class LossNewsActivity extends BaseActivity {
     private void initPull(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        okHttpRequestWrap.get(CartAddaress.LOSS_NEW + "107", isToast, "请稍候", params, new OnHttpRequest() {
+        okHttpRequestWrap.get(CartAddaress.LOSS_NEW + cartState.getUser().getShopid(), isToast, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse新损耗品---" + response);
@@ -252,11 +253,13 @@ public class LossNewsActivity extends BaseActivity {
                         }.getType());
                         cartState.setLossNewsList(lossNewsList);
                         if (lossNewsLeftAdapter != null) {
+                            lossNewsLeftAdapter.setType(type);
                             lossNewsLeftAdapter.notifyDataSetChanged();
                         }
                         lossNewsRightAdapter = new LossNewsRightAdapter(context, 0);
                         lvLossnewsList.setAdapter(lossNewsRightAdapter);
                         if (lossNewsRightAdapter != null) {
+                            lossNewsRightAdapter.setPosition(type);
                             lossNewsRightAdapter.notifyDataSetChanged();
                         }
                         break;

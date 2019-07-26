@@ -428,13 +428,13 @@ public class AddOrderActivity extends BaseActivity {
                     return;
                 }
                 //判断其它服务是不是已经填写
-                String other = tvOrderOther.getText().toString();
-                if (other.length() <= 0) {
-                    ServiceDilogFragment serviceDilogFragment = new ServiceDilogFragment();
-                    serviceDilogFragment.show(getSupportFragmentManager(), "服务项目");
-                } else {
-                    cartState.initToast(context, "其它服目中已经选择了服务项目", true, 0);
-                }
+//                String other = tvOrderOther.getText().toString();
+//                if (other.length() <= 0) {
+                ServiceDilogFragment serviceDilogFragment = new ServiceDilogFragment();
+                serviceDilogFragment.show(getSupportFragmentManager(), "服务项目");
+//                } else {
+//                    cartState.initToast(context, "其它服目中已经选择了服务项目", true, 0);
+//                }
                 break;
             //其它服务
             case R.id.ll_order_other:
@@ -442,13 +442,13 @@ public class AddOrderActivity extends BaseActivity {
                     cartState.initToast(context, "请先选择车型", true, 0);
                     return;
                 }
-                String service = tvOrderService.getText().toString();
-                if (service.length() <= 0) {
-                    OtherDilogFragment otherDilogFragment = new OtherDilogFragment();
-                    otherDilogFragment.show(getSupportFragmentManager(), "其它服务");
-                } else {
-                    cartState.initToast(context, "服务项目已存在", true, 0);
-                }
+//                String service = tvOrderService.getText().toString();
+//                if (service.length() <= 0) {
+                OtherDilogFragment otherDilogFragment = new OtherDilogFragment();
+                otherDilogFragment.show(getSupportFragmentManager(), "其它服务");
+//                } else {
+//                    cartState.initToast(context, "服务项目已存在", true, 0);
+//                }
                 break;
             //提交订单
             case R.id.tv_order_submit:
@@ -621,6 +621,7 @@ public class AddOrderActivity extends BaseActivity {
         isService = true;
         serviceId = cartState.getServiceOrderList().get(s.position).getId();
         tvOrderService.setText(cartState.getServiceOrderList().get(s.position).getGoods_name());
+        tvOrderOther.setText("");
     }
 
     /**
@@ -635,5 +636,6 @@ public class AddOrderActivity extends BaseActivity {
         project = s.project;
         cost = s.cost;
         tvOrderOther.setText(name + "," + project + "," + cost);
+        tvOrderService.setText("");
     }
 }

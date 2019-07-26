@@ -165,7 +165,8 @@
                                 android:layout_width="@dimen/dp_10"
                                 android:layout_height="@dimen/dp_10"
                                 android:background="@android:color/transparent"
-                                android:src="@mipmap/shop_next" />
+                                android:src="@mipmap/shop_next"
+                                android:visibility="gone" />
 
                         </LinearLayout>
 

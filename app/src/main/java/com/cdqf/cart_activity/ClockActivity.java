@@ -13,16 +13,16 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
@@ -92,7 +92,7 @@ public class ClockActivity extends BaseActivity {
     public SwipeRefreshLayout srlClockPull = null;
 
     @BindView(R.id.sv_clock_sc)
-    public ScrollView svClockSc = null;
+    public NestedScrollView svClockSc = null;
 
     //返回
     @BindView(R.id.rl_clock_return)
@@ -195,6 +195,17 @@ public class ClockActivity extends BaseActivity {
     //声明mLocationOption对象
     public AMapLocationClientOption mLocationOption = null;
 
+    @BindView(R.id.rl_orders_bar)
+    public RelativeLayout rlOrdersBar = null;
+
+    //订单异常
+    @BindView(R.id.tv_orders_abnormal)
+    public TextView tvOrdersAbnormal = null;
+
+    @BindView(R.id.pb_orders_bar)
+    public ProgressBar pbOrdersBar = null;
+
+
     private String image;
 
     private Circle cirCle = null;
@@ -280,14 +291,8 @@ public class ClockActivity extends BaseActivity {
     }
 
     private void initBack() {
-        svClockSc.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
-            @Override
-            public void onScrollChanged() {
-                srlClockPull.setEnabled(svClockSc.getScrollY() == 0);
-            }
-        });
-
-        initPull(true);
+        srlClockPull.setEnabled(false);
+        initPull(false);
 
     }
 
@@ -387,17 +392,26 @@ public class ClockActivity extends BaseActivity {
             @Override
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse---打卡---" + response);
+                if (srlClockPull != null) {
+                    srlClockPull.setEnabled(true);
+                    srlClockPull.setRefreshing(false);
+                }
                 JSONObject resultJSON = JSON.parseObject(response);
                 int error_code = resultJSON.getInteger("code");
                 String msg = resultJSON.getString("message");
                 switch (error_code) {
                     //获取成功
                     case 200:
+                    case 201:
+                    case 204:
+                        rlOrdersBar.setVisibility(View.GONE);
+                        svClockSc.setVisibility(View.VISIBLE);
+                        tvOrdersAbnormal.setVisibility(View.GONE);
                         String data = resultJSON.getString("data");
                         Clock clock = gson.fromJson(data, Clock.class);
                         cartState.setClock(clock);
                         //姓名
-                        tvClockName.setText(cartState.getUser().getUsername());
+                        tvClockName.setText(cartState.getUser().getName());
                         //店名
                         tvClockAddress.setText(clock.getShop().getName());
                         //时间
@@ -461,6 +475,9 @@ public class ClockActivity extends BaseActivity {
                         initOption();
                         break;
                     default:
+                        rlOrdersBar.setVisibility(View.GONE);
+                        svClockSc.setVisibility(View.GONE);
+                        tvOrdersAbnormal.setVisibility(View.VISIBLE);
                         cartState.initToast(context, msg, true, 0);
                         break;
                 }
@@ -470,6 +487,13 @@ public class ClockActivity extends BaseActivity {
             public void onOkHttpError(String error) {
                 Log.e(TAG, "---onOkHttpError---" + error);
                 cartState.initToast(context, error, true, 0);
+                if (srlClockPull != null) {
+                    srlClockPull.setEnabled(true);
+                    srlClockPull.setRefreshing(false);
+                }
+                rlOrdersBar.setVisibility(View.GONE);
+                svClockSc.setVisibility(View.GONE);
+                tvOrdersAbnormal.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -489,6 +513,9 @@ public class ClockActivity extends BaseActivity {
     }
 
     public static String bitmapToBase64(Bitmap bitmap) {
+        if (bitmap == null) {
+            return null;
+        }
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 40, bos);//参数100表示不压缩
         byte[] bytes = bos.toByteArray();
@@ -540,7 +567,7 @@ public class ClockActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.rcrl_clock_state:
-                if(work == 2){
+                if (work == 2) {
                     return;
                 }
                 //判断是不是定位了
@@ -669,6 +696,9 @@ public class ClockActivity extends BaseActivity {
                 Tiny.getInstance().source(uri).asBitmap().withOptions(options).compress(new BitmapCallback() {
                     @Override
                     public void callback(boolean isSuccess, Bitmap bitmap, Throwable t) {
+                        if (bitmap == null) {
+                            return;
+                        }
                         Log.e(TAG, "---门店图片---");
                         isImageOne = true;
                         isImageTwo = true;

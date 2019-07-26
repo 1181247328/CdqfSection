@@ -161,6 +161,25 @@ public class DatilsActivity extends BaseActivity {
 
     private DatilsRemarksAdapter datilsRemarksAdapter;
 
+    /****************余额返还******************/
+    //折扣
+    @BindView(R.id.ll_datils_count)
+    public LinearLayout llDatilsCount = null;
+    @BindView(R.id.tv_datils_count)
+    public TextView tvDatilsCount = null;
+
+    //折扣后的价格
+    @BindView(R.id.ll_datils_price)
+    public LinearLayout llDatilsPrice = null;
+    @BindView(R.id.tv_datils_price)
+    public TextView tvDatilsPrice = null;
+
+    //余额返还
+    @BindView(R.id.ll_datils_balance)
+    public LinearLayout llDatilsBalance = null;
+    @BindView(R.id.tv_datils_balance)
+    public TextView tvDatilsBalance = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -307,6 +326,18 @@ public class DatilsActivity extends BaseActivity {
                                 datilsRemarksAdapter.notifyDataSetChanged();
                             }
                         }
+                        //是否有折扣
+//                        if (true) {
+//                            llDatilsCount.setVisibility(View.VISIBLE);
+//                            llDatilsPrice.setVisibility(View.VISIBLE);
+//                            llDatilsBalance.setVisibility(View.VISIBLE);
+//                            tvDatilsCount.setText("");
+//                            tvDatilsBalance.setText("");
+//                            tvDatilsBalance.setText("");
+//                        } else {
+//                            llDatilsCount.setVisibility(View.GONE);
+//                            llDatilsBalance.setVisibility(View.GONE);
+//                        }
                         break;
                     default:
                         rlOrdersBar.setVisibility(View.GONE);

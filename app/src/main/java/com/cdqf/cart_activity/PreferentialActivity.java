@@ -261,6 +261,7 @@ public class PreferentialActivity extends BaseActivity {
         Log.e(TAG, "---返余额---" + money);
         //服务项目
         String goodsNmae = "";
+//        goodsNmae = cartState.getDatils().getGoods_names();
 //        for (String name : cartState.getDatils().getGoodsname()) {
 //            goodsNmae += name + " ";
 //        }
