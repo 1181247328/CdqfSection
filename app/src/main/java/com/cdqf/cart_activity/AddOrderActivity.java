@@ -40,6 +40,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -146,6 +147,8 @@ public class AddOrderActivity extends BaseActivity {
     private String services = "";
 
     private int serviceId = 0;
+
+    private List<Integer> serviceList = new CopyOnWriteArrayList<>();
 
     private boolean isService = false;
 
@@ -567,7 +570,7 @@ public class AddOrderActivity extends BaseActivity {
         params.put("car_num", number);
         if (isService) {
             //服务项目
-            params.put("goods_id", serviceId);
+            params.put("goods_id", serviceList);
         } else {
             //其它服务
             params.put("goods_id", 0);
@@ -619,7 +622,7 @@ public class AddOrderActivity extends BaseActivity {
     @Subscribe
     public void onEventMainThread(ServiceOrderFind s) {
         isService = true;
-        serviceId = cartState.getServiceOrderList().get(s.position).getId();
+        serviceList.add(cartState.getServiceOrderList().get(s.position).getId());
         tvOrderService.setText(cartState.getServiceOrderList().get(s.position).getGoods_name());
         tvOrderOther.setText("");
     }

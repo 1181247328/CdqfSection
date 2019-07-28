@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.cdqf.cart.R;
 import com.cdqf.cart_find.UserAddFind;
 import com.cdqf.cart_state.CartState;
+import com.cdqf.cart_state.DoubleOperationUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,7 +53,7 @@ public class UserAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return cartState.getUserGoodsList().get(this.position).getData().size();
+        return cartState.getUserGoodsList().get(this.position).getChildren().size();
     }
 
     @Override
@@ -75,13 +76,28 @@ public class UserAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        viewHolder.tvUserItemName.setText(cartState.getUserGoodsList().get(this.position).getData().get(position).getGoodsname());
-        viewHolder.tvUserItemPrice.setText("￥" + cartState.getUserGoodsList().get(this.position).getData().get(position).getPrice());
+        viewHolder.tvUserItemName.setText(cartState.getUserGoodsList().get(this.position).getChildren().get(position).getGoodsname());
+        int cartType = cartState.getDatils().getCartype();
+        double price = 0;
+        switch (cartType) {
+            case 1:
+                price = Double.parseDouble(cartState.getUserGoodsList().get(this.position).getChildren().get(position).getPrice());
+                break;
+            case 2:
+                double prices = Double.parseDouble(cartState.getUserGoodsList().get(this.position).getChildren().get(position).getPrice());
+                double activePrice = Double.parseDouble(cartState.getUserGoodsList().get(this.position).getChildren().get(position).getActive_price());
+                price = DoubleOperationUtil.add(prices, activePrice);
+                break;
+            default:
+                //TODO 价格
+                break;
+        }
+        viewHolder.tvUserItemPrice.setText("￥" + price);
         lightConnectMap.put(viewHolder.cbUserItemCheckbox, position);
 //        viewHolder.cbUserItemCheckbox.setChecked(lightCheckMap.get(position) == null ? false : true);
-        viewHolder.cbUserItemCheckbox.setChecked(cartState.getUserGoodsList().get(this.position).getData().get(position).isSelect());
+        viewHolder.cbUserItemCheckbox.setChecked(cartState.getUserGoodsList().get(this.position).getChildren().get(position).isSelect());
         viewHolder.cbUserItemCheckbox.setOnCheckedChangeListener(new OnCartCheckedChangeListener(position));
-        if (this.position == cartState.getUserGoodsList().size()-1) {
+        if (this.position == cartState.getUserGoodsList().size() - 1) {
             viewHolder.cbUserItemCheckbox.setVisibility(View.GONE);
         } else {
             viewHolder.cbUserItemCheckbox.setVisibility(View.VISIBLE);
@@ -104,11 +120,11 @@ public class UserAdapter extends BaseAdapter {
             }
             if (isChecked) {
                 lightCheckMap.put(lightConnectMap.get(buttonView), isChecked);
-                cartState.getUserGoodsList().get(UserAdapter.position).getData().get(position).setSelect(true);
+                cartState.getUserGoodsList().get(UserAdapter.position).getChildren().get(position).setSelect(true);
                 eventBus.post(new UserAddFind(position));
             } else {
                 lightCheckMap.remove(lightConnectMap.get(buttonView));
-                cartState.getUserGoodsList().get(UserAdapter.position).getData().get(position).setSelect(false);
+                cartState.getUserGoodsList().get(UserAdapter.position).getChildren().get(position).setSelect(false);
                 eventBus.post(new UserAddFind(position));
             }
         }

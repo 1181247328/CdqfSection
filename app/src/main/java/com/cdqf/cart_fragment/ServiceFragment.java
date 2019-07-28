@@ -120,9 +120,11 @@ public class ServiceFragment extends Fragment {
         lvServiceList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                initIntent(DatilsActivity.class, position);
+                Log.e(TAG, "---" + position);
+                initIntent(DatilsActivity.class, position - 1);
             }
         });
+
         ptrlServicePull.setOnPullListener(new PullToRefreshLayout.OnPullListener() {
             @Override
             public void onRefresh(PullToRefreshLayout pullToRefreshLayout) {
@@ -199,12 +201,6 @@ public class ServiceFragment extends Fragment {
                 } else {
                     eventBus.post(new SwipePullFind(false, false));
                 }
-            }
-        });
-        lvServiceList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                initIntent(DatilsActivity.class, position);
             }
         });
     }

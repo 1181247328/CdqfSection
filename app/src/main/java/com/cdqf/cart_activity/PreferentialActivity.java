@@ -242,33 +242,34 @@ public class PreferentialActivity extends BaseActivity {
     private void initPull(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
         //订单号
-        String order_num = cartState.getDatils().getOrdernum();
-        params.put("order_num", order_num);
-        //用户id
-        int user_id = cartState.getDatils().getUserid();
-        params.put("user_id", user_id);
-        //金额
-        params.put("money", price + "");
+        int order_num = cartState.getDatils().getId();
+        params.put("order_id", order_num);
         //折扣扣数
         String discountTurn = etPreferentialDiscount.getText().toString();
-        params.put("discount_num", discountTurn + "");
-        //折扣价
-        String discounts = tvPreferentialDiscount.getText().toString();
-        params.put("discount_money", discounts + "");
-        //返余额
-        String money = etPreferentialMoney.getText().toString();
-        params.put("balance", money + "");
-        Log.e(TAG, "---返余额---" + money);
-        //服务项目
-        String goodsNmae = "";
-//        goodsNmae = cartState.getDatils().getGoods_names();
-//        for (String name : cartState.getDatils().getGoodsname()) {
-//            goodsNmae += name + " ";
-//        }
-        params.put("info", goodsNmae);
+        params.put("discount", discountTurn + "");
+//        //用户id
+//        int user_id = cartState.getDatils().getUserid();
+//        params.put("user_id", user_id);
+//        //金额
+//        params.put("money", price + "");
+//
+//        //折扣价
+//        String discounts = tvPreferentialDiscount.getText().toString();
+//        params.put("discount_money", discounts + "");
+//        //返余额
+//        String money = etPreferentialMoney.getText().toString();
+//        params.put("balance", money + "");
+//        Log.e(TAG, "---返余额---" + money);
+//        //服务项目
+//        String goodsNmae = "";
+////        goodsNmae = cartState.getDatils().getGoods_names();
+////        for (String name : cartState.getDatils().getGoodsname()) {
+////            goodsNmae += name + " ";
+////        }
+//        params.put("info", goodsNmae);
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
         Log.e(TAG, "---" + CartAddaress.SHOP_PREFERENT);
-        okHttpRequestWrap.post(CartAddaress.SHOP_PREFERENT, isToast, "提交中", params, new OnHttpRequest() {
+        okHttpRequestWrap.postString(CartAddaress.SHOP_PREFERENT, isToast, "提交中", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse给予优惠---" + response);

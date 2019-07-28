@@ -4,9 +4,17 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class UserGoods {
+    private int id;
     private String name;
-    private String classifyid;
-    private List<Data> data = new CopyOnWriteArrayList<>();
+    private List<Children> children = new CopyOnWriteArrayList<>();
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -16,43 +24,29 @@ public class UserGoods {
         this.name = name;
     }
 
-    public String getClassifyid() {
-        return classifyid;
+    public List<Children> getChildren() {
+        return children;
     }
 
-    public void setClassifyid(String classifyid) {
-        this.classifyid = classifyid;
+    public void setChildren(List<Children> children) {
+        this.children = children;
     }
 
-    public List<Data> getData() {
-        return data;
-    }
-
-    public void setData(List<Data> data) {
-        this.data = data;
-    }
-
-    public class Data {
-        private String id;
-        private String price;
+    public class Children {
+        private int id;
         private String goodsname;
-        private String classifyid;
+        private String active_price;
+        private String price;
+        private int classifyid;
+
         private boolean isSelect = false;
 
-        public String getId() {
+        public int getId() {
             return id;
         }
 
-        public void setId(String id) {
+        public void setId(int id) {
             this.id = id;
-        }
-
-        public String getPrice() {
-            return price;
-        }
-
-        public void setPrice(String price) {
-            this.price = price;
         }
 
         public String getGoodsname() {
@@ -63,11 +57,27 @@ public class UserGoods {
             this.goodsname = goodsname;
         }
 
-        public String getClassifyid() {
+        public String getActive_price() {
+            return active_price;
+        }
+
+        public void setActive_price(String active_price) {
+            this.active_price = active_price;
+        }
+
+        public String getPrice() {
+            return price;
+        }
+
+        public void setPrice(String price) {
+            this.price = price;
+        }
+
+        public int getClassifyid() {
             return classifyid;
         }
 
-        public void setClassifyid(String classifyid) {
+        public void setClassifyid(int classifyid) {
             this.classifyid = classifyid;
         }
 

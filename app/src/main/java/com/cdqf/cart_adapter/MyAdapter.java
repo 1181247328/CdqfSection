@@ -1,7 +1,6 @@
 package com.cdqf.cart_adapter;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,28 +86,19 @@ public class MyAdapter extends BaseAdapter {
                 break;
             //工号
             case 1:
-                viewHolder.tvMyItemName.setText(cartState.getMyUser().getLogin_account());
+                viewHolder.tvMyItemName.setText(cartState.getMyUser().getId() + "");
                 break;
             //职位
             case 2:
-                //审核通过
-                if (TextUtils.equals(cartState.getMyUser().getType(), "1")) {
-                    //员工
-                    viewHolder.tvMyItemName.setText("店员(" + cartState.getMyUser().getPosition_id() + ")");
-                } else if (TextUtils.equals(cartState.getMyUser().getType(), "2")) {
-                    //店长
-                    viewHolder.tvMyItemName.setText("店长(" + cartState.getMyUser().getPosition_id() + ")");
-                } else {
-                    //TODO
-                }
+                viewHolder.tvMyItemName.setText(cartState.getMyUser().getRoles_name());
                 break;
             //紧急电话
             case 3:
-                viewHolder.tvMyItemName.setText(cartState.getMyUser().getPhone());
+                viewHolder.tvMyItemName.setText(cartState.getMyUser().getUrgent_phone());
                 break;
             //服务总数
             case 4:
-                viewHolder.tvMyItemName.setText(cartState.getMyUser().getCount() + "");
+                viewHolder.tvMyItemName.setText(cartState.getMyUser().getService() + "");
                 break;
         }
         return convertView;

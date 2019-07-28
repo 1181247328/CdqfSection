@@ -86,9 +86,9 @@ dependencies {
     api project(':switch')
     api project(':okhttputils')
     api project(':nicespinner')
+    api project(':RCLayout')
     api project(':viewpagerindicator_master')
     api 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
-    api 'com.gcssloop.widget:rclayout:1.8.1'
     api 'org.sufficientlysecure:html-textview:3.6'
     api 'com.xw.repo:xedittext:2.0.0'
     api 'com.youth.banner:banner:1.4.10'

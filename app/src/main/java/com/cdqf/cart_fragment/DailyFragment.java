@@ -80,6 +80,8 @@ public class DailyFragment extends Fragment {
 
     private boolean isPull = false;
 
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

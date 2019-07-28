@@ -8,6 +8,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/RCLayout" />
             <option value="$PROJECT_DIR$/SimpleAndroidImageCrop" />
             <option value="$PROJECT_DIR$/ZProgressBar" />
             <option value="$PROJECT_DIR$/app" />

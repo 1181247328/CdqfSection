@@ -4,13 +4,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
@@ -77,6 +79,19 @@ public class MyFragment extends Fragment {
 
     private MyAdapter myAdapter = null;
 
+    @BindView(R.id.rl_orders_bar)
+    public RelativeLayout rlOrdersBar = null;
+
+    //订单异常
+    @BindView(R.id.tv_orders_abnormal)
+    public TextView tvOrdersAbnormal = null;
+
+    @BindView(R.id.pb_orders_bar)
+    public ProgressBar pbOrdersBar = null;
+
+    @BindView(R.id.nsv_orders_pull)
+    public NestedScrollView nsvOrdersPull = null;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -98,6 +113,7 @@ public class MyFragment extends Fragment {
 
     private void initAgo() {
         ButterKnife.bind(this, view);
+        imageLoader = cartState.getImageLoader(getContext());
         if (!eventBus.isRegistered(this)) {
             eventBus.register(this);
         }
@@ -107,7 +123,6 @@ public class MyFragment extends Fragment {
         vsrlMyPull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                vsrlMyPull.setRefreshing(false);
                 initPull(false);
             }
         });
@@ -118,44 +133,42 @@ public class MyFragment extends Fragment {
     }
 
     private void initBack() {
-        initPull(true);
+        initPull(false);
     }
 
     private void initPull(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
-        Log.e(TAG, "---id---" + cartState.getUser().getId());
-        String lossShop = userInformation(cartState.getUser().getId()+"", cartState.getUser().getShopid()+"");
-        okHttpRequestWrap.post(lossShop, isToast, "请稍候", params, new OnHttpRequest() {
+        String lossShop = userInformation(cartState.getUser().getId() + "", cartState.getUser().getShopid() + "");
+        okHttpRequestWrap.get(lossShop, isToast, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
-                Log.e(TAG, "---onOkHttpResponse我的---" + response);
+                Log.e(TAG, "---onOkHttpResponse---我的---" + response);
                 if (vsrlMyPull != null) {
                     vsrlMyPull.setRefreshing(false);
                 }
                 JSONObject resultJSON = JSON.parseObject(response);
-                int error_code = resultJSON.getInteger("ret");
-                String msg = resultJSON.getString("msg");
+                int error_code = resultJSON.getInteger("code");
+                String msg = resultJSON.getString("message");
                 switch (error_code) {
                     //获取成功
+                    case 204:
+                    case 201:
                     case 200:
+                        rlOrdersBar.setVisibility(View.GONE);
+                        nsvOrdersPull.setVisibility(View.VISIBLE);
+                        tvOrdersAbnormal.setVisibility(View.GONE);
                         String data = resultJSON.getString("data");
                         MyUser myUser = gson.fromJson(data, MyUser.class);
+                        imageLoader.displayImage(myUser.getAvatar(), ivMyHear, cartState.getImageLoaderOptions(R.mipmap.test6, R.mipmap.test6, R.mipmap.test6));
                         cartState.setMyUser(myUser);
-                        //正式名称
-                        if (TextUtils.equals(myUser.getType(), "1")) {
-                            //员工
-                            tvMyPosition.setText("店员");
-                        } else if (TextUtils.equals(myUser.getType(), "2")) {
-                            //店长
-                            tvMyPosition.setText("店长");
-                        } else {
-                            //TODO
-                        }
                         myAdapter = new MyAdapter(getContext());
                         lvfsvMyList.setAdapter(myAdapter);
                         break;
                     default:
+                        rlOrdersBar.setVisibility(View.GONE);
+                        nsvOrdersPull.setVisibility(View.GONE);
+                        tvOrdersAbnormal.setVisibility(View.VISIBLE);
                         cartState.initToast(getContext(), msg, true, 0);
                         break;
                 }
@@ -164,13 +177,16 @@ public class MyFragment extends Fragment {
             @Override
             public void onOkHttpError(String error) {
                 Log.e(TAG, "---onOkHttpError---" + error);
+                rlOrdersBar.setVisibility(View.GONE);
+                nsvOrdersPull.setVisibility(View.GONE);
+                tvOrdersAbnormal.setVisibility(View.VISIBLE);
             }
         });
     }
 
     private String userInformation(String staffid, String shopid) {
         String result = null;
-        result = CartAddaress.ADDRESS + "/?s=staff.getstaff&staffid=" + staffid + "&shopid=" + shopid;
+        result = CartAddaress.ADDRESS + "/staff/find/" + staffid;
         Log.e(TAG, "---我的---" + result);
         return result;
     }

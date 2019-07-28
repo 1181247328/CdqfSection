@@ -40,6 +40,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -115,6 +116,8 @@ public class UserActivity extends BaseActivity {
     private double sum = 0;
 
     private int userType = 0;
+
+    private List<Integer> serviceList = new CopyOnWriteArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -197,7 +200,7 @@ public class UserActivity extends BaseActivity {
     private void initPull(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        okHttpRequestWrap.post(CartAddaress.SHOP_GOODS, isToast, "请稍候", params, new OnHttpRequest() {
+        okHttpRequestWrap.get(CartAddaress.SHOP_GOODS, isToast, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse追加的商品---" + response);
@@ -206,10 +209,12 @@ public class UserActivity extends BaseActivity {
                     srlUserPull.setRefreshing(false);
                 }
                 JSONObject resultJSON = JSON.parseObject(response);
-                int error_code = resultJSON.getInteger("ret");
-                String msg = resultJSON.getString("msg");
+                int error_code = resultJSON.getInteger("code");
+                String msg = resultJSON.getString("message");
                 switch (error_code) {
                     //获取成功
+                    case 201:
+                    case 204:
                     case 200:
                         rlOrdersBar.setVisibility(View.GONE);
                         rlDatilsPull.setVisibility(View.VISIBLE);
@@ -224,6 +229,7 @@ public class UserActivity extends BaseActivity {
                         if (nameAdapter != null) {
                             nameAdapter.notifyDataSetChanged();
                         }
+                        //TODO 关于补差价
                         userAdapter = new UserAdapter(context);
                         lvUserList.setAdapter(userAdapter);
                         userAdapter.setPosition(0);
@@ -330,9 +336,9 @@ public class UserActivity extends BaseActivity {
     public void onEventMainThread(UserAddFind l) {
         sum = 0;
         for (int i = 0; i < cartState.getUserGoodsList().size(); i++) {
-            for (int j = 0; j < cartState.getUserGoodsList().get(i).getData().size(); j++) {
-                if (cartState.getUserGoodsList().get(i).getData().get(j).isSelect()) {
-                    double money = Double.parseDouble(cartState.getUserGoodsList().get(i).getData().get(j).getPrice());
+            for (int j = 0; j < cartState.getUserGoodsList().get(i).getChildren().size(); j++) {
+                if (cartState.getUserGoodsList().get(i).getChildren().get(j).isSelect()) {
+                    double money = Double.parseDouble(cartState.getUserGoodsList().get(i).getChildren().get(j).getPrice());
                     sum = DoubleOperationUtil.add(sum, money);
                 }
             }
@@ -350,9 +356,9 @@ public class UserActivity extends BaseActivity {
         numbers = u.number;
         sum = numbers;
         for (int i = 0; i < cartState.getUserGoodsList().size(); i++) {
-            for (int j = 0; j < cartState.getUserGoodsList().get(i).getData().size(); j++) {
-                if (cartState.getUserGoodsList().get(i).getData().get(j).isSelect()) {
-                    double money = Double.parseDouble(cartState.getUserGoodsList().get(i).getData().get(j).getPrice());
+            for (int j = 0; j < cartState.getUserGoodsList().get(i).getChildren().size(); j++) {
+                if (cartState.getUserGoodsList().get(i).getChildren().get(j).isSelect()) {
+                    double money = Double.parseDouble(cartState.getUserGoodsList().get(i).getChildren().get(j).getPrice());
                     sum = DoubleOperationUtil.add(sum, money);
                 }
             }
@@ -369,25 +375,26 @@ public class UserActivity extends BaseActivity {
     public void onEventMainThread(UserSumberFind u) {
         boolean isSelect = false;
         //商品id
-        String goodsid = "";
+//        String goodsid = "";
         for (int i = 0; i < cartState.getUserGoodsList().size(); i++) {
-            for (int j = 0; j < cartState.getUserGoodsList().get(i).getData().size(); j++) {
-                if (cartState.getUserGoodsList().get(i).getData().get(j).isSelect()) {
+            for (int j = 0; j < cartState.getUserGoodsList().get(i).getChildren().size(); j++) {
+                if (cartState.getUserGoodsList().get(i).getChildren().get(j).isSelect()) {
                     isSelect = true;
-                    goodsid = goodsid + cartState.getUserGoodsList().get(i).getData().get(j).getId() + ",";
+//                    goodsid = goodsid + cartState.getUserGoodsList().get(i).getChildren().get(j).getId() + ",";
+                    serviceList.add(cartState.getUserGoodsList().get(i).getChildren().get(j).getId());
                 }
             }
         }
-        Log.e(TAG, "---商品id---" + goodsid);
+//        Log.e(TAG, "---商品id---" + goodsid);
         if (numbers >= 1) {
             isSelect = true;
-            if (cartState.getUserGoodsList().get(cartState.getUserGoodsList().size() - 1).getData().size() <= 0) {
+            if (cartState.getUserGoodsList().get(cartState.getUserGoodsList().size() - 1).getChildren().size() <= 0) {
                 //TODO
             } else {
-                goodsid = goodsid + cartState.getUserGoodsList().get(cartState.getUserGoodsList().size() - 1).getData().get(0).getId();
+//                goodsid = goodsid + cartState.getUserGoodsList().get(cartState.getUserGoodsList().size() - 1).getChildren().get(0).getId();
             }
         }
-        Log.e(TAG, "---获得的数量---" + goodsid);
+//        Log.e(TAG, "---获得的数量---" + goodsid);
         if (!isSelect) {
             cartState.initToast(context, "请选择追加的商品", true, 0);
             return;
@@ -406,15 +413,32 @@ public class UserActivity extends BaseActivity {
         //数量
         String number = numbers + "";
 
-        String order = order(cartype, goodsid, userid, shopid, carnum, phone, number);
+        //店铺id
+        params.put("shop_id", cartState.getUser().getShopid());
+        //手机号
+        params.put("phone", phone);
+        //车辆车型
+        params.put("car_type", cartype);
+        //车牌号
+        params.put("car_num", carnum);
+        //服务项目
+        params.put("goods_id", serviceList);
+        //车辆颜色
+        params.put("color", "");
+        //备注
+        params.put("remarks", "");
+        //支付方式
+        params.put("pay_type", "");
+        //数量
+
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        okHttpRequestWrap.post(order, true, "请稍候", params, new OnHttpRequest() {
+        okHttpRequestWrap.postString(CartAddaress.ADD_ORDER, true, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse提交订单---" + response);
                 JSONObject resultJSON = JSON.parseObject(response);
-                int error_code = resultJSON.getInteger("ret");
-                String msg = resultJSON.getString("msg");
+                int error_code = resultJSON.getInteger("code");
+                String msg = resultJSON.getString("message");
                 switch (error_code) {
                     //获取成功
                     case 200:

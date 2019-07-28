@@ -123,6 +123,12 @@ public class CartAddaress {
     //下载
     public static String DOWNLOAD = ADDRESS + "/staff/versions";
 
+    //追加的订单
+    public static String SHOP_GOODS = ADDRESS + "/staff/class";
+
+    //给予优惠
+    public static String SHOP_PREFERENT = ADDRESS + "staff/discount";
+
     /****************************************************/
 
     //店总
@@ -162,7 +168,8 @@ public class CartAddaress {
     public static String SHOP_RECORD = ADDRESS + "/?s=TotalGoods.goodsext_staff";
 
     //店长追加
-    public static String SHOP_GOODS = ADDRESS_THE + "/?s=goods.goodsall";
+//    public static String SHOP_GOODS = ADDRESS_THE + "/?s=goods.goodsall";
+
 
     //店长添加员工
     public static String SHOP_POSITION = ADDRESS + "/?s=Shopowner.add_position_list";
@@ -170,8 +177,6 @@ public class CartAddaress {
     //上传身份证
     public static String SHOP_IDIMAGE = ADDRESS + "/?s=Upload.addImg";
 
-    //给予优惠
-    public static String SHOP_PREFERENT = ADDRESS_THE + "/?s=order.discount_list";
 
     //员工管理列表
     public static String SHOP_EMPLOYEES = ADDRESS + "/?s=Shopowner.shop_user_list";
