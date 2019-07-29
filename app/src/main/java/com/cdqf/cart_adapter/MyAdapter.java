@@ -34,10 +34,10 @@ public class MyAdapter extends BaseAdapter {
     private int[] image = {
             R.mipmap.my_name,
             R.mipmap.my_number,
-//            R.mipmap.my_state,
             R.mipmap.my_position,
             R.mipmap.my_phone,
             R.mipmap.my_month,
+            R.mipmap.my_state,
     };
 
     private String[] name = {
@@ -45,7 +45,8 @@ public class MyAdapter extends BaseAdapter {
             "工号",
             "职位",
             "紧急联系电话",
-            "当月服务总数"
+            "当月服务总数",
+            "当前版本"
     };
 
     public MyAdapter(Context context) {
@@ -90,7 +91,7 @@ public class MyAdapter extends BaseAdapter {
                 break;
             //职位
             case 2:
-                viewHolder.tvMyItemName.setText(cartState.getMyUser().getRoles_name());
+                viewHolder.tvMyItemName.setText(cartState.getMyUser().getRoles_name() + "(" + cartState.getUser().getShopName() + ")");
                 break;
             //紧急电话
             case 3:
@@ -99,6 +100,10 @@ public class MyAdapter extends BaseAdapter {
             //服务总数
             case 4:
                 viewHolder.tvMyItemName.setText(cartState.getMyUser().getService() + "");
+                break;
+            //版本号
+            case 5:
+                viewHolder.tvMyItemName.setText(cartState.getVersion(context));
                 break;
         }
         return convertView;

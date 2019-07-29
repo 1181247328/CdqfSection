@@ -245,7 +245,7 @@ public class ServiceFragment extends Fragment {
                         JSONObject data = resultJSON.getJSONObject("data");
                         String datas = data.getString("data");
                         cartState.getServiceLis().clear();
-                        cartState.initToast(getContext(), msg, true, 0);
+//                        cartState.initToast(getContext(), msg, true, 0);
                         eventBus.post(new SwipePullFind(false, true));
                         List<Service> serviceList = gson.fromJson(datas, new TypeToken<List<Service>>() {
                         }.getType());
@@ -361,7 +361,7 @@ public class ServiceFragment extends Fragment {
     @Subscribe
     public void onEventMainThread(ShopServiceOneFind s) {
         WhyDilogFragment whyDilogFragment = new WhyDilogFragment();
-        whyDilogFragment.setInit(1, "提示", "是否领取车牌号为" + cartState.getServiceLis().get(s.position).getCarnum() + "的订单.", "否", "是", s.position);
+        whyDilogFragment.setInit(1, "提示", "是否领取车牌号为" + cartState.getServiceLis().get(s.position-1).getCarnum() + "的订单.", "否", "是", s.position-1);
         whyDilogFragment.show(getFragmentManager(), "领取订单");
     }
 

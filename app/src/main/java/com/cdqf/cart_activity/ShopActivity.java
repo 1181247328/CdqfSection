@@ -185,6 +185,17 @@ public class ShopActivity extends BaseActivity {
         startActivity(intent);
     }
 
+    /**
+     * 录入
+     *
+     * @param activity
+     */
+    private void initIntentOrder(Class<?> activity) {
+        Intent intent = new Intent(context, activity);
+        intent.putExtra("type", 2);
+        startActivity(intent);
+    }
+
 
     @OnClick({R.id.rl_shop_return, R.id.tv_shop_entry})
     public void onClick(View v) {
@@ -194,7 +205,7 @@ public class ShopActivity extends BaseActivity {
                 break;
             //录入
             case R.id.tv_shop_entry:
-                initIntent(AddOrderActivity.class);
+                initIntentOrder(AddOrderActivity.class);
                 break;
         }
     }

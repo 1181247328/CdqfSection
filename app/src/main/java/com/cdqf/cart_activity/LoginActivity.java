@@ -122,6 +122,7 @@ public class LoginActivity extends BaseActivity {
         if (!eventBus.isRegistered(this)) {
             eventBus.register(this);
         }
+        Log.e(TAG, "---" + cartState.sHA1(context));
         Log.e(TAG, "---宽度---" + ScreenUtils.getScreenWidth(context) + "---高度---" + ScreenUtils.getScreenHeight(context));
         permissions();
 

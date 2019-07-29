@@ -244,7 +244,7 @@ public class EntryFragment extends Fragment {
                         JSONObject data = resultJSON.getJSONObject("data");
                         String datas = data.getString("data");
                         cartState.getEntryList().clear();
-                        cartState.initToast(getContext(), msg, true, 0);
+//                        cartState.initToast(getContext(), msg, true, 0);
                         eventBus.post(new SwipePullFind(false, true));
                         List<Entry> entryList = gson.fromJson(datas, new TypeToken<List<Entry>>() {
                         }.getType());

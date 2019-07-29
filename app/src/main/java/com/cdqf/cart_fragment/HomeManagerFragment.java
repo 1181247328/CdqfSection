@@ -33,6 +33,7 @@ import com.cdqf.cart_activity.OtherActivity;
 import com.cdqf.cart_activity.ShopActivity;
 import com.cdqf.cart_adapter.HomeManagerAdapter;
 import com.cdqf.cart_class.Home;
+import com.cdqf.cart_find.MyShopNameFind;
 import com.cdqf.cart_find.ScanFind;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;
@@ -492,6 +493,7 @@ public class HomeManagerFragment extends Fragment {
                         tvHomemanagerShop.setText(cartState.getHomeList().get(index).getShop_new_name());
                         cartState.getUser().setShopid(cartState.getHomeList().get(index).getId());
                         cartState.getUser().setShopName(cartState.getHomeList().get(index).getShop_new_name());
+                        eventBus.post(new MyShopNameFind());
                         initShopId();
                     }
                 });

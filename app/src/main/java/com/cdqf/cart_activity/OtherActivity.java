@@ -2,9 +2,11 @@ package com.cdqf.cart_activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -17,6 +19,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
 import com.cdqf.cart_dilog.WhyDilogFragment;
+import com.cdqf.cart_find.SingFind;
 import com.cdqf.cart_find.WithdrawalFind;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;
@@ -27,7 +30,10 @@ import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_state.StaturBar;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.zxy.tiny.Tiny;
+import com.zxy.tiny.callback.BitmapCallback;
 
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -106,6 +112,12 @@ public class OtherActivity extends BaseActivity {
     public LinearLayout llOtherPull = null;
 
     private boolean isConfirm = false;
+
+    private boolean isSignature = false;
+
+    private String fileName = "";
+
+    private Bitmap mSignBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -203,18 +215,22 @@ public class OtherActivity extends BaseActivity {
                         JSONObject payroll = data.getJSONObject("payroll");
                         tvOtherDetail.setText(payroll.getString("real_wage"));
                         //签字人员
-                        tvOtherName.setText(cartState.getUser().getName());
+//                        tvOtherName.setText(cartState.getUser().getName());
                         int confirm = payroll.getInteger("is_confirm");
                         switch (confirm) {
                             case 0:
                                 //代表未签字
+                                tvOtherName.setText("");
                                 isConfirm = false;
+                                isSignature = false;
                                 tvOtherWithdrawal.setText("马上签字");
                                 tvOtherWithdrawal.setBackgroundColor(ContextCompat.getColor(context, R.color.tab_main_text_icon));
                                 break;
                             case 1:
                                 //代表签字了
+                                tvOtherName.setText(cartState.getUser().getName());
                                 isConfirm = true;
+                                isSignature = true;
                                 tvOtherWithdrawal.setText("已签字");
                                 tvOtherWithdrawal.setBackgroundColor(ContextCompat.getColor(context, R.color.service_bak));
                                 break;
@@ -253,6 +269,7 @@ public class OtherActivity extends BaseActivity {
     private void initPosition(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("staff_id", cartState.getUser().getId());
+        params.put("img", bitmapToBase64(mSignBitmap));
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
         okHttpRequestWrap.postString(CartAddaress.POSTIION, isToast, "签字中", params, new OnHttpRequest() {
             @Override
@@ -283,20 +300,45 @@ public class OtherActivity extends BaseActivity {
         });
     }
 
+    public static String bitmapToBase64(Bitmap bitmap) {
+        if (bitmap == null) {
+            return null;
+        }
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 40, bos);//参数100表示不压缩
+        byte[] bytes = bos.toByteArray();
+        //转换来的base64码需要加前缀，必须是NO_WRAP参数，表示没有空格。
+        return "data:image/png;base64," + Base64.encodeToString(bytes, Base64.NO_WRAP);
+        //转换来的base64码不需要需要加前缀，必须是NO_WRAP参数，表示没有空格。
+        //return "data:image/jpeg;base64," + Base64.encodeToString(bytes, Base64.NO_WRAP);
+    }
+
     private void initIntent(Class<?> activity) {
         Intent intent = new Intent(context, activity);
         startActivity(intent);
     }
 
-    @OnClick({R.id.rl_other_return, R.id.tv_other_withdrawal})
+    @OnClick({R.id.rl_other_return, R.id.tv_other_name, R.id.tv_other_withdrawal})
     public void onClick(View v) {
         switch (v.getId()) {
             //返回
             case R.id.rl_other_return:
                 finish();
                 break;
+            //签名
+            case R.id.tv_other_name:
+                if (isConfirm) {
+                    cartState.initToast(context, "已签字,请勿重复操作", true, 0);
+                    return;
+                }
+                initIntent(SignActivity.class);
+                break;
             //马上签字
             case R.id.tv_other_withdrawal:
+                if (!isSignature) {
+                    cartState.initToast(context, "请先前住签字", true, 0);
+                    return;
+                }
                 if (isConfirm) {
                     cartState.initToast(context, "已签字,请勿重复操作", true, 0);
                     return;
@@ -355,4 +397,24 @@ public class OtherActivity extends BaseActivity {
         initPosition(true);
     }
 
+    /**
+     * 签字
+     *
+     * @param w
+     */
+    @Subscribe
+    public void onEventMainThread(SingFind w) {
+        tvOtherName.setText(cartState.getUser().getName());
+        isSignature = true;
+        fileName = w.fileName;
+        Log.e(TAG, "---文件---" + fileName);
+        Tiny.FileCompressOptions options = new Tiny.FileCompressOptions();
+        Tiny.getInstance().source(fileName).asBitmap().withOptions(options).compress(new BitmapCallback() {
+            @Override
+            public void callback(boolean isSuccess, Bitmap bitmap, Throwable t) {
+                mSignBitmap = bitmap;
+            }
+        });
+
+    }
 }

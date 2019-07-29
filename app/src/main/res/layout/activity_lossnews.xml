@@ -62,6 +62,20 @@
 
                 </RelativeLayout>
 
+                <TextView
+                    android:id="@+id/tv_user_record"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/dp_40"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="@android:color/transparent"
+                    android:gravity="center"
+                    android:paddingLeft="@dimen/dp_10"
+                    android:paddingRight="@dimen/dp_10"
+                    android:text="记录"
+                    android:textColor="@color/tab_main_text_default"
+                    android:textSize="@dimen/sp_14" />
+
             </RelativeLayout>
 
             <RelativeLayout

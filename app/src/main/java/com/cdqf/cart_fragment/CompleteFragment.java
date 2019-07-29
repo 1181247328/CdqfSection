@@ -231,7 +231,7 @@ public class CompleteFragment extends Fragment {
                         JSONObject data = resultJSON.getJSONObject("data");
                         String datas = data.getString("data");
                         cartState.getCompleteList().clear();
-                        cartState.initToast(getContext(), msg, true, 0);
+//                        cartState.initToast(getContext(), msg, true, 0);
                         eventBus.post(new SwipePullFind(false, true));
                         List<Complete> completeList = gson.fromJson(datas, new TypeToken<List<Complete>>() {
                         }.getType());

@@ -19,6 +19,8 @@ public class Datils {
     private int cost_price;
     private List<String> staff_sevice = new CopyOnWriteArrayList<>();
     private List<UserRemarks> user_remarks = new CopyOnWriteArrayList<>();
+    private int is_discount = 0;
+    private Discount discount = null;
 
     public int getId() {
         return id;
@@ -140,6 +142,22 @@ public class Datils {
         this.user_remarks = user_remarks;
     }
 
+    public int getIs_discount() {
+        return is_discount;
+    }
+
+    public void setIs_discount(int is_discount) {
+        this.is_discount = is_discount;
+    }
+
+    public Discount getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(Discount discount) {
+        this.discount = discount;
+    }
+
     public class UserRemarks {
         private int id;
         private String content;
@@ -185,6 +203,99 @@ public class Datils {
 
         public void setStaff_name(String staff_name) {
             this.staff_name = staff_name;
+        }
+    }
+
+    public class Discount {
+        private int id;
+        private int order_id;
+        private int user_id;
+        private String money;
+        private int discount_num;
+        private String discount_money;
+        private String balance;
+        private String created_at;
+        private String updated_at;
+        private String deleted_at;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public int getOrder_id() {
+            return order_id;
+        }
+
+        public void setOrder_id(int order_id) {
+            this.order_id = order_id;
+        }
+
+        public int getUser_id() {
+            return user_id;
+        }
+
+        public void setUser_id(int user_id) {
+            this.user_id = user_id;
+        }
+
+        public String getMoney() {
+            return money;
+        }
+
+        public void setMoney(String money) {
+            this.money = money;
+        }
+
+        public int getDiscount_num() {
+            return discount_num;
+        }
+
+        public void setDiscount_num(int discount_num) {
+            this.discount_num = discount_num;
+        }
+
+        public String getDiscount_money() {
+            return discount_money;
+        }
+
+        public void setDiscount_money(String discount_money) {
+            this.discount_money = discount_money;
+        }
+
+        public String getBalance() {
+            return balance;
+        }
+
+        public void setBalance(String balance) {
+            this.balance = balance;
+        }
+
+        public String getCreated_at() {
+            return created_at;
+        }
+
+        public void setCreated_at(String created_at) {
+            this.created_at = created_at;
+        }
+
+        public String getUpdated_at() {
+            return updated_at;
+        }
+
+        public void setUpdated_at(String updated_at) {
+            this.updated_at = updated_at;
+        }
+
+        public String getDeleted_at() {
+            return deleted_at;
+        }
+
+        public void setDeleted_at(String deleted_at) {
+            this.deleted_at = deleted_at;
         }
     }
 }

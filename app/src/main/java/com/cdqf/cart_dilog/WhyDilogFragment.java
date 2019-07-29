@@ -35,6 +35,7 @@ import com.cdqf.cart_find.ReleaseFind;
 import com.cdqf.cart_find.ServiceTwoFind;
 import com.cdqf.cart_find.ShopServiceTwoFind;
 import com.cdqf.cart_find.ShopTwoFind;
+import com.cdqf.cart_find.SignSumitFind;
 import com.cdqf.cart_find.ThroughTwoFind;
 import com.cdqf.cart_find.UserSumberFind;
 import com.cdqf.cart_find.WithdrawalFind;
@@ -280,6 +281,10 @@ public class WhyDilogFragment extends DialogFragment {
                     //OtherActivity立即提现
                     case 22:
                         eventBus.post(new WithdrawalFind());
+                        break;
+                    //SignActivity马上签字
+                    case 23:
+                        eventBus.post(new SignSumitFind());
                         break;
                 }
                 break;

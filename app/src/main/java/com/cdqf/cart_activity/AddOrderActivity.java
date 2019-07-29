@@ -173,6 +173,9 @@ public class AddOrderActivity extends BaseActivity {
     //小轿车1,SUV = 2;
     private int model = 0;
 
+    //1=追加 2 = 录入
+    private int types = 1;
+
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -203,6 +206,8 @@ public class AddOrderActivity extends BaseActivity {
         if (!eventBus.isRegistered(this)) {
             eventBus.register(this);
         }
+        Intent intent = getIntent();
+        types = intent.getIntExtra("type", 0);
     }
 
     private void initView() {
@@ -568,6 +573,8 @@ public class AddOrderActivity extends BaseActivity {
         params.put("car_type", model);
         //车牌号
         params.put("car_num", number);
+        //1=追加2 = 录入
+        params.put("type", types);
         if (isService) {
             //服务项目
             params.put("goods_id", serviceList);

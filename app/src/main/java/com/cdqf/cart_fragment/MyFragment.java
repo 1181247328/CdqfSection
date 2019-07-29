@@ -23,6 +23,7 @@ import com.cdqf.cart_adapter.MyAdapter;
 import com.cdqf.cart_class.MyUser;
 import com.cdqf.cart_dilog.WhyDilogFragment;
 import com.cdqf.cart_find.AccountExitFind;
+import com.cdqf.cart_find.MyShopNameFind;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;
 import com.cdqf.cart_state.ACache;
@@ -236,6 +237,13 @@ public class MyFragment extends Fragment {
         super.onDestroy();
         Log.e(TAG, "---销毁---");
         eventBus.unregister(this);
+    }
+
+    @Subscribe
+    public void onEventMainThread(MyShopNameFind a) {
+        if (myAdapter != null) {
+            myAdapter.notifyDataSetChanged();
+        }
     }
 
     /**

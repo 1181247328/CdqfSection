@@ -1,103 +1,124 @@
 package com.cdqf.cart_class;
 
 public class Record {
-    private String id;
-    private String goods_id;
-    private String goods_name;
-    private String name;
-    private String shop_name;
-    private String state;
-    private String shop_id;
-    private String number;
-    private String add_time;
-    private String update_time;
-    private String image;
+    private int id;
+    private int status;
+    private int num;
+    private int consumables_id;
+    private String created_at;
+    private Consumables consumables;
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public String getGoods_id() {
-        return goods_id;
+    public int getStatus() {
+        return status;
     }
 
-    public void setGoods_id(String goods_id) {
-        this.goods_id = goods_id;
+    public void setStatus(int status) {
+        this.status = status;
     }
 
-    public String getGoods_name() {
-        return goods_name;
+    public int getNum() {
+        return num;
     }
 
-    public void setGoods_name(String goods_name) {
-        this.goods_name = goods_name;
+    public void setNum(int num) {
+        this.num = num;
     }
 
-    public String getName() {
-        return name;
+    public int getConsumables_id() {
+        return consumables_id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setConsumables_id(int consumables_id) {
+        this.consumables_id = consumables_id;
     }
 
-    public String getShop_name() {
-        return shop_name;
+    public String getCreated_at() {
+        return created_at;
     }
 
-    public void setShop_name(String shop_name) {
-        this.shop_name = shop_name;
+    public void setCreated_at(String created_at) {
+        this.created_at = created_at;
     }
 
-    public String getState() {
-        return state;
+    public Consumables getConsumables() {
+        return consumables;
     }
 
-    public void setState(String state) {
-        this.state = state;
+    public void setConsumables(Consumables consumables) {
+        this.consumables = consumables;
     }
 
-    public String getShop_id() {
-        return shop_id;
-    }
+    public class Consumables {
+        private int id;
+        private String name;
+        private int pid;
+        private int stock;
+        private String created_at;
+        private String updated_at;
+        private String deleted_at;
 
-    public void setShop_id(String shop_id) {
-        this.shop_id = shop_id;
-    }
+        public int getId() {
+            return id;
+        }
 
-    public String getNumber() {
-        return number;
-    }
+        public void setId(int id) {
+            this.id = id;
+        }
 
-    public void setNumber(String number) {
-        this.number = number;
-    }
+        public String getName() {
+            return name;
+        }
 
-    public String getAdd_time() {
-        return add_time;
-    }
+        public void setName(String name) {
+            this.name = name;
+        }
 
-    public void setAdd_time(String add_time) {
-        this.add_time = add_time;
-    }
+        public int getPid() {
+            return pid;
+        }
 
-    public String getUpdate_time() {
-        return update_time;
-    }
+        public void setPid(int pid) {
+            this.pid = pid;
+        }
 
-    public void setUpdate_time(String update_time) {
-        this.update_time = update_time;
-    }
+        public int getStock() {
+            return stock;
+        }
 
-    public String getImage() {
-        return image;
-    }
+        public void setStock(int stock) {
+            this.stock = stock;
+        }
 
-    public void setImage(String image) {
-        this.image = image;
+        public String getCreated_at() {
+            return created_at;
+        }
+
+        public void setCreated_at(String created_at) {
+            this.created_at = created_at;
+        }
+
+        public String getUpdated_at() {
+            return updated_at;
+        }
+
+        public void setUpdated_at(String updated_at) {
+            this.updated_at = updated_at;
+        }
+
+        public String getDeleted_at() {
+            return deleted_at;
+        }
+
+        public void setDeleted_at(String deleted_at) {
+            this.deleted_at = deleted_at;
+        }
     }
 }

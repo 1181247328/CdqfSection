@@ -180,6 +180,8 @@ public class DatilsActivity extends BaseActivity {
     @BindView(R.id.tv_datils_balance)
     public TextView tvDatilsBalance = null;
 
+    private boolean isUserId = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -327,17 +329,23 @@ public class DatilsActivity extends BaseActivity {
                             }
                         }
                         //是否有折扣
-//                        if (true) {
-//                            llDatilsCount.setVisibility(View.VISIBLE);
-//                            llDatilsPrice.setVisibility(View.VISIBLE);
-//                            llDatilsBalance.setVisibility(View.VISIBLE);
-//                            tvDatilsCount.setText("");
-//                            tvDatilsBalance.setText("");
-//                            tvDatilsBalance.setText("");
-//                        } else {
-//                            llDatilsCount.setVisibility(View.GONE);
-//                            llDatilsBalance.setVisibility(View.GONE);
-//                        }
+                        if (datils.getIs_discount() == 1) {
+                            llDatilsCount.setVisibility(View.VISIBLE);
+                            llDatilsPrice.setVisibility(View.VISIBLE);
+                            llDatilsBalance.setVisibility(View.GONE);
+                            tvDatilsCount.setText(datils.getDiscount().getDiscount_num() + "");
+                            tvDatilsPrice.setText("￥" + datils.getDiscount().getDiscount_money());
+                            tvDatilsBalance.setText(datils.getDiscount().getBalance());
+                        } else {
+                            rcrlDatilsPreferential.setVisibility(View.VISIBLE);
+                            llDatilsCount.setVisibility(View.GONE);
+                            llDatilsBalance.setVisibility(View.GONE);
+                        }
+                        if (datils.getUserid() == 0) {
+                            isUserId = false;
+                        } else {
+                            isUserId = true;
+                        }
                         break;
                     default:
                         rlOrdersBar.setVisibility(View.GONE);
@@ -395,10 +403,22 @@ public class DatilsActivity extends BaseActivity {
                 break;
             //追加服务
             case R.id.rcrl_datils_add:
+                if(!isUserId){
+                    cartState.initToast(context, "用户非会员,不可追加服务", true, 0);
+                    return;
+                }
                 initIntent(UserActivity.class, position);
                 break;
             //给予优惠
             case R.id.rcrl_datils_preferential:
+                if(!isUserId){
+                    cartState.initToast(context, "用户非会员,不可给予优惠", true, 0);
+                    return;
+                }
+                if (datils.getIs_discount() == 1) {
+                    cartState.initToast(context, "商品已经打过折扣", true, 0);
+                    return;
+                }
                 initIntent(PreferentialActivity.class);
                 break;
             //添加备注

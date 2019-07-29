@@ -3,7 +3,6 @@ package com.cdqf.cart_hear;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.mob.MobApplication;
 import com.wanjian.cockroach.Cockroach;
@@ -44,7 +43,7 @@ public class App extends MobApplication {
                     public void run() {
                         try {
                             Log.e(TAG, "--->CockroachException:" + thread + "<---", throwable);
-                            Toast.makeText(App.this, "Exception Happend\n" + thread + "\n" + throwable.toString(), Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(App.this, "Exception Happend\n" + thread + "\n" + throwable.toString(), Toast.LENGTH_SHORT).show();
                         } catch (Throwable e) {
 
                         }

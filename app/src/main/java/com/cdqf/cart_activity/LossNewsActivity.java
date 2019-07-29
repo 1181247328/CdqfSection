@@ -106,6 +106,9 @@ public class LossNewsActivity extends BaseActivity {
     @BindView(R.id.rl_loss_context)
     public RelativeLayout rlLossContext = null;
 
+    @BindView(R.id.tv_user_record)
+    public TextView tvUserRecord = null;
+
     private int type = 0;
 
     private int state = 0;
@@ -291,7 +294,7 @@ public class LossNewsActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    @OnClick({R.id.rl_lossnews_return, R.id.tv_lossnews_order, R.id.tv_lossnews_out})
+    @OnClick({R.id.rl_lossnews_return, R.id.tv_lossnews_order, R.id.tv_lossnews_out, R.id.tv_user_record})
     public void onClick(View v) {
         switch (v.getId()) {
             //返回
@@ -311,6 +314,10 @@ public class LossNewsActivity extends BaseActivity {
                 WhyDilogFragment whyDilogTwoFragment = new WhyDilogFragment();
                 whyDilogTwoFragment.setInit(12, "提示", "是否出库", "否", "是");
                 whyDilogTwoFragment.show(getSupportFragmentManager(), "提交出库数量");
+                break;
+            //记录
+            case R.id.tv_user_record:
+                initIntent(RecordActivity.class);
                 break;
         }
     }

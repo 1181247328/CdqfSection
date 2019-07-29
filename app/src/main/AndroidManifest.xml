@@ -11,7 +11,8 @@
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
+
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -427,6 +428,14 @@
         <!--营业-->
         <activity
             android:name="com.cdqf.cart_activity.BusinessActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+
+        </activity>
+
+        <!--签字-->
+        <activity
+            android:name="com.cdqf.cart_activity.SignActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
 

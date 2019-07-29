@@ -2,18 +2,16 @@ package com.cdqf.cart_activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
+import android.widget.AbsListView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -25,7 +23,7 @@ import com.cdqf.cart_okhttp.OnHttpRequest;
 import com.cdqf.cart_state.BaseActivity;
 import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
-import com.cdqf.cart_state.StatusBarCompat;
+import com.cdqf.cart_state.StaturBar;
 import com.cdqf.cart_view.VerticalSwipeRefreshLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -42,7 +40,7 @@ import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 
 /**
- * 记录(店长)
+ * 记录
  */
 public class RecordActivity extends BaseActivity {
     private String TAG = RecordActivity.class.getSimpleName();
@@ -57,7 +55,7 @@ public class RecordActivity extends BaseActivity {
 
     private Gson gson = new Gson();
 
-    @BindView(R.id.vsrl_record_pull)
+    @BindView(R.id.srl_lossnews_pull)
     public VerticalSwipeRefreshLayout vsrlRecordPull = null;
 
     @BindView(R.id.ptrl_record_pull)
@@ -71,44 +69,31 @@ public class RecordActivity extends BaseActivity {
 
     private RecordAdapter recordAdapter = null;
 
+    @BindView(R.id.pb_orders_bar)
+    public ProgressBar pbOrdersBar = null;
+
+    @BindView(R.id.rl_orders_bar)
+    public RelativeLayout rlOrdersBar = null;
+
+    @BindView(R.id.tv_orders_abnormal)
+    public TextView tvOrdersAbnormal = null;
+
     //领取的数量
     private int number = 0;
 
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 0x001:
-                    lvRecrodList.setVisibility(View.VISIBLE);
-                    vsrlRecordPull.setEnabled(false);
-                    break;
-                case 0x002:
-                    lvRecrodList.setVisibility(View.GONE);
-                    vsrlRecordPull.setEnabled(true);
-                    break;
-            }
-        }
-    };
+    private boolean isName = false;
+
+    private int page = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        //API19以下用于沉侵式菜单栏
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        }
-
         //加载布局
         setContentView(R.layout.activity_record);
 
-        //API>=20以上用于沉侵式菜单栏
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-            //沉侵
-            StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.black));
-        }
+        StaturBar.setStatusBar(this, R.color.tab_main_text_icon);
 
         initAgo();
 
@@ -129,7 +114,6 @@ public class RecordActivity extends BaseActivity {
 
     private void initView() {
         lvRecrodList = (ListView) ptrlRecordPull.getPullableView();
-
     }
 
     private void initAdapter() {
@@ -138,10 +122,10 @@ public class RecordActivity extends BaseActivity {
     }
 
     private void initListener() {
-
         vsrlRecordPull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                page = 1;
                 initPull(false);
             }
         });
@@ -153,50 +137,128 @@ public class RecordActivity extends BaseActivity {
             }
 
             @Override
-            public void onLoadMore(PullToRefreshLayout pullToRefreshLayout) {
+            public void onLoadMore(final PullToRefreshLayout pullToRefreshLayout) {
                 //上拉加载
+                Map<String, Object> params = new HashMap<String, Object>();
+                params.put("shop_id", cartState.getUser().getShopid());
+                params.put("page", page);
+                OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
+                okHttpRequestWrap.get(CartAddaress.SHOP_RECORD, false, "请稍候", params, new OnHttpRequest() {
+                    @Override
+                    public void onOkHttpResponse(String response, int id) {
+                        Log.e(TAG, "---onOkHttpResponse出入库记录之上拉加载---" + response);
+                        JSONObject resultJSON = JSON.parseObject(response);
+                        int error_code = resultJSON.getInteger("code");
+                        String msg = resultJSON.getString("message");
+                        switch (error_code) {
+                            //获取成功
+                            case 204:
+                            case 200:
+                            case 201:
+                                page++;
+                                pullToRefreshLayout.refreshFinish(PullToRefreshLayout.SUCCEED);
+                                JSONObject data = resultJSON.getJSONObject("data");
+                                String datas = data.getString("data");
+                                List<Record> recordList = gson.fromJson(datas, new TypeToken<List<Record>>() {
+                                }.getType());
+                                if (recordList.size() <= 0) {
+                                    cartState.initToast(context, "没有更多了", true, 0);
+                                }
+                                cartState.getRecordList().addAll(recordList);
+                                if (recordAdapter != null) {
+                                    recordAdapter.notifyDataSetChanged();
+                                }
+                                break;
+                            default:
+                                pullToRefreshLayout.refreshFinish(PullToRefreshLayout.SUCCEED);
+                                cartState.initToast(context, msg, true, 0);
+                                break;
+                        }
+                    }
+
+                    @Override
+                    public void onOkHttpError(String error) {
+                        Log.e(TAG, "---onOkHttpError---" + error);
+                        pullToRefreshLayout.refreshFinish(PullToRefreshLayout.SUCCEED);
+                    }
+                });
+            }
+        });
+
+        lvRecrodList.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                View firstView = view.getChildAt(firstVisibleItem);
+                // 当firstVisibleItem是第0位。如果firstView==null说明列表为空，需要刷新;或者top==0说明已经到达列表顶部, 也需要刷新
+                if (firstVisibleItem == 0 && (firstView == null || firstView.getTop() == view.getPaddingTop())) {
+                    if (isName) {
+                        vsrlRecordPull.setEnabled(true);
+                    } else {
+                        vsrlRecordPull.setEnabled(false);
+                    }
+                } else {
+                    vsrlRecordPull.setEnabled(false);
+                }
             }
         });
     }
 
     private void initBack() {
-        initPull(true);
+        initPull(false);
         ptrlRecordPull.setPullDownEnable(false);
-        ptrlRecordPull.setPullUpEnable(false);
-        vsrlRecordPull.setEnabled(true);
+        vsrlRecordPull.setEnabled(false);
     }
 
     private void initPull(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("s", "TotalGoods.goodsext_staff");
         params.put("shop_id", cartState.getUser().getShopid());
+        params.put("page", page);
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        okHttpRequestWrap.post(CartAddaress.SHOP_RECORD, isToast, "请稍候", params, new OnHttpRequest() {
+        okHttpRequestWrap.get(CartAddaress.SHOP_RECORD, isToast, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
-                Log.e(TAG, "---onOkHttpResponse审核审核记录---" + response);
-                if(vsrlRecordPull!=null){
+                Log.e(TAG, "---onOkHttpResponse出入库记录---" + response);
+                if (vsrlRecordPull != null) {
+                    isName = true;
+                    vsrlRecordPull.setEnabled(true);
                     vsrlRecordPull.setRefreshing(false);
                 }
                 JSONObject resultJSON = JSON.parseObject(response);
-                int error_code = resultJSON.getInteger("ret");
-                String msg = resultJSON.getString("msg");
+                int error_code = resultJSON.getInteger("code");
+                String msg = resultJSON.getString("message");
                 switch (error_code) {
                     //获取成功
+                    case 204:
+                    case 201:
                     case 200:
-                        String data = resultJSON.getString("data");
-                        Log.e(TAG, "---审核记录---" + data);
-//                        handler.sendEmptyMessage(0x001);
+                        page = 2;
+                        ptrlRecordPull.setVisibility(View.VISIBLE);
+                        rlOrdersBar.setVisibility(View.GONE);
+                        tvOrdersAbnormal.setVisibility(View.GONE);
+                        JSONObject data = resultJSON.getJSONObject("data");
+                        String datas = data.getString("data");
                         cartState.getRecordList().clear();
-                        List<Record> recordList = gson.fromJson(data, new TypeToken<List<Record>>() {
+                        List<Record> recordList = gson.fromJson(datas, new TypeToken<List<Record>>() {
                         }.getType());
                         cartState.setRecordList(recordList);
+                        if (cartState.getRecordList().size() <= 0) {
+                            ptrlRecordPull.setVisibility(View.GONE);
+                            rlOrdersBar.setVisibility(View.GONE);
+                            tvOrdersAbnormal.setVisibility(View.VISIBLE);
+                        }
                         if (recordAdapter != null) {
                             recordAdapter.notifyDataSetChanged();
                         }
                         break;
                     default:
-//                        handler.sendEmptyMessage(0x002);
+                        ptrlRecordPull.setVisibility(View.GONE);
+                        rlOrdersBar.setVisibility(View.GONE);
+                        tvOrdersAbnormal.setVisibility(View.VISIBLE);
                         cartState.initToast(context, msg, true, 0);
                         break;
                 }
@@ -205,6 +267,14 @@ public class RecordActivity extends BaseActivity {
             @Override
             public void onOkHttpError(String error) {
                 Log.e(TAG, "---onOkHttpError---" + error);
+                ptrlRecordPull.setVisibility(View.GONE);
+                rlOrdersBar.setVisibility(View.GONE);
+                tvOrdersAbnormal.setVisibility(View.VISIBLE);
+                if (vsrlRecordPull != null) {
+                    isName = false;
+                    vsrlRecordPull.setEnabled(true);
+                    vsrlRecordPull.setRefreshing(false);
+                }
             }
         });
     }

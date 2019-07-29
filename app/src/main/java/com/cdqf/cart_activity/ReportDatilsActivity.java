@@ -2,9 +2,9 @@ package com.cdqf.cart_activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.widget.NestedScrollView;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
@@ -12,32 +12,26 @@ import android.view.Window;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
-import com.cdqf.cart_adapter.DatilsAdapter;
-import com.cdqf.cart_class.Number;
-import com.cdqf.cart_find.ServiceTwoFind;
-import com.cdqf.cart_okhttp.OKHttpRequestWrap;
-import com.cdqf.cart_okhttp.OnHttpRequest;
+import com.cdqf.cart_adapter.ShopFragmentAdapter;
+import com.cdqf.cart_find.CompletePullFind;
+import com.cdqf.cart_find.EntryPullFind;
+import com.cdqf.cart_find.ServicePullFind;
+import com.cdqf.cart_find.ShopPositionFind;
+import com.cdqf.cart_find.SwipePullFind;
+import com.cdqf.cart_fragment.CompleteFragment;
+import com.cdqf.cart_fragment.EntryFragment;
+import com.cdqf.cart_fragment.ServiceFragment;
 import com.cdqf.cart_state.BaseActivity;
-import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
-import com.cdqf.cart_state.DoubleOperationUtil;
 import com.cdqf.cart_state.StaturBar;
-import com.cdqf.cart_view.ListViewForScrollView;
-import com.cdqf.cart_view.PieChartView;
+import com.cdqf.cart_view.ViewPageSwipeRefreshLayout;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.jingchen.pulltorefresh.PullToRefreshLayout;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.zhengsr.viewpagerlib.indicator.TabIndicator;
 
-import org.xclcharts.chart.PieData;
-
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,7 +43,7 @@ import de.greenrobot.event.Subscribe;
  * 报表详情
  */
 public class ReportDatilsActivity extends BaseActivity {
-    private String TAG = ReportDatilsActivity.class.getSimpleName();
+    private String TAG = ShopActivity.class.getSimpleName();
 
     private Context context = null;
 
@@ -59,77 +53,41 @@ public class ReportDatilsActivity extends BaseActivity {
 
     private CartState cartState = CartState.getCartState();
 
-    private ArrayList<PieData> chartData = new ArrayList<PieData>();
-
     private Gson gson = new Gson();
 
-    @BindView(R.id.srl_datils_pull)
-    public SwipeRefreshLayout srlDatilsPull = null;
+    private Fragment[] orderList = new Fragment[]{
+            new ServiceFragment(),
+            new CompleteFragment(),
+            new EntryFragment(),
+    };
 
-    @BindView(R.id.ptrl_datils_pull)
-    public PullToRefreshLayout ptrlDatilsPull = null;
+    private List<String> orderName = Arrays.asList("待服务", "已完成", "待付款");
 
-    private NestedScrollView svDatilsList = null;
+    //刷新器
+    @BindView(R.id.srl_shop_pull)
+    public ViewPageSwipeRefreshLayout srlShopPull = null;
 
     //返回
-    @BindView(R.id.rl_datils_return)
-    public RelativeLayout rlDatilsReturn = null;
+    @BindView(R.id.rl_shop_return)
+    public RelativeLayout rlShopReturn = null;
 
-    //时间
-    @BindView(R.id.tv_datils_timer)
-    public TextView tvDatilsTimer = null;
+    //录入
+    @BindView(R.id.tv_shop_entry)
+    public TextView tvShopEntry = null;
 
-    //下单次数
-    @BindView(R.id.tv_datils_place)
-    public TextView tvDatilsPlace = null;
+    @BindView(R.id.tv_shop_name)
+    public TextView tvShopName = null;
 
-    //服务次数
-    @BindView(R.id.tv_datils_service)
-    public TextView tvDatilsService = null;
+    @BindView(R.id.ti_shop_dicatior)
+    public TabIndicator tiShopDicatior = null;
 
-    //比例
-    @BindView(R.id.tv_datils_proportion)
-    public TextView tvDatilsProportion = null;
+    @BindView(R.id.vp_shop_screen)
+    public ViewPager vpShopScreen = null;
 
-    //比例率
-    @BindView(R.id.tv_datils_rate)
-    public TextView tvDatilsRate = null;
+    private ShopFragmentAdapter shopFragmentAdapter = null;
 
-    //服务金额
-    @BindView(R.id.tv_datils_price)
-    public TextView tvDatilsPrice = null;
-
-    //提成
-    @BindView(R.id.tv_datils_commission)
-    public TextView tvDatilsCommission = null;
-
-    //饼图
-    @BindView(R.id.pcv_datils_bread)
-    public PieChartView pcvDatilsBread = null;
-
-    //平台
-    @BindView(R.id.tv_datils_platform)
-    public TextView tvDatilsPlatform = null;
-
-    //现金
-    @BindView(R.id.tv_datils_cash)
-    public TextView tvDatilsCash = null;
-
-    //农商
-    @BindView(R.id.tv_datils_agri)
-    public TextView tvDatilsAgri = null;
-
-    //下单明细
-    @BindView(R.id.lvfsv_datils_list)
-    public ListViewForScrollView lvfsvDatilsList = null;
-
-    private DatilsAdapter datilsAdapter = null;
-
+    //哪个碎片要刷新
     private int position = 0;
-
-    private int type = 0;
-
-    private int page = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,7 +95,7 @@ public class ReportDatilsActivity extends BaseActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         //加载布局
-        setContentView(R.layout.activity_reportdatils);
+        setContentView(R.layout.activity_shop);
 
         StaturBar.setStatusBar(this, R.color.tab_main_text_icon);
 
@@ -158,269 +116,68 @@ public class ReportDatilsActivity extends BaseActivity {
             eventBus.register(this);
         }
         ButterKnife.bind(this);
-        Intent intent = getIntent();
-        position = intent.getIntExtra("position", position);
-        type = intent.getIntExtra("type", 0);
     }
 
     private void initView() {
-        svDatilsList = (NestedScrollView) ptrlDatilsPull.getPullableView();
+
     }
 
     private void initAdapter() {
-        lvfsvDatilsList.setFocusable(false);
-        datilsAdapter = new DatilsAdapter(context);
-        lvfsvDatilsList.setAdapter(datilsAdapter);
+        shopFragmentAdapter = new ShopFragmentAdapter(getSupportFragmentManager(), orderList);
+        vpShopScreen.setAdapter(shopFragmentAdapter);
+        vpShopScreen.setOffscreenPageLimit(1);
     }
 
     private void initListener() {
-
-        srlDatilsPull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        tiShopDicatior.setViewPagerSwitchSpeed(vpShopScreen, 600);
+        tiShopDicatior.setTabData(vpShopScreen, orderName, new TabIndicator.TabClickListener() {
             @Override
-            public void onRefresh() {
-                page = 1;
-                initPull(false);
-                initPullList(false);
+            public void onClick(int i) {
+                position = i;
+                vpShopScreen.setCurrentItem(i);
             }
         });
 
-        ptrlDatilsPull.setOnPullListener(new PullToRefreshLayout.OnPullListener() {
+        vpShopScreen.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void onRefresh(PullToRefreshLayout pullToRefreshLayout) {
+            public void onPageScrolled(int i, float v, int i1) {
 
             }
 
             @Override
-            public void onLoadMore(final PullToRefreshLayout pullToRefreshLayout) {
+            public void onPageSelected(int i) {
+                position = i;
+            }
 
-                Map<String, Object> params = new HashMap<String, Object>();
-                OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-                params.put("page", page);
-                okHttpRequestWrap.get(CartAddaress.REPORT_DATILS_LIST + "568", false, "请稍候", params, new OnHttpRequest() {
-                    @Override
-                    public void onOkHttpResponse(String response, int id) {
-                        Log.e(TAG, "---onOkHttpResponse---明细详情---" + response);
-                        if (srlDatilsPull != null) {
-                            srlDatilsPull.setRefreshing(false);
-                        }
-                        JSONObject resultJSON = JSON.parseObject(response);
-                        int error_code = resultJSON.getInteger("code");
-                        String msg = resultJSON.getString("message");
-                        switch (error_code) {
-                            //获取成功
-                            case 204:
-                            case 201:
-                            case 200:
-                                page++;
-                                pullToRefreshLayout.refreshFinish(PullToRefreshLayout.SUCCEED);
-                                JSONObject data = resultJSON.getJSONObject("data");
-                                String datas = data.getString("data");
-                                cartState.initToast(context, msg, true, 0);
-                                List<Number> numberList = gson.fromJson(datas, new TypeToken<List<Number>>() {
-                                }.getType());
-                                cartState.getNumberList().addAll(numberList);
-                                if (datilsAdapter != null) {
-                                    datilsAdapter.notifyDataSetChanged();
-                                }
-                                break;
-                            default:
-                                pullToRefreshLayout.refreshFinish(PullToRefreshLayout.FAIL);
-                                cartState.initToast(context, msg, true, 0);
-                                break;
-                        }
+            @Override
+            public void onPageScrollStateChanged(int i) {
 
-                    }
+            }
+        });
 
-                    @Override
-                    public void onOkHttpError(String error) {
-                        pullToRefreshLayout.refreshFinish(PullToRefreshLayout.FAIL);
-                        Log.e(TAG, "---onOkHttpError---" + error);
-                        cartState.initToast(context, error, true, 0);
-                    }
-                });
+        srlShopPull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                switch (position) {
+                    case 0:
+                        //待服务
+                        eventBus.post(new ServicePullFind(false));
+                        break;
+                    case 1:
+                        //已完成
+                        eventBus.post(new CompletePullFind(false));
+                        break;
+                    case 2:
+                        //录入
+                        eventBus.post(new EntryPullFind(false));
+                        break;
+                }
             }
         });
     }
 
     private void initBack() {
-        ptrlDatilsPull.setPullDownEnable(false);
-        initReportDatils();
-        initPull(true);
-        initPullList(true);
-    }
-
-    //报表详情
-    private void initReportDatils() {
-        String timer = "";
-        String serviceNumber = "";
-        String staffServiceNumber = "";
-        String proportion = "";
-        String rate = "";
-        String price = "";
-        String commission = "";
-        switch (type) {
-            case 1:
-                //日报
-                timer = cartState.getDailyList().get(position).getStart_time();
-                serviceNumber = cartState.getDailyList().get(position).getService_number() + "";
-                staffServiceNumber = cartState.getDailyList().get(position).getStaff_service_number() + "";
-                proportion = cartState.getDailyList().get(position).getTurnover() + "/" + cartState.getDailyList().get(position).getCost_price();
-                rate = cartState.getDailyList().get(position).getTrend() == 1 ?
-                        "+" + cartState.getDailyList().get(position).getCompare_val() + "%" :
-                        "-" + cartState.getDailyList().get(position).getCompare_val() + "%";
-                price = cartState.getDailyList().get(position).getTurnover();
-                commission = cartState.getDailyList().get(position).getGet_money();
-                break;
-            case 2:
-                //周报
-                timer = cartState.getWeekList().get(position).getStart_time() + "-" + cartState.getWeekList().get(position).getEnd_time();
-                serviceNumber = cartState.getWeekList().get(position).getService_number() + "";
-                staffServiceNumber = cartState.getWeekList().get(position).getStaff_service_number() + "";
-                proportion = cartState.getWeekList().get(position).getTurnover() + "/" + cartState.getWeekList().get(position).getCost_price();
-                rate = cartState.getWeekList().get(position).getTrend() == 1 ?
-                        "+" + cartState.getWeekList().get(position).getCompare_val() + "%" :
-                        "-" + cartState.getWeekList().get(position).getCompare_val() + "%";
-                price = cartState.getWeekList().get(position).getTurnover();
-                commission = cartState.getWeekList().get(position).getGet_money();
-                break;
-            case 3:
-                //月报
-                timer = cartState.getMothList().get(position).getStart_time();
-                serviceNumber = cartState.getMothList().get(position).getService_number() + "";
-                staffServiceNumber = cartState.getMothList().get(position).getStaff_service_number() + "";
-                proportion = cartState.getMothList().get(position).getTurnover() + "/" + cartState.getMothList().get(position).getCost_price();
-                rate = cartState.getMothList().get(position).getTrend() == 1 ?
-                        "+" + cartState.getMothList().get(position).getCompare_val() + "%" :
-                        "-" + cartState.getMothList().get(position).getCompare_val() + "%";
-                price = cartState.getMothList().get(position).getTurnover();
-                commission = cartState.getMothList().get(position).getGet_money();
-                break;
-            default:
-                break;
-        }
-        tvDatilsTimer.setText(timer);
-        tvDatilsPlace.setText(serviceNumber);
-        tvDatilsService.setText(staffServiceNumber);
-        tvDatilsProportion.setText(proportion);
-        tvDatilsRate.setText(rate);
-        tvDatilsPrice.setText(price);
-        tvDatilsCommission.setText(commission);
-    }
-
-    private void initPull(boolean isToast) {
-        Map<String, Object> params = new HashMap<String, Object>();
-        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        okHttpRequestWrap.get(CartAddaress.REPORT_DATILS + "568", isToast, "请稍候", params, new OnHttpRequest() {
-            @Override
-            public void onOkHttpResponse(String response, int id) {
-                Log.e(TAG, "---onOkHttpResponse---报表详情---" + response);
-                if (srlDatilsPull != null) {
-                    srlDatilsPull.setRefreshing(false);
-                }
-                JSONObject resultJSON = JSON.parseObject(response);
-                int error_code = resultJSON.getInteger("code");
-                String msg = resultJSON.getString("message");
-                switch (error_code) {
-                    //获取成功
-                    case 204:
-                    case 201:
-                    case 200:
-                        cartState.initToast(context, msg, true, 0);
-                        JSONObject data = resultJSON.getJSONObject("data");
-                        //平台
-                        int balance = data.getInteger("balance");
-                        //现金
-                        int cash = data.getInteger("cash");
-                        //农商
-                        int backRcb = data.getInteger("back_rcb");
-                        tvDatilsPlatform.setText(balance + "");
-                        tvDatilsCash.setText(cash + "");
-                        tvDatilsAgri.setText(backRcb + "");
-                        int sum = balance + cash + backRcb;
-
-
-                        double balanceOne = DoubleOperationUtil.div(balance, sum, 2) * 100;
-                        PieData pieDataOne = new PieData(balanceOne + "%", balanceOne, Color.rgb(155, 187, 90));
-                        chartData.add(pieDataOne);
-
-                        double cashTwo = DoubleOperationUtil.div(cash, sum, 2) * 100;
-                        PieData pieDataTwo = new PieData(cashTwo + "%", cashTwo, Color.rgb(191, 79, 75));
-                        chartData.add(pieDataTwo);
-
-                        double backRcbTwo = DoubleOperationUtil.div(backRcb, sum, 2) * 100;
-                        PieData pieDataThreee = new PieData(backRcbTwo + "%", backRcbTwo, Color.rgb(242, 167, 69));
-                        chartData.add(pieDataThreee);
-
-                        pcvDatilsBread.setChartData(chartData);
-
-                        break;
-                    default:
-                        cartState.initToast(context, msg, true, 0);
-                        break;
-                }
-
-            }
-
-            @Override
-            public void onOkHttpError(String error) {
-                if (srlDatilsPull != null) {
-                    srlDatilsPull.setRefreshing(false);
-                }
-                Log.e(TAG, "---onOkHttpError---" + error);
-                cartState.initToast(context, error, true, 0);
-            }
-        });
-    }
-
-    private void initPullList(boolean isToast) {
-        Map<String, Object> params = new HashMap<String, Object>();
-        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        params.put("page", page);
-        okHttpRequestWrap.get(CartAddaress.REPORT_DATILS_LIST + "568", isToast, "请稍候", params, new OnHttpRequest() {
-            @Override
-            public void onOkHttpResponse(String response, int id) {
-                Log.e(TAG, "---onOkHttpResponse---明细详情---" + response);
-                if (srlDatilsPull != null) {
-                    srlDatilsPull.setRefreshing(false);
-                }
-                JSONObject resultJSON = JSON.parseObject(response);
-                int error_code = resultJSON.getInteger("code");
-                String msg = resultJSON.getString("message");
-                switch (error_code) {
-                    //获取成功
-                    case 204:
-                    case 201:
-                    case 200:
-                        page = 2;
-                        JSONObject data = resultJSON.getJSONObject("data");
-                        String datas = data.getString("data");
-                        cartState.initToast(context, msg, true, 0);
-                        cartState.getNumberList().clear();
-                        cartState.initToast(context, msg, true, 0);
-
-                        List<Number> numberList = gson.fromJson(datas, new TypeToken<List<Number>>() {
-                        }.getType());
-                        cartState.setNumberList(numberList);
-                        if (datilsAdapter != null) {
-                            datilsAdapter.notifyDataSetChanged();
-                        }
-                        break;
-                    default:
-                        cartState.initToast(context, msg, true, 0);
-                        break;
-                }
-
-            }
-
-            @Override
-            public void onOkHttpError(String error) {
-                if (srlDatilsPull != null) {
-                    srlDatilsPull.setRefreshing(false);
-                }
-                Log.e(TAG, "---onOkHttpError---" + error);
-                cartState.initToast(context, error, true, 0);
-            }
-        });
+        tvShopName.setText(cartState.getUser().getShopName());
     }
 
     private void initIntent(Class<?> activity) {
@@ -428,12 +185,16 @@ public class ReportDatilsActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    @OnClick({R.id.rl_datils_return})
+
+    @OnClick({R.id.rl_shop_return, R.id.tv_shop_entry})
     public void onClick(View v) {
         switch (v.getId()) {
-            //返回
-            case R.id.rl_datils_return:
+            case R.id.rl_shop_return:
                 finish();
+                break;
+            //录入
+            case R.id.tv_shop_entry:
+                initIntent(AddOrderActivity.class);
                 break;
         }
     }
@@ -478,10 +239,28 @@ public class ReportDatilsActivity extends BaseActivity {
         super.onDestroy();
         Log.e(TAG, "---销毁---");
         eventBus.unregister(this);
+
     }
 
+    /**
+     * 用于通知修改页
+     *
+     * @param s
+     */
     @Subscribe
-    public void onEventMainThread(ServiceTwoFind s) {
+    public void onEventMainThread(ShopPositionFind s) {
+        position = s.position;
+        vpShopScreen.setCurrentItem(s.position);
+    }
 
+    /**
+     * 是否刷新和禁用
+     *
+     * @param s
+     */
+    @Subscribe
+    public void onEventMainThread(SwipePullFind s) {
+        srlShopPull.setRefreshing(s.isRefreshing);
+        srlShopPull.setEnabled(s.isEnabled);
     }
 }

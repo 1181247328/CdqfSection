@@ -233,6 +233,7 @@ public class UserActivity extends BaseActivity {
                         userAdapter = new UserAdapter(context);
                         lvUserList.setAdapter(userAdapter);
                         userAdapter.setPosition(0);
+                        nameAdapter.setType(0);
                         break;
                     default:
                         rlOrdersBar.setVisibility(View.GONE);
@@ -429,6 +430,8 @@ public class UserActivity extends BaseActivity {
         params.put("remarks", "");
         //支付方式
         params.put("pay_type", "");
+        int type = 1;
+        params.put("type", type);
         //数量
 
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);

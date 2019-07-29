@@ -127,7 +127,10 @@ public class CartAddaress {
     public static String SHOP_GOODS = ADDRESS + "/staff/class";
 
     //给予优惠
-    public static String SHOP_PREFERENT = ADDRESS + "staff/discount";
+    public static String SHOP_PREFERENT = ADDRESS + "/staff/discount";
+
+    //出入库记录
+    public static String SHOP_RECORD = ADDRESS + "/staff/consumables";
 
     /****************************************************/
 
@@ -163,9 +166,6 @@ public class CartAddaress {
 
     //店长不通过
     public static String SHOP_THROUGH_NO = ADDRESS + "/?s=TotalGoods.shop_exit";
-
-    //店长审核记录
-    public static String SHOP_RECORD = ADDRESS + "/?s=TotalGoods.goodsext_staff";
 
     //店长追加
 //    public static String SHOP_GOODS = ADDRESS_THE + "/?s=goods.goodsall";

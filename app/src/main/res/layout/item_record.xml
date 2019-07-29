@@ -4,53 +4,84 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/service_bak"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:orientation="vertical"
-        android:paddingLeft="@dimen/dp_15"
-        android:paddingTop="@dimen/dp_20"
-        android:paddingRight="@dimen/dp_15"
-        android:paddingBottom="@dimen/dp_20">
+        android:paddingLeft="@dimen/dp_5"
+        android:paddingTop="@dimen/dp_5"
+        android:paddingRight="@dimen/dp_5"
+        android:paddingBottom="@dimen/dp_5">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white">
+            android:background="@color/white"
+            android:orientation="vertical">
 
-            <com.gcssloop.widget.RCRelativeLayout
-                android:id="@+id/rcrl_audit_item_image"
+            <TextView
+                android:id="@+id/tv_record_item_state"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
-                app:clip_background="true"
-                app:round_corner="@dimen/dp_5">
+                android:text="入库"
+                android:textColor="@color/audit_text"
+                android:textSize="@dimen/sp_14" />
 
-                <ImageView
-                    android:id="@+id/iv_record_item_image"
-                    android:layout_width="@dimen/dp_90"
-                    android:layout_height="@dimen/dp_85"
-                    android:scaleType="centerCrop" />
-
-            </com.gcssloop.widget.RCRelativeLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@id/rcrl_audit_item_image"
-                android:layout_toRightOf="@id/rcrl_audit_item_image"
                 android:background="@color/white"
                 android:orientation="horizontal"
-                android:paddingLeft="@dimen/dp_8">
+                android:paddingTop="@dimen/dp_5"
+                android:paddingBottom="@dimen/dp_5">
 
                 <TextView
-                    android:id="@+id/tv_record_item_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
+                    android:text="物品名称:"
+                    android:textColor="@color/audit_text"
+                    android:textSize="@dimen/sp_14" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:gravity="right|center_vertical">
+
+                    <TextView
+                        android:id="@+id/tv_record_item_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        android:ellipsize="middle"
+                        android:singleLine="true"
+                        android:text="雨刷"
+                        android:textColor="@color/audit_text"
+                        android:textSize="@dimen/sp_14" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                android:paddingTop="@dimen/dp_5"
+                android:paddingBottom="@dimen/dp_5">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:text="物品数量:"
                     android:textColor="@color/audit_text"
                     android:textSize="@dimen/sp_14" />
 
@@ -65,40 +96,28 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@color/white"
-                        android:paddingLeft="@dimen/dp_30"
-                        android:paddingRight="@dimen/dp_30"
+                        android:ellipsize="middle"
+                        android:singleLine="true"
+                        android:text="20"
                         android:textColor="@color/audit_text"
                         android:textSize="@dimen/sp_14" />
                 </LinearLayout>
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/tv_record_item_figure"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@id/rcrl_audit_item_image"
-                android:background="@color/white"
-                android:paddingLeft="@dimen/dp_8"
-                android:textColor="@color/audit_text"
-                android:textSize="@dimen/sp_14" />
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@id/rcrl_audit_item_image"
-                android:layout_toRightOf="@id/rcrl_audit_item_image"
                 android:background="@color/white"
-                android:gravity="bottom"
                 android:orientation="horizontal"
-                android:paddingLeft="@dimen/dp_8">
+                android:paddingTop="@dimen/dp_5"
+                android:paddingBottom="@dimen/dp_5">
 
                 <TextView
-                    android:id="@+id/tv_record_item_timer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
+                    android:text="时间:"
                     android:textColor="@color/audit_text"
                     android:textSize="@dimen/sp_14" />
 
@@ -106,27 +125,28 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
-                    android:gravity="right|center_vertical"
-                    android:orientation="horizontal">
+                    android:gravity="right|center_vertical">
 
                     <TextView
-                        android:id="@+id/tv_record_item_state"
+                        android:id="@+id/tv_record_item_timer"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@android:color/transparent"
-                        android:paddingLeft="@dimen/dp_15"
-                        android:paddingTop="@dimen/dp_5"
-                        android:paddingRight="@dimen/dp_15"
-                        android:paddingBottom="@dimen/dp_5"
-                        android:textColor="#f75c3e"
+                        android:background="@color/white"
+                        android:text="2019-07-29 15:28"
+                        android:textColor="@color/audit_text"
                         android:textSize="@dimen/sp_14" />
-
                 </LinearLayout>
 
             </LinearLayout>
 
-        </RelativeLayout>
+        </LinearLayout>
 
     </LinearLayout>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_5"
+        android:background="@color/service_bak" />
+
 </LinearLayout>
+
