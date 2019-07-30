@@ -81,7 +81,6 @@ public class DailyFragment extends Fragment {
     private boolean isPull = false;
 
 
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -127,8 +126,7 @@ public class DailyFragment extends Fragment {
                 Map<String, Object> params = new HashMap<String, Object>();
                 OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
                 //店铺id
-//        params.put("shop_id", cartState.getUser().getShopid());
-                params.put("shop_id", "107");
+                params.put("staff_id", cartState.getUser().getId());
                 //类型1 = 日
                 params.put("type", 1);
                 //页码
@@ -207,6 +205,7 @@ public class DailyFragment extends Fragment {
         lvDailyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.e(TAG, "---2222222222===");
                 initIntent(ReportDatilsActivity.class, position);
             }
         });
@@ -227,8 +226,7 @@ public class DailyFragment extends Fragment {
         Map<String, Object> params = new HashMap<String, Object>();
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
         //店铺id
-//        params.put("shop_id", cartState.getUser().getShopid());
-        params.put("shop_id", "107");
+        params.put("staff_id", cartState.getUser().getId());
         //类型1 = 日
         params.put("type", 1);
         //页码

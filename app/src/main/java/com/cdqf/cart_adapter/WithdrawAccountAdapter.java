@@ -56,10 +56,10 @@ public class WithdrawAccountAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        viewHolder.tvAuditItemNumber.setText("工号：" + cartState.getWithdrawList().get(position).getStaff_id());
+        viewHolder.tvAuditItemNumber.setText(cartState.getWithdrawList().get(position).getType());
         viewHolder.tvAuditItemPrice.setText("报销金额：￥" + cartState.getWithdrawList().get(position).getExamine_price());
         viewHolder.tvAuditItemTimer.setText("报销时间：" + cartState.getWithdrawList().get(position).getCreated_at());
-        viewHolder.tvAuditItemTimer.setText("已撤回");
+        viewHolder.tvAuditItemState.setText("已撤回");
         return convertView;
     }
 

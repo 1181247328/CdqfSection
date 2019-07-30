@@ -7,6 +7,7 @@ public class Audits {
     private String examine_price;
     private int staff_id;
     private String login_account;
+    private String type;
 
     public int getId() {
         return id;
@@ -46,5 +47,13 @@ public class Audits {
 
     public void setLogin_account(String login_account) {
         this.login_account = login_account;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

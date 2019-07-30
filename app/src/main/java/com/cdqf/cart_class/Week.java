@@ -1,6 +1,7 @@
 package com.cdqf.cart_class;
 
 public class Week {
+    private int id;
     private int service_number;
     private int staff_service_number;
     private String turnover;
@@ -14,6 +15,14 @@ public class Week {
     private String created_at;
     private String start_time;
     private String end_time;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public int getService_number() {
         return service_number;

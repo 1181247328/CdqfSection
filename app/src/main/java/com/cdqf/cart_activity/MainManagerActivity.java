@@ -169,7 +169,6 @@ public class MainManagerActivity extends BaseActivity {
                 //我的
                 ivMainMy.setImageResource(R.mipmap.main_tab_my_default);
                 tvMainMy.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_default));
-
                 if (homeManagerFragment == null) {
                     homeManagerFragment = new HomeManagerFragment();
                     transaction.add(R.id.fl_main_fragment, homeManagerFragment);

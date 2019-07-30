@@ -328,21 +328,5 @@ public class AuditFragment extends Fragment {
     public void onEventMainThread(AuditPullFind s) {
         page = 1;
         initPull(false);
-//        Map<String, Object> params = new HashMap<String, Object>();
-//        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
-//        params.put("", "");
-//        okHttpRequestWrap.post("", false, "请稍候", params, new OnHttpRequest() {
-//            @Override
-//            public void onOkHttpResponse(String response, int id) {
-//                Log.e(TAG, "---onOkHttpResponse---待服务---" + response);
-//                eventBus.post(new SwipePullFind(false, false));
-//            }
-//
-//            @Override
-//            public void onOkHttpError(String error) {
-//                Log.e(TAG, "---onOkHttpError---" + error);
-//                eventBus.post(new SwipePullFind(false, false));
-//            }
-//        });
     }
 }

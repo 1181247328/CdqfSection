@@ -56,10 +56,10 @@ public class AuditAccountAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        viewHolder.tvAuditItemNumber.setText("工号：" + cartState.getAuditsList().get(position).getStaff_id());
+        viewHolder.tvAuditItemNumber.setText(cartState.getAuditsList().get(position).getType());
         viewHolder.tvAuditItemPrice.setText("报销金额：￥" + cartState.getAuditsList().get(position).getExamine_price());
         viewHolder.tvAuditItemTimer.setText("报销时间：" + cartState.getAuditsList().get(position).getCreated_at());
-        viewHolder.tvAuditItemTimer.setText("待审批");
+        viewHolder.tvAuditItemState.setText("待审批");
         return convertView;
     }
 

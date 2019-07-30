@@ -125,9 +125,7 @@ public class MothFragment extends Fragment {
                 //上拉加载
                 Map<String, Object> params = new HashMap<String, Object>();
                 OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
-                //店铺id
-//        params.put("shop_id", cartState.getUser().getShopid());
-                params.put("shop_id", "107");
+                params.put("staff_id", cartState.getUser().getId());
                 //类型1 = 月
                 params.put("type", 3);
                 //页码
@@ -225,9 +223,7 @@ public class MothFragment extends Fragment {
         page = 1;
         Map<String, Object> params = new HashMap<String, Object>();
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
-        //店铺id
-//        params.put("shop_id", cartState.getUser().getShopid());
-        params.put("shop_id", "107");
+        params.put("staff_id", cartState.getUser().getId());
         //类型1 = 月
         params.put("type", 3);
         //页码

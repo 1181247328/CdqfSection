@@ -179,6 +179,7 @@ public class HomeManagerFragment extends Fragment {
                         break;
                     //服务
                     case "服务":
+                        Log.e(TAG, "---服务---");
                         initIntent(ShopActivity.class);
                         break;
                     //通知

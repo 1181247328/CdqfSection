@@ -331,7 +331,6 @@ public class ClockActivity extends BaseActivity {
                             }
                         });
                         address = "";
-                        Log.e(TAG, "---纬度---" + latiude + "---经度---" + longitude);
                         latLng = new LatLng(latiude, longitude);
                         isClock = true;
                         //获取系统时间
@@ -455,7 +454,7 @@ public class ClockActivity extends BaseActivity {
                             tvClockImageOne.setVisibility(View.GONE);
                             tvClockWorkon.setText(clock.getGo_work().get(0).getCreated_at());
                             tvClockAddresson.setText(clock.getShop().getName());
-                            imageLoader.displayImage(clock.getGo_work().get(0).getImage(), ivClockImageon);
+                            imageLoader.displayImage(clock.getGo_work().get(0).getImage(), ivClockImageon, cartState.getImageLoaderOptions(R.mipmap.not_loaded, R.mipmap.not_loaded, R.mipmap.not_loaded));
                         }
 
                         //是否下班
@@ -470,7 +469,7 @@ public class ClockActivity extends BaseActivity {
                             isImagesone = false;
                             tvClockFixedafterafter.setText(clock.getLeave_work().get(0).getCreated_at());
                             tvClockAddressafter.setText(clock.getShop().getName());
-                            imageLoader.displayImage(clock.getLeave_work().get(0).getImage(), ivClockImageafter);
+                            imageLoader.displayImage(clock.getLeave_work().get(0).getImage(), ivClockImageafter, cartState.getImageLoaderOptions(R.mipmap.not_loaded, R.mipmap.not_loaded, R.mipmap.not_loaded));
                         }
 
                         initOption();
@@ -510,6 +509,8 @@ public class ClockActivity extends BaseActivity {
         values.put(MediaStore.Images.Media.TITLE, filename);
         photoUriOne = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUriOne);
+        //1=前置 2 = 后置
+        intent.putExtra("android.intent.extras.CAMERA_FACING", 2);
         startActivityForResult(intent, REQUEST_CODE_TAKE_PICTURE);
     }
 
@@ -686,13 +687,13 @@ public class ClockActivity extends BaseActivity {
                         if (TextUtils.equals(outfile, "") || outfile == null) {
                             return;
                         }
-                        isImageOne = true;
-                        isImageTwo = true;
                         photoUriOn = outfile;
                         if (isWork) {
-                            imageLoader.displayImage("file:/" + outfile, ivClockImageon);
+                            isImageOne = true;
+                            imageLoader.displayImage("file:/" + outfile, ivClockImageon, cartState.getImageLoaderOptions(R.mipmap.clock_add, R.mipmap.clock_add, R.mipmap.clock_add));
                         } else {
-                            imageLoader.displayImage("file:/" + outfile, ivClockImageafter);
+                            isImageTwo = true;
+                            imageLoader.displayImage("file:/" + outfile, ivClockImageafter, cartState.getImageLoaderOptions(R.mipmap.clock_add, R.mipmap.clock_add, R.mipmap.clock_add));
                         }
                     }
                 });
@@ -704,8 +705,11 @@ public class ClockActivity extends BaseActivity {
                             return;
                         }
                         Log.e(TAG, "---门店图片---");
-                        isImageOne = true;
-                        isImageTwo = true;
+                        if (isWork) {
+                            isImageOne = true;
+                        } else {
+                            isImageTwo = true;
+                        }
                         image = bitmapToBase64(bitmap);
                     }
                 });

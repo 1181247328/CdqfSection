@@ -24,9 +24,9 @@
             android:gravity="center_vertical|left"
             android:paddingLeft="@dimen/dp_10"
             android:paddingTop="@dimen/dp_14"
-            android:text="工号：W10021"
-            android:textColor="@color/tab_main_text_default"
-            android:textSize="@dimen/sp_16" />
+            android:text="类别"
+            android:textColor="@color/clock_one"
+            android:textSize="@dimen/sp_14" />
 
         <TextView
             android:id="@+id/tv_audit_item_price"

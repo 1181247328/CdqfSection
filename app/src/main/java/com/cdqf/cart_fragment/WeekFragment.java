@@ -127,8 +127,7 @@ public class WeekFragment extends Fragment {
                 Map<String, Object> params = new HashMap<String, Object>();
                 OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
                 //店铺id
-//        params.put("shop_id", cartState.getUser().getShopid());
-                params.put("shop_id", "107");
+                params.put("staff_id", cartState.getUser().getId());
                 //类型1 = 周
                 params.put("type", 2);
                 //页码
@@ -225,8 +224,7 @@ public class WeekFragment extends Fragment {
         Map<String, Object> params = new HashMap<String, Object>();
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
         //店铺id
-//        params.put("shop_id", cartState.getUser().getShopid());
-        params.put("shop_id", "107");
+        params.put("staff_id", cartState.getUser().getId());
         //类型1 = 周
         params.put("type", 2);
         //页码

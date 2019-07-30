@@ -1,6 +1,7 @@
 package com.cdqf.cart_class;
 
 public class Daily {
+    private int id;
     private int service_number;
     private int staff_service_number;
     private String turnover;
@@ -13,6 +14,14 @@ public class Daily {
     private int type;
     private String created_at;
     private String start_time;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public int getService_number() {
         return service_number;

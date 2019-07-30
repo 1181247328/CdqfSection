@@ -87,6 +87,34 @@
 
             </RelativeLayout>
 
+            <RelativeLayout
+                android:id="@+id/rl_orders_bar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/service_bak"
+                android:visibility="visible">
+
+                <ProgressBar
+                    android:id="@+id/pb_orders_bar"
+                    style="@android:style/Widget.ProgressBar.Inverse"
+                    android:layout_width="@dimen/dp_20"
+                    android:layout_height="@dimen/dp_20"
+                    android:layout_centerInParent="true"
+                    android:background="@android:color/transparent" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tv_orders_abnormal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:text="暂无~"
+                android:textColor="@color/house_eight"
+                android:textSize="@dimen/sp_14"
+                android:visibility="gone" />
+
 
             <com.jingchen.pulltorefresh.PullToRefreshLayout
                 android:id="@+id/ptrl_datils_pull"
@@ -532,7 +560,21 @@
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:background="@android:color/transparent">
+                                android:background="@android:color/transparent"
+                                android:focusable="true"
+                                android:focusableInTouchMode="true"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/tv_orders_list"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/dp_120"
+                                    android:layout_centerInParent="true"
+                                    android:gravity="center"
+                                    android:text="暂无~"
+                                    android:textColor="@color/house_eight"
+                                    android:textSize="@dimen/sp_14"
+                                    android:visibility="gone" />
 
                                 <com.cdqf.cart_view.ListViewForScrollView
                                     android:id="@+id/lvfsv_datils_list"

@@ -56,10 +56,10 @@ public class ThroughAccountAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        viewHolder.tvAuditItemNumber.setText("工号：" + cartState.getThroughList().get(position).getStaff_id());
+        viewHolder.tvAuditItemNumber.setText(cartState.getThroughList().get(position).getType());
         viewHolder.tvAuditItemPrice.setText("报销金额：￥" + cartState.getThroughList().get(position).getExamine_price());
         viewHolder.tvAuditItemTimer.setText("报销时间：" + cartState.getThroughList().get(position).getCreated_at());
-        viewHolder.tvAuditItemTimer.setText("已通过");
+        viewHolder.tvAuditItemState.setText("已通过");
         return convertView;
     }
 
