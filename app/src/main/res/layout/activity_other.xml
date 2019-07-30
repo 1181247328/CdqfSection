@@ -399,7 +399,7 @@
                             android:paddingLeft="@dimen/dp_10"
                             android:paddingTop="@dimen/dp_8"
                             android:paddingBottom="@dimen/dp_5"
-                            android:text="请签字"
+                            android:text="请提现"
                             android:textColor="@color/loss_manager_number"
                             android:textSize="@dimen/sp_14" />
 
@@ -419,7 +419,7 @@
                                 android:paddingTop="@dimen/dp_6"
                                 android:paddingRight="@dimen/dp_12"
                                 android:paddingBottom="@dimen/dp_6"
-                                android:text="确认签字"
+                                android:text="马上提现"
                                 android:textColor="@color/tab_main_text_default"
                                 android:textSize="@dimen/sp_14" />
 

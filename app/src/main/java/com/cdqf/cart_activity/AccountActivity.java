@@ -167,7 +167,7 @@ public class AccountActivity extends BaseActivity {
     }
 
     private void initBack() {
-
+        srlShopPull.setEnabled(false);
     }
 
     private void initIntent(Class<?> activity) {

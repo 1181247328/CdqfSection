@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/service_bak"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <ProgressBar
             android:id="@+id/pb_orders_bar"
@@ -68,6 +68,7 @@
                     android:gravity="center|center_vertical"
                     android:paddingLeft="@dimen/dp_12"
                     android:paddingTop="@dimen/dp_8"
+                    android:paddingRight="@dimen/dp_8"
                     android:paddingBottom="@dimen/dp_8"
                     android:text="浅水半岛店"
                     android:textColor="@color/tab_main_text_default"
@@ -80,7 +81,8 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="@dimen/dp_3"
                     android:background="@android:color/transparent"
-                    android:src="@mipmap/shop_next" />
+                    android:src="@mipmap/shop_next"
+                    android:visibility="gone" />
 
             </LinearLayout>
 

@@ -84,12 +84,12 @@
                             android:id="@+id/tv_shop_item_name"
                             android:layout_width="@dimen/dp_130"
                             android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:ellipsize="middle"
+                            android:gravity="left"
                             android:paddingLeft="@dimen/dp_8"
                             android:paddingRight="@dimen/dp_8"
                             android:singleLine="true"
-                            android:ellipsize="middle"
-                            android:background="@android:color/transparent"
-                            android:gravity="left"
                             android:text="耗材"
                             android:textColor="@color/tab_main_text_default"
                             android:textSize="@dimen/sp_14" />
@@ -135,43 +135,84 @@
                 android:paddingLeft="@dimen/dp_5"
                 android:paddingRight="@dimen/dp_5">
 
-                <com.gcssloop.widget.RCRelativeLayout
-                    android:id="@+id/rcrl_shop_item_claim"
+                <LinearLayout
+                    android:id="@+id/ll_shop_item_claim"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginRight="@dimen/dp_2"
                     android:background="@android:color/transparent"
-                    app:clip_background="true">
+                    android:orientation="horizontal">
 
-                    <LinearLayout
+                    <com.gcssloop.widget.RCRelativeLayout
+                        android:id="@+id/rcrl_shop_item_claim"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@color/tab_main_text_icon"
-                        android:orientation="horizontal"
-                        android:paddingLeft="@dimen/dp_30"
-                        android:paddingTop="@dimen/dp_10"
-                        android:paddingRight="@dimen/dp_30"
-                        android:paddingBottom="@dimen/dp_10">
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="@dimen/dp_2"
+                        android:background="@android:color/transparent"
+                        app:clip_background="true">
 
-                        <TextView
-                            android:id="@+id/tv_shop_item_claim"
-                            android:layout_width="match_parent"
+                        <LinearLayout
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@android:color/transparent"
-                            android:gravity="center|right"
-                            android:text="服务"
-                            android:textColor="@color/tab_main_text_default"
-                            android:textSize="@dimen/sp_14" />
+                            android:background="@color/tab_main_text_icon"
+                            android:orientation="horizontal"
+                            android:paddingLeft="@dimen/dp_30"
+                            android:paddingTop="@dimen/dp_10"
+                            android:paddingRight="@dimen/dp_30"
+                            android:paddingBottom="@dimen/dp_10">
 
-                    </LinearLayout>
-                </com.gcssloop.widget.RCRelativeLayout>
+                            <TextView
+                                android:id="@+id/tv_shop_item_claim"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@android:color/transparent"
+                                android:gravity="center|right"
+                                android:text="服务"
+                                android:textColor="@color/tab_main_text_default"
+                                android:textSize="@dimen/sp_14" />
+
+                        </LinearLayout>
+                    </com.gcssloop.widget.RCRelativeLayout>
+
+                    <com.gcssloop.widget.RCRelativeLayout
+                        android:id="@+id/rcrl_shop_item_yes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/dp_2"
+                        android:background="@android:color/transparent"
+                        app:clip_background="true">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@color/tab_main_text_icon"
+                            android:orientation="horizontal"
+                            android:paddingLeft="@dimen/dp_30"
+                            android:paddingTop="@dimen/dp_10"
+                            android:paddingRight="@dimen/dp_30"
+                            android:paddingBottom="@dimen/dp_10">
+
+                            <TextView
+                                android:id="@+id/tv_shop_item_yes"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@android:color/transparent"
+                                android:gravity="center|right"
+                                android:text="完成"
+                                android:textColor="@color/tab_main_text_default"
+                                android:textSize="@dimen/sp_14" />
+
+                        </LinearLayout>
+                    </com.gcssloop.widget.RCRelativeLayout>
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@id/rcrl_shop_item_claim"
+                    android:layout_toLeftOf="@id/ll_shop_item_claim"
                     android:background="@android:color/transparent"
                     android:orientation="vertical">
 

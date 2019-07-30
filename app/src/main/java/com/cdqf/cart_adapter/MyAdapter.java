@@ -91,7 +91,11 @@ public class MyAdapter extends BaseAdapter {
                 break;
             //职位
             case 2:
-                viewHolder.tvMyItemName.setText(cartState.getMyUser().getRoles_name() + "(" + cartState.getUser().getShopName() + ")");
+                try {
+                    viewHolder.tvMyItemName.setText(cartState.getMyUser().getRoles_name() + "(" + cartState.getUser().getShopName() + ")");
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
                 break;
             //紧急电话
             case 3:

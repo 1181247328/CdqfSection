@@ -22,8 +22,11 @@ import com.cdqf.cart_activity.DatilsActivity;
 import com.cdqf.cart_adapter.ShopAdapter;
 import com.cdqf.cart_class.Service;
 import com.cdqf.cart_dilog.WhyDilogFragment;
+import com.cdqf.cart_find.CompletePullFind;
 import com.cdqf.cart_find.ServcieKeyFind;
 import com.cdqf.cart_find.ServicePullFind;
+import com.cdqf.cart_find.ServiceYesOneFind;
+import com.cdqf.cart_find.ServiceYesTwoFind;
 import com.cdqf.cart_find.ShopServiceOneFind;
 import com.cdqf.cart_find.ShopServiceTwoFind;
 import com.cdqf.cart_find.SwipePullFind;
@@ -361,7 +364,7 @@ public class ServiceFragment extends Fragment {
     @Subscribe
     public void onEventMainThread(ShopServiceOneFind s) {
         WhyDilogFragment whyDilogFragment = new WhyDilogFragment();
-        whyDilogFragment.setInit(1, "提示", "是否领取车牌号为" + cartState.getServiceLis().get(s.position-1).getCarnum() + "的订单.", "否", "是", s.position-1);
+        whyDilogFragment.setInit(1, "提示", "是否领取车牌号为" + cartState.getServiceLis().get(s.position - 1).getCarnum() + "的订单.", "否", "是", s.position - 1);
         whyDilogFragment.show(getFragmentManager(), "领取订单");
     }
 
@@ -391,6 +394,58 @@ public class ServiceFragment extends Fragment {
                         page = 1;
                         initPull(true);
                         cartState.initToast(getContext(), "接单成功", true, 0);
+                        break;
+                    default:
+                        cartState.initToast(getContext(), msg, true, 0);
+                        break;
+                }
+            }
+
+            @Override
+            public void onOkHttpError(String error) {
+                Log.e(TAG, "---onOkHttpError---" + error);
+            }
+        });
+    }
+
+    /**
+     * 完成第一次，用于提示
+     *
+     * @param s
+     */
+    @Subscribe
+    public void onEventMainThread(ServiceYesOneFind s) {
+        WhyDilogFragment whyDilogFragment = new WhyDilogFragment();
+        whyDilogFragment.setInit(24, "提示", "是否完成车牌号为" + cartState.getServiceLis().get(s.position - 1).getCarnum() + "的订单.", "否", "是", s.position - 1);
+        whyDilogFragment.show(getFragmentManager(), "完成订单");
+    }
+
+    /**
+     * 完成第二次
+     *
+     * @param s
+     */
+    @Subscribe
+    public void onEventMainThread(ServiceYesTwoFind s) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
+        params.put("order_id", cartState.getServiceLis().get(s.position).getId());
+        okHttpRequestWrap.postString(CartAddaress.USER_YES, true, "完成中", params, new OnHttpRequest() {
+            @Override
+            public void onOkHttpResponse(String response, int id) {
+                Log.e(TAG, "---onOkHttpResponse---完成中---" + response);
+                JSONObject resultJSON = JSON.parseObject(response);
+                int ret = resultJSON.getInteger("code");
+                String msg = resultJSON.getString("message");
+                switch (ret) {
+                    case 201:
+                    case 204:
+                    case 200:
+                        String data = resultJSON.getString("data");
+                        eventBus.post(new CompletePullFind(false));
+                        page = 1;
+                        initPull(true);
+                        cartState.initToast(getContext(), "完成订单", true, 0);
                         break;
                     default:
                         cartState.initToast(getContext(), msg, true, 0);

@@ -413,7 +413,8 @@ public class UserActivity extends BaseActivity {
         String phone = cartState.getDatils().getPhone();
         //数量
         String number = numbers + "";
-
+        //用户id
+        params.put("user_id", userid);
         //店铺id
         params.put("shop_id", cartState.getUser().getShopid());
         //手机号

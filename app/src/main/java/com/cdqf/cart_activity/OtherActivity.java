@@ -223,7 +223,7 @@ public class OtherActivity extends BaseActivity {
                                 tvOtherName.setText("");
                                 isConfirm = false;
                                 isSignature = false;
-                                tvOtherWithdrawal.setText("马上签字");
+                                tvOtherWithdrawal.setText("马上提现");
                                 tvOtherWithdrawal.setBackgroundColor(ContextCompat.getColor(context, R.color.tab_main_text_icon));
                                 break;
                             case 1:
@@ -231,7 +231,7 @@ public class OtherActivity extends BaseActivity {
                                 tvOtherName.setText(cartState.getUser().getName());
                                 isConfirm = true;
                                 isSignature = true;
-                                tvOtherWithdrawal.setText("已签字");
+                                tvOtherWithdrawal.setText("已提现");
                                 tvOtherWithdrawal.setBackgroundColor(ContextCompat.getColor(context, R.color.service_bak));
                                 break;
                             default:
@@ -344,8 +344,8 @@ public class OtherActivity extends BaseActivity {
                     return;
                 }
                 WhyDilogFragment whyDilogFragment = new WhyDilogFragment();
-                whyDilogFragment.setInit(22, "提示", "是否签字", "否", "是");
-                whyDilogFragment.show(getSupportFragmentManager(), "是否签字");
+                whyDilogFragment.setInit(22, "提示", "是否提现", "否", "是");
+                whyDilogFragment.show(getSupportFragmentManager(), "是否提现");
                 break;
         }
     }

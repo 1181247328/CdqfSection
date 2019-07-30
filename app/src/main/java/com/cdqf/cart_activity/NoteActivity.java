@@ -143,8 +143,11 @@ public class NoteActivity extends BaseActivity {
             //本单
             case R.id.tv_note_single:
                 noteNumber = 1;
-                tvNoteSingle.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_icon));
-                tvNoteMembers.setTextColor(ContextCompat.getColor(context, R.color.shop_one));
+                tvNoteSingle.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_default));
+                tvNoteSingle.setBackgroundColor(ContextCompat.getColor(context, R.color.tab_main_text_icon));
+
+                tvNoteMembers.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_default));
+                tvNoteMembers.setBackgroundColor(ContextCompat.getColor(context, R.color.shop_one));
                 break;
             //会员
             case R.id.tv_note_members:
@@ -153,8 +156,11 @@ public class NoteActivity extends BaseActivity {
                     return;
                 }
                 noteNumber = 2;
-                tvNoteSingle.setTextColor(ContextCompat.getColor(context, R.color.shop_one));
-                tvNoteMembers.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_icon));
+                tvNoteSingle.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_default));
+                tvNoteSingle.setBackgroundColor(ContextCompat.getColor(context, R.color.shop_one));
+
+                tvNoteMembers.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_default));
+                tvNoteMembers.setBackgroundColor(ContextCompat.getColor(context, R.color.tab_main_text_icon));
                 break;
             //提交
             case R.id.tv_note_submit:

@@ -38,6 +38,9 @@ public class CartAddaress {
     //员工点击服务
     public static final String USER_SERVICE = ADDRESS + "/staff/takeService";
 
+    //店长点击完成
+    public static final String USER_YES = ADDRESS + "/staff/confirmOrder";
+
     public static final String FILL_TYPE = ADDRESS + "";
 
     //提交报销

@@ -15,6 +15,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -682,6 +683,9 @@ public class ClockActivity extends BaseActivity {
                     @Override
                     public void callback(boolean isSuccess, String outfile, Throwable t) {
                         Log.e(TAG, "---员工使用扫一扫---" + outfile);
+                        if (TextUtils.equals(outfile, "") || outfile == null) {
+                            return;
+                        }
                         isImageOne = true;
                         isImageTwo = true;
                         photoUriOn = outfile;

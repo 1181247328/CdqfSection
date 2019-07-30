@@ -225,6 +225,9 @@ public class AddEmployeesFragment extends Fragment {
         switch (v.getId()) {
             //选择店铺
             case R.id.ll_allemployees_item_shopname:
+                if(true){
+                    return;
+                }
                 if (cartState.getHomeList().size() <= 0) {
                     return;
                 }

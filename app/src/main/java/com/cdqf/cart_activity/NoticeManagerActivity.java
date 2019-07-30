@@ -4,11 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AbsListView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -25,10 +25,10 @@ import com.cdqf.cart_state.BaseActivity;
 import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_state.StaturBar;
-import com.cdqf.cart_view.ListViewForScrollView;
 import com.cdqf.cart_view.VerticalSwipeRefreshLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.jingchen.pulltorefresh.PullToRefreshLayout;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.HashMap;
@@ -68,8 +68,10 @@ public class NoticeManagerActivity extends BaseActivity {
     @BindView(R.id.tv_noticemanager_release)
     public TextView tvNoticemanagerRelease = null;
 
-    @BindView(R.id.lv_notice_list)
-    public ListViewForScrollView lvNoticeList = null;
+    @BindView(R.id.ptrl_noti_pull)
+    public PullToRefreshLayout ptrlNotiPull = null;
+
+    public ListView lvNoticeList = null;
 
     private NoticeAdapter noticeAdapter = null;
 
@@ -84,6 +86,8 @@ public class NoticeManagerActivity extends BaseActivity {
     public ProgressBar pbOrdersBar = null;
 
     private boolean isPull = false;
+
+    private int page = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,17 +119,68 @@ public class NoticeManagerActivity extends BaseActivity {
     }
 
     private void initView() {
-        noticeAdapter = new NoticeAdapter(context);
-        lvNoticeList.setAdapter(noticeAdapter);
-
+        lvNoticeList = (ListView) ptrlNotiPull.getPullableView();
     }
 
     private void initAdapter() {
-
+        noticeAdapter = new NoticeAdapter(context);
+        lvNoticeList.setAdapter(noticeAdapter);
     }
 
     private void initListener() {
+        ptrlNotiPull.setOnPullListener(new PullToRefreshLayout.OnPullListener() {
+            @Override
+            public void onRefresh(PullToRefreshLayout pullToRefreshLayout) {
 
+            }
+
+            @Override
+            public void onLoadMore(final PullToRefreshLayout pullToRefreshLayout) {
+                //上拉加载
+                Map<String, Object> params = new HashMap<String, Object>();
+                params.put("page", page);
+                OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
+                String address = CartAddaress.STAFF_NOTICE + cartState.getUser().getId() + "/notice/" + cartState.getUser().getShopid();
+                Log.e(TAG, "---地址---" + address);
+                okHttpRequestWrap.get(address, false, "请稍候", params, new OnHttpRequest() {
+                    @Override
+                    public void onOkHttpResponse(String response, int id) {
+                        Log.e(TAG, "---onOkHttpResponse通知之上拉加载---" + response);
+                        JSONObject resultJSON = JSON.parseObject(response);
+                        int error_code = resultJSON.getInteger("code");
+                        String msg = resultJSON.getString("message");
+                        switch (error_code) {
+                            //获取成功
+                            case 204:
+                            case 201:
+                            case 200:
+                                page++;
+                                pullToRefreshLayout.refreshFinish(PullToRefreshLayout.SUCCEED);
+                                JSONObject data = resultJSON.getJSONObject("data");
+                                String datas = data.getString("data");
+                                cartState.getNoticeList().clear();
+                                List<Notice> noticeList = gson.fromJson(datas, new TypeToken<List<Notice>>() {
+                                }.getType());
+                                cartState.setNoticeList(noticeList);
+                                if (noticeAdapter != null) {
+                                    noticeAdapter.notifyDataSetChanged();
+                                }
+                                break;
+                            default:
+                                pullToRefreshLayout.refreshFinish(PullToRefreshLayout.SUCCEED);
+                                cartState.initToast(context, msg, true, 0);
+                                break;
+                        }
+                    }
+
+                    @Override
+                    public void onOkHttpError(String error) {
+                        Log.e(TAG, "---onOkHttpError---" + error);
+                        pullToRefreshLayout.refreshFinish(PullToRefreshLayout.FAIL);
+                    }
+                });
+            }
+        });
         lvNoticeList.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -151,6 +206,7 @@ public class NoticeManagerActivity extends BaseActivity {
         srlNoticePull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                page = 1;
                 initPull(false);
             }
         });
@@ -158,13 +214,17 @@ public class NoticeManagerActivity extends BaseActivity {
 
     private void initBack() {
         srlNoticePull.setRefreshing(false);
+        ptrlNotiPull.setPullDownEnable(false);
         initPull(false);
     }
 
     private void initPull(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
+        params.put("page", page);
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
-        okHttpRequestWrap.get(CartAddaress.STAFF_NOTICE + cartState.getUser().getId() + "/notice/" + cartState.getUser().getShopid(), isToast, "请稍候", params, new OnHttpRequest() {
+        String address = CartAddaress.STAFF_NOTICE + cartState.getUser().getId() + "/notice/" + cartState.getUser().getShopid();
+        Log.e(TAG, "---地址---" + address);
+        okHttpRequestWrap.get(address, isToast, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse通知---" + response);
@@ -181,24 +241,19 @@ public class NoticeManagerActivity extends BaseActivity {
                     case 204:
                     case 201:
                     case 200:
+                        page = 2;
                         rlOrdersBar.setVisibility(View.GONE);
-                        lvNoticeList.setVisibility(View.VISIBLE);
+                        ptrlNotiPull.setVisibility(View.VISIBLE);
                         tvNoticemanagerNo.setVisibility(View.GONE);
-                        String data = resultJSON.getString("data");
-                        Log.e(TAG, "---通知---" + data);
-                        if (TextUtils.equals(data, "{}")) {
-                            rlOrdersBar.setVisibility(View.GONE);
-                            lvNoticeList.setVisibility(View.GONE);
-                            tvNoticemanagerNo.setVisibility(View.VISIBLE);
-                            return;
-                        }
+                        JSONObject data = resultJSON.getJSONObject("data");
+                        String datas = data.getString("data");
                         cartState.getNoticeList().clear();
-                        List<Notice> noticeList = gson.fromJson(data, new TypeToken<List<Notice>>() {
+                        List<Notice> noticeList = gson.fromJson(datas, new TypeToken<List<Notice>>() {
                         }.getType());
                         cartState.setNoticeList(noticeList);
                         if (cartState.getNoticeList().size() <= 0) {
                             rlOrdersBar.setVisibility(View.GONE);
-                            lvNoticeList.setVisibility(View.GONE);
+                            ptrlNotiPull.setVisibility(View.GONE);
                             tvNoticemanagerNo.setVisibility(View.VISIBLE);
                         }
                         if (noticeAdapter != null) {
@@ -207,7 +262,7 @@ public class NoticeManagerActivity extends BaseActivity {
                         break;
                     default:
                         rlOrdersBar.setVisibility(View.GONE);
-                        lvNoticeList.setVisibility(View.GONE);
+                        ptrlNotiPull.setVisibility(View.GONE);
                         tvNoticemanagerNo.setVisibility(View.VISIBLE);
                         cartState.initToast(context, msg, true, 0);
                         break;
@@ -219,7 +274,7 @@ public class NoticeManagerActivity extends BaseActivity {
                 Log.e(TAG, "---onOkHttpError---" + error);
                 isPull = true;
                 rlOrdersBar.setVisibility(View.GONE);
-                lvNoticeList.setVisibility(View.GONE);
+                ptrlNotiPull.setVisibility(View.GONE);
                 tvNoticemanagerNo.setVisibility(View.VISIBLE);
                 if (srlNoticePull != null) {
                     srlNoticePull.setEnabled(true);
@@ -297,6 +352,7 @@ public class NoticeManagerActivity extends BaseActivity {
      */
     @Subscribe
     public void onEventMainThread(ReleasePullFind r) {
+        page = 1;
         initPull(true);
     }
 }

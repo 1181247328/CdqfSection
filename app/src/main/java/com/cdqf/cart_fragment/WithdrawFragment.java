@@ -22,7 +22,6 @@ import com.cdqf.cart_activity.AccountDatilsActivity;
 import com.cdqf.cart_adapter.WithdrawAccountAdapter;
 import com.cdqf.cart_class.Withdraw;
 import com.cdqf.cart_find.AccountPullFind;
-import com.cdqf.cart_find.SwipePullFind;
 import com.cdqf.cart_find.WithdrawPullFind;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;
@@ -191,12 +190,12 @@ public class WithdrawFragment extends Fragment {
                 // 当firstVisibleItem是第0位。如果firstView==null说明列表为空，需要刷新;或者top==0说明已经到达列表顶部, 也需要刷新
                 if (firstVisibleItem == 0 && (firstView == null || firstView.getTop() == view.getPaddingTop())) {
                     if(isPull) {
-                        eventBus.post(new SwipePullFind(false, true));
+                        eventBus.post(new AccountPullFind(false, true));
                     } else {
-                        eventBus.post(new SwipePullFind(false, false));
+                        eventBus.post(new AccountPullFind(false, false));
                     }
                 } else {
-                    eventBus.post(new SwipePullFind(false, false));
+                    eventBus.post(new AccountPullFind(false, false));
                 }
             }
         });
@@ -224,6 +223,7 @@ public class WithdrawFragment extends Fragment {
             @Override
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse---已撤回---" + response);
+                isPull = true;
                 JSONObject resultJSON = JSON.parseObject(response);
                 int error_code = resultJSON.getInteger("code");
                 String msg = resultJSON.getString("message");
@@ -269,7 +269,7 @@ public class WithdrawFragment extends Fragment {
                 ptrlServicePull.setVisibility(View.GONE);
                 tvOrdersAbnormal.setVisibility(View.VISIBLE);
                 Log.e(TAG, "---onOkHttpError---" + error);
-                eventBus.post(new AccountPullFind(false, false));
+                eventBus.post(new AccountPullFind(false, true));
             }
         });
     }
@@ -326,7 +326,7 @@ public class WithdrawFragment extends Fragment {
      */
     @Subscribe
     public void onEventMainThread(WithdrawPullFind s) {
-        initPull(true);
+        initPull(false);
 //        Map<String, Object> params = new HashMap<String, Object>();
 //        OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
 //        params.put("", "");

@@ -198,7 +198,7 @@ public class EntryFragment extends Fragment {
         lvServiceList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                initIntent(DatilsActivity.class, position);
+                initIntent(DatilsActivity.class, position-1);
             }
         });
     }

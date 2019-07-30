@@ -206,8 +206,8 @@ public class AllEmployeesFragment extends Fragment {
     private void initPull(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
-//        params.put("shop_id", cartState.getUser().getShopid());
-        params.put("shop_id", 116);
+        params.put("shop_id", cartState.getUser().getShopid());
+//        params.put("shop_id", 116);
         //0=全部
         params.put("type", 0);
 //        //页码

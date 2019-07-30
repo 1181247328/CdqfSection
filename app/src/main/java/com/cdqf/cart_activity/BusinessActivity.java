@@ -25,9 +25,10 @@ import com.cdqf.cart_state.BaseActivity;
 import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_state.StaturBar;
-import com.cdqf.cart_view.LineGridView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.jingchen.pulltorefresh.LineGridView;
+import com.jingchen.pulltorefresh.PullToRefreshLayout;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.HashMap;
@@ -65,9 +66,11 @@ public class BusinessActivity extends BaseActivity {
     @BindView(R.id.rl_business_return)
     public RelativeLayout rlBusinessReturn = null;
 
+    @BindView(R.id.ptrl_noti_pull)
+    public PullToRefreshLayout ptrlNotiPull = null;
+
     //列表
-    @BindView(R.id.mgv_business_list)
-    public LineGridView mgvBusinessList = null;
+    private LineGridView mgvBusinessList = null;
 
     private BusinessAdapter businessAdapter = null;
 
@@ -86,6 +89,10 @@ public class BusinessActivity extends BaseActivity {
     private String[] tab = {
             "车牌", "车型", "项目", "金额", "付款", "状态"
     };
+
+    private boolean isPull = false;
+
+    private int page = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,7 +124,7 @@ public class BusinessActivity extends BaseActivity {
     }
 
     private void initView() {
-
+        mgvBusinessList = (LineGridView) ptrlNotiPull.getPullableView();
     }
 
     private void initAdapter() {
@@ -126,9 +133,143 @@ public class BusinessActivity extends BaseActivity {
     }
 
     private void initListener() {
+        ptrlNotiPull.setOnPullListener(new PullToRefreshLayout.OnPullListener() {
+            @Override
+            public void onRefresh(PullToRefreshLayout pullToRefreshLayout) {
+
+            }
+
+            @Override
+            public void onLoadMore(final PullToRefreshLayout pullToRefreshLayout) {
+                //上拉加载
+                Map<String, Object> params = new HashMap<String, Object>();
+                params.put("page", page);
+                OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
+                okHttpRequestWrap.get(CartAddaress.SHOP_DATILS + cartState.getUser().getShopid(), false, "请稍候", params, new OnHttpRequest() {
+                    @Override
+                    public void onOkHttpResponse(String response, int id) {
+                        Log.e(TAG, "---onOkHttpResponse---营业状况之上拉加载---" + response);
+                        JSONObject resultJSON = JSON.parseObject(response);
+                        int error_code = resultJSON.getInteger("code");
+                        String msg = resultJSON.getString("message");
+                        switch (error_code) {
+                            //获取成功
+                            case 204:
+                            case 201:
+                            case 200:
+                                pullToRefreshLayout.refreshFinish(PullToRefreshLayout.SUCCEED);
+                                page++;
+                                JSONObject data = resultJSON.getJSONObject("data");
+                                String datas = data.getString("data");
+                                List<Business> businessList = gson.fromJson(datas, new TypeToken<List<Business>>() {
+                                }.getType());
+                                for (int i = 0; i < businessList.size(); i++) {
+                                    for (int j = 0; j < tab.length; j++) {
+                                        switch (j) {
+                                            case 0:
+                                                //车牌
+                                                String carnum = businessList.get(i).getCarnum();
+                                                if (TextUtils.equals(carnum, "") || carnum == null) {
+                                                    carnum = "暂无车牌";
+                                                }
+                                                testList.add(carnum);
+
+                                                break;
+                                            case 1:
+                                                //车型
+                                                String cart = "";
+                                                switch (businessList.get(i).getCartype()) {
+                                                    case 1:
+                                                        cart = "小轿车";
+                                                        break;
+                                                    case 2:
+                                                        cart = "SUV";
+                                                        break;
+                                                    default:
+                                                        cart = "未知";
+                                                        break;
+                                                }
+                                                testList.add(cart);
+                                                break;
+                                            case 2:
+                                                //项目
+                                                testList.add(businessList.get(i).getGoods_name());
+                                                break;
+                                            case 3:
+                                                //金额
+                                                testList.add(businessList.get(i).getZongprice());
+                                                break;
+                                            case 4:
+                                                //支付
+                                                String pay = "";
+                                                switch (businessList.get(i).getPay_type()) {
+                                                    case 1:
+                                                        pay = "余额";
+                                                        break;
+                                                    case 2:
+                                                        pay = "微信";
+                                                        break;
+                                                    case 3:
+                                                        pay = "现金";
+                                                        break;
+                                                    case 4:
+                                                        pay = "农商";
+                                                        break;
+                                                    default:
+                                                        pay = "现金";
+                                                        break;
+                                                }
+                                                testList.add(pay);
+                                                break;
+                                            case 5:
+                                                //状态
+                                                String type = "";
+                                                switch (businessList.get(i).getType()) {
+                                                    case 1:
+                                                        type = "未支付";
+                                                        break;
+                                                    case 2:
+                                                        type = "待使用";
+                                                        break;
+                                                    case 3:
+                                                        type = "已完成";
+                                                        break;
+                                                    case 5:
+                                                        type = "已失效";
+                                                        break;
+                                                    default:
+                                                        break;
+                                                }
+                                                testList.add(type);
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                    }
+                                }
+                                businessAdapter.setTestList(testList);
+                                break;
+                            default:
+                                pullToRefreshLayout.refreshFinish(PullToRefreshLayout.SUCCEED);
+                                cartState.initToast(context, msg, true, 0);
+                                break;
+                        }
+                    }
+
+                    @Override
+                    public void onOkHttpError(String error) {
+                        Log.e(TAG, "---onOkHttpError---" + error);
+                        pullToRefreshLayout.refreshFinish(PullToRefreshLayout.FAIL);
+                        cartState.initToast(context, error, true, 0);
+                    }
+                });
+            }
+        });
+
         srlBusinessPull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                page = 1;
                 testList.clear();
                 initTab();
                 initShopDatils(false);
@@ -145,7 +286,11 @@ public class BusinessActivity extends BaseActivity {
                 View firstView = view.getChildAt(firstVisibleItem);
                 // 当firstVisibleItem是第0位。如果firstView==null说明列表为空，需要刷新;或者top==0说明已经到达列表顶部, 也需要刷新
                 if (firstVisibleItem == 0 && (firstView == null || firstView.getTop() == view.getPaddingTop())) {
-                    srlBusinessPull.setEnabled(true);
+                    if (isPull) {
+                        srlBusinessPull.setEnabled(true);
+                    } else {
+                        srlBusinessPull.setEnabled(false);
+                    }
                 } else {
                     srlBusinessPull.setEnabled(false);
                 }
@@ -159,6 +304,7 @@ public class BusinessActivity extends BaseActivity {
 
     private void initData() {
         srlBusinessPull.setEnabled(false);
+        ptrlNotiPull.setPullDownEnable(false);
         initTab();
         initShopDatils(false);
     }
@@ -175,12 +321,14 @@ public class BusinessActivity extends BaseActivity {
      */
     private void initShopDatils(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
+        params.put("page", page);
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
         okHttpRequestWrap.get(CartAddaress.SHOP_DATILS + cartState.getUser().getShopid(), isToast, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse---营业状况---" + response);
                 if (srlBusinessPull != null) {
+                    isPull = true;
                     srlBusinessPull.setEnabled(true);
                     srlBusinessPull.setRefreshing(false);
                 }
@@ -192,12 +340,14 @@ public class BusinessActivity extends BaseActivity {
                     case 204:
                     case 201:
                     case 200:
+                        page = 2;
                         rlOrdersBar.setVisibility(View.GONE);
                         tvOrdersAbnormal.setVisibility(View.GONE);
                         mgvBusinessList.setVisibility(View.VISIBLE);
                         cartState.initToast(context, msg, true, 0);
-                        String data = resultJSON.getString("data");
-                        List<Business> businessList = gson.fromJson(data, new TypeToken<List<Business>>() {
+                        JSONObject data = resultJSON.getJSONObject("data");
+                        String datas = data.getString("data");
+                        List<Business> businessList = gson.fromJson(datas, new TypeToken<List<Business>>() {
                         }.getType());
                         for (int i = 0; i < businessList.size(); i++) {
                             for (int j = 0; j < tab.length; j++) {
@@ -298,6 +448,7 @@ public class BusinessActivity extends BaseActivity {
             public void onOkHttpError(String error) {
                 Log.e(TAG, "---onOkHttpError---" + error);
                 if (srlBusinessPull != null) {
+                    isPull = true;
                     srlBusinessPull.setEnabled(true);
                     srlBusinessPull.setRefreshing(false);
                 }

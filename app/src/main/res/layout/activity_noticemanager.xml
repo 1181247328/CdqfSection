@@ -114,19 +114,22 @@
                         android:textSize="@dimen/sp_14"
                         android:visibility="gone" />
 
-                    <com.cdqf.cart_view.ListViewForScrollView
-                        android:id="@+id/lv_notice_list"
+                    <com.jingchen.pulltorefresh.PullToRefreshLayout
+                        android:id="@+id/ptrl_noti_pull"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@color/service_bak"
-                        android:divider="@null"
-                        android:dividerHeight="@dimen/dp_10"
-                        android:paddingLeft="@dimen/dp_10"
-                        android:paddingTop="@dimen/dp_10"
-                        android:paddingRight="@dimen/dp_10"
-                        android:paddingBottom="@dimen/dp_10"
-                        android:scrollbars="none"
-                        android:visibility="gone" />
+                        android:visibility="gone">
+
+                        <com.jingchen.pulltorefresh.PullableListView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@color/service_bak"
+                            android:divider="@color/service_bak"
+                            android:dividerHeight="@dimen/dp_5"
+                            android:scrollbars="none" />
+
+                    </com.jingchen.pulltorefresh.PullToRefreshLayout>
 
                 </LinearLayout>
             </RelativeLayout>

@@ -332,10 +332,10 @@ public class DatilsActivity extends BaseActivity {
                         if (datils.getIs_discount() == 1) {
                             llDatilsCount.setVisibility(View.VISIBLE);
                             llDatilsPrice.setVisibility(View.VISIBLE);
-                            llDatilsBalance.setVisibility(View.GONE);
+                            llDatilsBalance.setVisibility(View.VISIBLE);
                             tvDatilsCount.setText(datils.getDiscount().getDiscount_num() + "");
                             tvDatilsPrice.setText("￥" + datils.getDiscount().getDiscount_money());
-                            tvDatilsBalance.setText(datils.getDiscount().getBalance());
+                            tvDatilsBalance.setText("￥" + datils.getDiscount().getBalance());
                         } else {
                             rcrlDatilsPreferential.setVisibility(View.VISIBLE);
                             llDatilsCount.setVisibility(View.GONE);
@@ -403,7 +403,7 @@ public class DatilsActivity extends BaseActivity {
                 break;
             //追加服务
             case R.id.rcrl_datils_add:
-                if(!isUserId){
+                if (!isUserId) {
                     cartState.initToast(context, "用户非会员,不可追加服务", true, 0);
                     return;
                 }
@@ -411,7 +411,7 @@ public class DatilsActivity extends BaseActivity {
                 break;
             //给予优惠
             case R.id.rcrl_datils_preferential:
-                if(!isUserId){
+                if (!isUserId) {
                     cartState.initToast(context, "用户非会员,不可给予优惠", true, 0);
                     return;
                 }

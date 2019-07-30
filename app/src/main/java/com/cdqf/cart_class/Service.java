@@ -14,6 +14,7 @@ public class Service {
     private String phone;
     private String car_type_name;
     private String goods_names;
+    private int staff;
 
     public int getId() {
         return id;
@@ -109,5 +110,13 @@ public class Service {
 
     public void setGoods_names(String goods_names) {
         this.goods_names = goods_names;
+    }
+
+    public int getStaff() {
+        return staff;
+    }
+
+    public void setStaff(int staff) {
+        this.staff = staff;
     }
 }

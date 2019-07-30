@@ -33,6 +33,7 @@ import com.cdqf.cart_find.PreferentialFind;
 import com.cdqf.cart_find.RefusedTwoFind;
 import com.cdqf.cart_find.ReleaseFind;
 import com.cdqf.cart_find.ServiceTwoFind;
+import com.cdqf.cart_find.ServiceYesTwoFind;
 import com.cdqf.cart_find.ShopServiceTwoFind;
 import com.cdqf.cart_find.ShopTwoFind;
 import com.cdqf.cart_find.SignSumitFind;
@@ -285,6 +286,10 @@ public class WhyDilogFragment extends DialogFragment {
                     //SignActivity马上签字
                     case 23:
                         eventBus.post(new SignSumitFind());
+                        break;
+                    //ServiceFragment完成
+                    case 24:
+                        eventBus.post(new ServiceYesTwoFind(position));
                         break;
                 }
                 break;

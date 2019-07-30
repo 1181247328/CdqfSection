@@ -176,7 +176,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@color/service_bak"
-                        android:paddingLeft="@dimen/dp_10">
+                        android:paddingLeft="@dimen/dp_10"
+                        android:visibility="gone">
 
                         <TextView
                             android:id="@+id/tv_members_cancel"

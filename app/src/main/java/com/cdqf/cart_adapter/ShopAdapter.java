@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.cdqf.cart.R;
 import com.cdqf.cart_find.ServcieKeyFind;
+import com.cdqf.cart_find.ServiceYesOneFind;
 import com.cdqf.cart_find.ShopServiceOneFind;
 import com.cdqf.cart_state.CartState;
 import com.gcssloop.widget.RCRelativeLayout;
@@ -114,21 +115,33 @@ public class ShopAdapter extends BaseAdapter {
             switch (cartState.getServiceLis().get(position - 1).getType()) {
                 case 1:
                     claim = "待付款";
+                    viewHolder.rcrlShopItemYes.setVisibility(View.GONE);
+                    viewHolder.tvShopItemClaim.setText(claim);
                     break;
                 case 2:
                     claim = "服务";
+                    viewHolder.rcrlShopItemYes.setVisibility(View.VISIBLE);
+                    viewHolder.tvShopItemClaim.setText(claim + "(" + cartState.getServiceLis().get(position - 1).getStaff() + ")");
                     break;
                 case 3:
                     claim = "已服务";
+                    viewHolder.rcrlShopItemYes.setVisibility(View.GONE);
+                    viewHolder.tvShopItemClaim.setText(claim);
                     break;
                 default:
                     //TODO
+                    viewHolder.rcrlShopItemYes.setVisibility(View.GONE);
+                    viewHolder.tvShopItemClaim.setText("未知");
                     break;
             }
-            viewHolder.tvShopItemClaim.setText(claim);
+
+            //权限显示
+
             viewHolder.rcrlShopItemClaim.setOnClickListener(new OnServiceListener(position));
             //时间
             viewHolder.tvShopItemTimer.setText(cartState.getServiceLis().get(position - 1).getAddtime());
+            //完成
+            viewHolder.rcrlShopItemYes.setOnClickListener(new OnYesListener(position));
         }
         return convertView;
     }
@@ -160,6 +173,10 @@ public class ShopAdapter extends BaseAdapter {
         public RCRelativeLayout rcrlShopItemClaim = null;
         @BindView(R.id.tv_shop_item_claim)
         public TextView tvShopItemClaim = null;
+
+        //完成
+        @BindView(R.id.rcrl_shop_item_yes)
+        public RCRelativeLayout rcrlShopItemYes = null;
 
         //时间
         @BindView(R.id.tv_shop_item_timer)
@@ -216,6 +233,27 @@ public class ShopAdapter extends BaseAdapter {
             if (cartState.getServiceLis().get(position - 1).getType() == 2) {
                 eventBus.post(new ShopServiceOneFind(position));
             }
+        }
+    }
+
+    /**
+     * 完成
+     */
+    class OnYesListener implements View.OnClickListener {
+
+        private int position;
+
+        public OnYesListener(int position) {
+            this.position = position;
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (cartState.getServiceLis().get(position - 1).getStaff() <= 0) {
+                cartState.initToast(context, "服务人数必须大于一人", true, 0);
+                return;
+            }
+            eventBus.post(new ServiceYesOneFind(position));
         }
     }
 }
