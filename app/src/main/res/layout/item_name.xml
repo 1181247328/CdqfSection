@@ -19,7 +19,7 @@
             android:paddingBottom="@dimen/dp_12"
             android:text="洗车"
             android:textColor="@color/tab_main_text_icon"
-            android:textSize="@dimen/sp_14" />
+            android:textSize="@dimen/sp_12" />
 
     </LinearLayout>
 

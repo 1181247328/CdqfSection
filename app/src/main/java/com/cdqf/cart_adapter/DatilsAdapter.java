@@ -60,12 +60,15 @@ public class DatilsAdapter extends BaseAdapter {
         String pay = "";
         switch (cartState.getNumberList().get(position).getPay_type()) {
             case 1:
-                pay = "平台";
+                pay = "余额";
                 break;
             case 2:
-                pay = "现金";
+                pay = "微信";
                 break;
             case 3:
+                pay = "现金";
+                break;
+            case 4:
                 pay = "农商";
                 break;
         }

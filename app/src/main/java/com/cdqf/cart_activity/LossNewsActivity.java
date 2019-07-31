@@ -3,12 +3,11 @@ package com.cdqf.cart_activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -30,9 +29,6 @@ import com.cdqf.cart_state.BaseActivity;
 import com.cdqf.cart_state.CartAddaress;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_state.StaturBar;
-import com.cdqf.cart_view.ListViewForScrollView;
-import com.cdqf.cart_view.RoundProgressBar;
-import com.cdqf.cart_view.VerticalSwipeRefreshLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -64,12 +60,6 @@ public class LossNewsActivity extends BaseActivity {
 
     private Gson gson = new Gson();
 
-    @BindView(R.id.srl_lossnews_pull)
-    public VerticalSwipeRefreshLayout srlLossnewsPull = null;
-
-    @BindView(R.id.rpb_lossnews_bar)
-    public RoundProgressBar rpbLossnewsBar = null;
-
     //返回
     @BindView(R.id.rl_lossnews_return)
     public RelativeLayout rlLossnewsReturn = null;
@@ -80,13 +70,13 @@ public class LossNewsActivity extends BaseActivity {
 
     //服务名称集合
     @BindView(R.id.lv_lossnews_name)
-    public ListViewForScrollView lvLossnewsName = null;
+    public ListView lvLossnewsName = null;
 
     private LossNewsLeftAdapter lossNewsLeftAdapter = null;
 
     //服务内容
     @BindView(R.id.lv_lossnews_list)
-    public ListViewForScrollView lvLossnewsList = null;
+    public ListView lvLossnewsList = null;
 
     private LossNewsRightAdapter lossNewsRightAdapter = null;
 
@@ -112,10 +102,6 @@ public class LossNewsActivity extends BaseActivity {
     private int type = 0;
 
     private int state = 0;
-
-    private boolean isName = false;
-
-    private boolean isList = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,63 +154,9 @@ public class LossNewsActivity extends BaseActivity {
                 lossNewsRightAdapter.setPosition(position);
             }
         });
-
-        srlLossnewsPull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                initPull(false);
-            }
-        });
-
-        lvLossnewsName.setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                View firstView = view.getChildAt(firstVisibleItem);
-                // 当firstVisibleItem是第0位。如果firstView==null说明列表为空，需要刷新;或者top==0说明已经到达列表顶部, 也需要刷新
-                if (firstVisibleItem == 0 && (firstView == null || firstView.getTop() == view.getPaddingTop())) {
-                    isName = true;
-                    if (isName && isList) {
-                        srlLossnewsPull.setEnabled(true);
-                    } else {
-                        srlLossnewsPull.setEnabled(false);
-                    }
-                } else {
-                    srlLossnewsPull.setEnabled(false);
-                }
-            }
-        });
-
-        lvLossnewsName.setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                View firstView = view.getChildAt(firstVisibleItem);
-                // 当firstVisibleItem是第0位。如果firstView==null说明列表为空，需要刷新;或者top==0说明已经到达列表顶部, 也需要刷新
-                if (firstVisibleItem == 0 && (firstView == null || firstView.getTop() == view.getPaddingTop())) {
-                    isList = true;
-                    if (isName && isList) {
-                        srlLossnewsPull.setEnabled(true);
-                    } else {
-                        srlLossnewsPull.setEnabled(false);
-                    }
-                } else {
-                    srlLossnewsPull.setEnabled(false);
-                }
-            }
-        });
     }
 
     private void initBack() {
-        srlLossnewsPull.setEnabled(false);
         initPull(false);
     }
 
@@ -235,10 +167,6 @@ public class LossNewsActivity extends BaseActivity {
             @Override
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse新损耗品---" + response);
-                if (srlLossnewsPull != null) {
-                    srlLossnewsPull.setEnabled(true);
-                    srlLossnewsPull.setRefreshing(false);
-                }
                 JSONObject resultJSON = JSON.parseObject(response);
                 int error_code = resultJSON.getInteger("code");
                 String msg = resultJSON.getString("message");
@@ -281,10 +209,6 @@ public class LossNewsActivity extends BaseActivity {
                 rlOrdersBar.setVisibility(View.GONE);
                 tvOrdersAbnormal.setVisibility(View.VISIBLE);
                 rlLossContext.setVisibility(View.GONE);
-                if (srlLossnewsPull != null) {
-                    srlLossnewsPull.setEnabled(true);
-                    srlLossnewsPull.setRefreshing(false);
-                }
             }
         });
     }
@@ -294,7 +218,7 @@ public class LossNewsActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    @OnClick({R.id.rl_lossnews_return, R.id.tv_lossnews_order, R.id.tv_lossnews_out, R.id.tv_user_record})
+    @OnClick({R.id.rl_lossnews_return, R.id.tv_lossnews_order, R.id.tv_lossnews_out, R.id.tv_user_record, R.id.tv_orders_abnormal})
     public void onClick(View v) {
         switch (v.getId()) {
             //返回
@@ -318,6 +242,13 @@ public class LossNewsActivity extends BaseActivity {
             //记录
             case R.id.tv_user_record:
                 initIntent(RecordActivity.class);
+                break;
+            //刷新
+            case R.id.tv_orders_abnormal:
+                rlOrdersBar.setVisibility(View.VISIBLE);
+                tvOrdersAbnormal.setVisibility(View.GONE);
+                rlLossContext.setVisibility(View.GONE);
+                initPull(false);
                 break;
         }
     }

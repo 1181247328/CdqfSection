@@ -11,8 +11,8 @@
         android:background="@color/white"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingLeft="@dimen/dp_15"
-        android:paddingRight="@dimen/dp_15">
+        android:paddingLeft="@dimen/dp_10"
+        android:paddingRight="@dimen/dp_10">
 
         <CheckBox
             android:id="@+id/cb_users_item_checkbox"
@@ -28,6 +28,7 @@
             android:id="@+id/ll_user_item_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true">
 
@@ -39,7 +40,7 @@
                 android:paddingLeft="@dimen/dp_8"
                 android:text="+"
                 android:textColor="@color/news_loss"
-                android:textSize="@dimen/sp_16" />
+                android:textSize="@dimen/sp_14" />
 
             <TextView
                 android:id="@+id/tv_user_item_price"
@@ -49,7 +50,7 @@
                 android:paddingLeft="@dimen/dp_2_5"
                 android:text="30"
                 android:textColor="@color/news_loss"
-                android:textSize="@dimen/sp_18" />
+                android:textSize="@dimen/sp_16" />
 
         </LinearLayout>
 
@@ -67,14 +68,12 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:background="@color/white"
-                android:ellipsize="end"
-                android:lines="1"
+                android:lineSpacingExtra="@dimen/dp_2"
                 android:paddingLeft="@dimen/dp_10"
                 android:paddingTop="@dimen/dp_6"
-                android:singleLine="true"
-                android:text="机油"
+                android:text="机油机油机油机油机油机油机油机油机油机油机油油机油机油机油机油机油机油机油机油机油机油"
                 android:textColor="@color/tab_main_text_default"
-                android:textSize="@dimen/sp_14" />
+                android:textSize="@dimen/sp_12" />
 
             <TextView
                 android:id="@+id/tv_users_item_number"
@@ -90,7 +89,7 @@
                 android:singleLine="true"
                 android:text="库存:   12"
                 android:textColor="@color/name_text"
-                android:textSize="@dimen/sp_14" />
+                android:textSize="@dimen/sp_12" />
 
         </LinearLayout>
 

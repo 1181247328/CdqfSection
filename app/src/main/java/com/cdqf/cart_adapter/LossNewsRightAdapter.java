@@ -77,7 +77,7 @@ public class LossNewsRightAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         //商品名称
-        viewHolder.tvUsersItemName.setText(cartState.getLossNewsList().get(type).getChildren().get(position).getName());
+        viewHolder.tvUsersItemName.setText(cartState.getLossNewsList().get(type).getChildren().get(position).getName()+"("+cartState.getLossNewsList().get(type).getChildren().get(position).getSku_name()+")");
         //库存
         viewHolder.tvUsersItemNumber.setText("库存:" + cartState.getLossNewsList().get(type).getChildren().get(position).getStock());
         //申请的数量有就显示，没有就隐藏

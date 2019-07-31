@@ -108,9 +108,13 @@ public class ReportDatilsActivity extends BaseActivity {
     @BindView(R.id.pcv_datils_bread)
     public PieChartView pcvDatilsBread = null;
 
-    //平台
+    //余额
     @BindView(R.id.tv_datils_platform)
     public TextView tvDatilsPlatform = null;
+
+    //微信
+    @BindView(R.id.tv_datils_pay)
+    public TextView tvDatilsPay = null;
 
     //现金
     @BindView(R.id.tv_datils_cash)
@@ -385,16 +389,19 @@ public class ReportDatilsActivity extends BaseActivity {
                                 ptrlDatilsPull.setVisibility(View.GONE);
                                 tvOrdersAbnormal.setVisibility(View.GONE);
                             }
-                        }else {
+                        } else {
                             rlOrdersBar.setVisibility(View.GONE);
                             ptrlDatilsPull.setVisibility(View.VISIBLE);
                             tvOrdersAbnormal.setVisibility(View.GONE);
                         }
                         chartData.clear();
                         JSONObject data = resultJSON.getJSONObject("data");
-                        //平台
+                        //余额
                         int balance = data.getInteger("balance");
                         tvDatilsPlatform.setText(balance + "");
+                        //微信
+                        int pay = data.getInteger("wechat");
+                        tvDatilsPay.setText(pay + "");
                         //现金
                         int cash = data.getInteger("cash");
                         tvDatilsCash.setText(cash + "");
@@ -402,12 +409,17 @@ public class ReportDatilsActivity extends BaseActivity {
                         int backRcb = data.getInteger("back_rcb");
                         tvDatilsAgri.setText(backRcb + "");
 
-                        int sum = balance + cash + backRcb;
+                        int sum = balance + pay + cash + backRcb;
 
-                        PieData pieDataOne = new PieData("平台",
+                        PieData pieDataOne = new PieData("余额",
                                 DoubleOperationUtil.mul(DoubleOperationUtil.div(balance, sum, 2), 100) + "%",
                                 DoubleOperationUtil.div(balance, sum, 2) * 100,
                                 ContextCompat.getColor(context, R.color.route_determine));
+
+                        PieData pieDataFive = new PieData("微信",
+                                DoubleOperationUtil.mul(DoubleOperationUtil.div(pay, sum, 2), 100) + "%",
+                                DoubleOperationUtil.mul(DoubleOperationUtil.div(pay, sum, 2), 100),
+                                ContextCompat.getColor(context, R.color.colorPrimary));
 
                         PieData pieDataTwo = new PieData("现金",
                                 DoubleOperationUtil.mul(DoubleOperationUtil.div(cash, sum, 2), 100) + "%",
@@ -421,6 +433,7 @@ public class ReportDatilsActivity extends BaseActivity {
                         chartData.add(pieDataOne);
                         chartData.add(pieDataTwo);
                         chartData.add(pieDataThree);
+                        chartData.add(pieDataFive);
                         pcvDatilsBread.setChartData(chartData);
                         Log.e(TAG, "---" + gson.toJson(chartData));
                         break;

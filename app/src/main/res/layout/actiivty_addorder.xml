@@ -516,7 +516,8 @@
                                 android:orientation="horizontal"
                                 android:paddingLeft="@dimen/dp_10"
                                 android:paddingTop="@dimen/dp_12"
-                                android:paddingBottom="@dimen/dp_12">
+                                android:paddingBottom="@dimen/dp_12"
+                                android:visibility="gone">
 
                                 <ImageView
                                     android:layout_width="@dimen/dp_23"
@@ -633,12 +634,14 @@
                                     android:layout_marginBottom="@dimen/dp_12"
                                     android:background="@drawable/checkbox_order"
                                     android:button="@null"
-                                    android:checked="false" />
+                                    android:checked="false"
+                                    android:visibility="gone" />
 
                                 <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="@dimen/dp_1"
-                                    android:background="@color/service_bak" />
+                                    android:background="@color/service_bak"
+                                    android:visibility="gone" />
 
                                 <RadioButton
                                     android:id="@+id/rb_order_paytwo"
