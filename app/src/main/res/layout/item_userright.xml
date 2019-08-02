@@ -51,7 +51,6 @@
                 android:text="30"
                 android:textColor="@color/news_loss"
                 android:textSize="@dimen/sp_16" />
-
         </LinearLayout>
 
         <LinearLayout

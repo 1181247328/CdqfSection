@@ -229,6 +229,7 @@ public class LoginActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("username", account);
         params.put("password", password);
+        params.put("type", 2);
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(context);
         okHttpRequestWrap.post(CartAddaress.LOGIN_NEW, true, "登录中", params, new OnHttpRequest() {
             @Override

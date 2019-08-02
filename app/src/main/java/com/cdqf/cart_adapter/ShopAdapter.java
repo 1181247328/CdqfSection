@@ -1,6 +1,7 @@
 package com.cdqf.cart_adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -135,13 +136,25 @@ public class ShopAdapter extends BaseAdapter {
                     break;
             }
 
-            //权限显示
-
             viewHolder.rcrlShopItemClaim.setOnClickListener(new OnServiceListener(position));
             //时间
             viewHolder.tvShopItemTimer.setText(cartState.getServiceLis().get(position - 1).getAddtime());
             //完成
             viewHolder.rcrlShopItemYes.setOnClickListener(new OnYesListener(position));
+
+            //权限显示
+            boolean isNotice = false;
+            for (int i = 0; i < cartState.getUser().getPermission().size(); i++) {
+                if (TextUtils.equals(cartState.getUser().getPermission().get(i), "finish-order")) {
+                    isNotice = true;
+                    break;
+                }
+            }
+            if (isNotice) {
+                viewHolder.rcrlShopItemYes.setVisibility(View.VISIBLE);
+            } else {
+                viewHolder.rcrlShopItemYes.setVisibility(View.GONE);
+            }
         }
         return convertView;
     }
