@@ -9,7 +9,7 @@ public class Constants {
     /**
      * 微信
      */
-    //订单请求参数
+    //订单请求参数222
     public static final String WX_URL_STRING = "https://api.mch.weixin.qq.com/pay/unifiedorder";
 
     //appid 微信分配的公众账号ID
