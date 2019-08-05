@@ -91,51 +91,6 @@
                     android:background="@color/white"
                     android:orientation="vertical">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/white"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:paddingTop="@dimen/dp_39"
-                        android:paddingBottom="@dimen/dp_39">
-
-                        <com.gcssloop.widget.RCRelativeLayout
-                            android:layout_width="@dimen/dp_60"
-                            android:layout_height="@dimen/dp_60"
-                            android:background="@color/white"
-                            app:clip_background="true"
-                            app:round_as_circle="true">
-
-                            <ImageView
-                                android:id="@+id/iv_my_hear"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:background="@android:color/transparent"
-                                android:scaleType="fitXY"
-                                android:src="@mipmap/test6" />
-
-                        </com.gcssloop.widget.RCRelativeLayout>
-
-                        <TextView
-                            android:id="@+id/tv_my_position"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:paddingTop="@dimen/dp_6"
-                            android:textColor="@color/tab_main_text_default"
-                            android:textSize="@dimen/sp_14" />
-
-                    </LinearLayout>
-
-                    <com.cdqf.cart_view.ListViewForScrollView
-                        android:id="@+id/lvfsv_my_list"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@color/white"
-                        android:divider="@null"
-                        android:scrollbars="none" />
-
                 </LinearLayout>
             </android.support.v4.widget.NestedScrollView>
         </LinearLayout>

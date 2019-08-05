@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -18,19 +17,10 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cdqf.cart.R;
-import com.cdqf.cart_activity.LoginActivity;
-import com.cdqf.cart_adapter.MyAdapter;
-import com.cdqf.cart_class.MyUser;
-import com.cdqf.cart_dilog.WhyDilogFragment;
-import com.cdqf.cart_find.AccountExitFind;
-import com.cdqf.cart_find.MyShopNameFind;
 import com.cdqf.cart_okhttp.OKHttpRequestWrap;
 import com.cdqf.cart_okhttp.OnHttpRequest;
-import com.cdqf.cart_state.ACache;
 import com.cdqf.cart_state.CartAddaress;
-import com.cdqf.cart_state.CartPreferences;
 import com.cdqf.cart_state.CartState;
-import com.cdqf.cart_view.ListViewForScrollView;
 import com.cdqf.cart_view.VerticalSwipeRefreshLayout;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -42,7 +32,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
-import de.greenrobot.event.Subscribe;
 
 /**
  * 我的
@@ -63,22 +52,6 @@ public class MyFragment extends Fragment {
 
     @BindView(R.id.vsrl_my_pull)
     public VerticalSwipeRefreshLayout vsrlMyPull = null;
-
-    //头像
-    @BindView(R.id.iv_my_hear)
-    public ImageView ivMyHear = null;
-
-    //职位
-    @BindView(R.id.tv_my_position)
-    public TextView tvMyPosition = null;
-
-    @BindView(R.id.lvfsv_my_list)
-    public ListViewForScrollView lvfsvMyList = null;
-
-    @BindView(R.id.tv_my_exit)
-    public TextView tvMyExit = null;
-
-    private MyAdapter myAdapter = null;
 
     @BindView(R.id.rl_orders_bar)
     public RelativeLayout rlOrdersBar = null;
@@ -115,9 +88,6 @@ public class MyFragment extends Fragment {
     private void initAgo() {
         ButterKnife.bind(this, view);
         imageLoader = cartState.getImageLoader(getContext());
-        if (!eventBus.isRegistered(this)) {
-            eventBus.register(this);
-        }
     }
 
     private void initListener() {
@@ -134,14 +104,12 @@ public class MyFragment extends Fragment {
     }
 
     private void initBack() {
-        initPull(false);
     }
 
     private void initPull(boolean isToast) {
         Map<String, Object> params = new HashMap<String, Object>();
         OKHttpRequestWrap okHttpRequestWrap = new OKHttpRequestWrap(getContext());
-        String lossShop = userInformation(cartState.getUser().getId() + "", cartState.getUser().getShopid() + "");
-        okHttpRequestWrap.get(lossShop, isToast, "请稍候", params, new OnHttpRequest() {
+        okHttpRequestWrap.get("", isToast, "请稍候", params, new OnHttpRequest() {
             @Override
             public void onOkHttpResponse(String response, int id) {
                 Log.e(TAG, "---onOkHttpResponse---我的---" + response);
@@ -159,12 +127,6 @@ public class MyFragment extends Fragment {
                         rlOrdersBar.setVisibility(View.GONE);
                         nsvOrdersPull.setVisibility(View.VISIBLE);
                         tvOrdersAbnormal.setVisibility(View.GONE);
-                        String data = resultJSON.getString("data");
-                        MyUser myUser = gson.fromJson(data, MyUser.class);
-                        imageLoader.displayImage(myUser.getAvatar(), ivMyHear, cartState.getImageLoaderOptions(R.mipmap.test6, R.mipmap.test6, R.mipmap.test6));
-                        cartState.setMyUser(myUser);
-                        myAdapter = new MyAdapter(getContext());
-                        lvfsvMyList.setAdapter(myAdapter);
                         break;
                     default:
                         rlOrdersBar.setVisibility(View.GONE);
@@ -197,14 +159,10 @@ public class MyFragment extends Fragment {
         startActivity(intent);
     }
 
-    @OnClick({R.id.tv_my_exit})
+    @OnClick({})
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.tv_my_exit:
-                WhyDilogFragment whyDilogFragment = new WhyDilogFragment();
-                whyDilogFragment.setInit(11, "提示", "是否退出当前账户", "否", "是");
-                whyDilogFragment.show(getFragmentManager(), "退出当前账户");
-                break;
+
         }
     }
 
@@ -236,27 +194,6 @@ public class MyFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         Log.e(TAG, "---销毁---");
-        eventBus.unregister(this);
     }
 
-    @Subscribe
-    public void onEventMainThread(MyShopNameFind a) {
-        if (myAdapter != null) {
-            myAdapter.notifyDataSetChanged();
-        }
-    }
-
-    /**
-     * 退出当前账户
-     *
-     * @param a
-     */
-    @Subscribe
-    public void onEventMainThread(AccountExitFind a) {
-        CartPreferences.clearUser(getContext());
-        cartState.setUser(null);
-        forIntent(LoginActivity.class);
-        ACache.get(getContext()).clear();
-        getActivity().finish();
-    }
 }

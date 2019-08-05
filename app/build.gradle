@@ -1,14 +1,6 @@
 apply plugin: 'com.android.application'
 
 android {
-    signingConfigs {
-        config {
-            keyAlias 'WashCart'
-            keyPassword '123456'
-            storeFile file('C:/AndroidStudio/WashCart/app/WashCart.jks')
-            storePassword '123456'
-        }
-    }
     compileSdkVersion 28
     buildToolsVersion "28.0.3"
     aaptOptions.cruncherEnabled = false

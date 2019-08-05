@@ -1,15 +1,8 @@
 package com.cdqf.cart_activity;
 
-import android.Manifest;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -22,20 +15,14 @@ import android.widget.TextView;
 
 import com.cdqf.cart.R;
 import com.cdqf.cart_dilog.WhyDilogFragment;
-import com.cdqf.cart_find.ExitFind;
-import com.cdqf.cart_find.ScanFind;
-import com.cdqf.cart_fragment.HomeFragment;
+import com.cdqf.cart_libfind.ExitFind;
+import com.cdqf.cart_fragment.HomeManagerFragment;
 import com.cdqf.cart_fragment.MyFragment;
 import com.cdqf.cart_fragment.ReoprtFragment;
 import com.cdqf.cart_state.BaseActivity;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_state.StaturBar;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.zxy.tiny.Tiny;
-import com.zxy.tiny.callback.FileCallback;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -57,10 +44,6 @@ public class MainActivity extends BaseActivity {
 
     private CartState cartState = CartState.getCartState();
 
-//    //载体
-//    @BindView(R.id.fl_main_fragment)
-//    public FrameLayout flMainFragment = null;
-
     //首页
     @BindView(R.id.ll_main_home)
     public LinearLayout llMainHome = null;
@@ -81,16 +64,6 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.tv_main_report)
     public TextView tvMainReport = null;
 
-//    //扫一扫
-//    @BindView(R.id.ll_main_scan)
-//    public LinearLayout llMainScan = null;
-//
-//    @BindView(R.id.iv_main_scan)
-//    public ImageView ivMainScan = null;
-//
-//    @BindView(R.id.tv_main_scan)
-//    public TextView tvMainScane = null;
-
     //我的
     @BindView(R.id.ll_main_my)
     public LinearLayout llMainMy = null;
@@ -105,12 +78,10 @@ public class MainActivity extends BaseActivity {
     private FragmentManager fragmentManager;
 
     //首页的fragment
-    private HomeFragment homeFragment = null;
+    private HomeManagerFragment homeManagerFragment = null;
     private ReoprtFragment reoprtFragment = null;
     private MyFragment myFragment = null;
 
-    //相机
-    private static final int REQUEST_CODE_TAKE_PICTURE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,14 +147,13 @@ public class MainActivity extends BaseActivity {
                 //我的
                 ivMainMy.setImageResource(R.mipmap.main_tab_my_default);
                 tvMainMy.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_default));
-                if (homeFragment == null) {
-                    homeFragment = new HomeFragment();
-                    transaction.add(R.id.fl_main_fragment, homeFragment);
+                if (homeManagerFragment == null) {
+                    homeManagerFragment = new HomeManagerFragment();
+                    transaction.add(R.id.fl_main_fragment, homeManagerFragment);
                 } else {
-                    transaction.show(homeFragment);
+                    transaction.show(homeManagerFragment);
                 }
                 break;
-            //报表
             case 1:
                 //首页
                 ivMainHome.setImageResource(R.mipmap.main_tab_home_default);
@@ -194,6 +164,7 @@ public class MainActivity extends BaseActivity {
                 //我的
                 ivMainMy.setImageResource(R.mipmap.main_tab_my_default);
                 tvMainMy.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_default));
+
                 if (reoprtFragment == null) {
                     reoprtFragment = new ReoprtFragment();
                     transaction.add(R.id.fl_main_fragment, reoprtFragment);
@@ -212,6 +183,7 @@ public class MainActivity extends BaseActivity {
                 //我的
                 ivMainMy.setImageResource(R.mipmap.main_tab_my_icn);
                 tvMainMy.setTextColor(ContextCompat.getColor(context, R.color.tab_main_text_icon));
+
                 if (myFragment == null) {
                     myFragment = new MyFragment();
                     transaction.add(R.id.fl_main_fragment, myFragment);
@@ -229,8 +201,8 @@ public class MainActivity extends BaseActivity {
      * @param transaction 用于对Fragment执行操作的事务
      */
     private void hideFragments(FragmentTransaction transaction) {
-        if (homeFragment != null) {
-            transaction.hide(homeFragment);
+        if (homeManagerFragment != null) {
+            transaction.hide(homeManagerFragment);
         }
         if (reoprtFragment != null) {
             transaction.hide(reoprtFragment);
@@ -244,22 +216,6 @@ public class MainActivity extends BaseActivity {
         Intent intent = new Intent(context, activity);
         startActivity(intent);
     }
-
-    /**
-     * 相机
-     */
-    private void camera() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        SimpleDateFormat timeStampFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
-        String filename = timeStampFormat.format(new Date());
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.TITLE, filename);
-        photoUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-        startActivityForResult(intent, REQUEST_CODE_TAKE_PICTURE);
-    }
-
-    private Uri photoUri = null;
 
     @OnClick({R.id.ll_main_home, R.id.ll_main_report, R.id.ll_main_my})
     public void onClick(View v) {
@@ -276,50 +232,14 @@ public class MainActivity extends BaseActivity {
             case R.id.ll_main_my:
                 tabImage(2);
                 break;
-//            //扫一扫
-//            case R.id.ll_main_scan:
-//                if (Build.VERSION.SDK_INT >= 23) {
-//                    if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-//                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA}, 8);
-//                    } else {
-//                        camera();
-//                    }
-//                } else {
-//                    camera();
-//                }
-//                break;
         }
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            //相机
-            case REQUEST_CODE_TAKE_PICTURE:
-                Uri uri = null;
-                if (data != null && data.getData() != null) {
-                    Log.e(TAG, "---Uri不为空---");
-                    uri = data.getData();
-                } else {
-                    Log.e(TAG, "---Uri为空---");
-                    uri = photoUri;
-                }
-                Tiny.FileCompressOptions options = new Tiny.FileCompressOptions();
-                Tiny.getInstance().source(uri).asFile().withOptions(options).compress(new FileCallback() {
-                    @Override
-                    public void callback(boolean isSuccess, String outfile, Throwable t) {
-                        Log.e(TAG, "---员工使用扫一扫---" + outfile);
-                    }
-                });
-                break;
-        }
-    }
 
     @Override
     public void onBackPressed() {
         WhyDilogFragment whyDilogFragment = new WhyDilogFragment();
-        whyDilogFragment.setInit(6, "提示", "是否退出当前程序", "否", "是");
+        whyDilogFragment.setInit(0, "提示", "是否退出当前程序", "否", "是");
         whyDilogFragment.show(getSupportFragmentManager(), "退出登录");
     }
 
@@ -370,21 +290,4 @@ public class MainActivity extends BaseActivity {
         exit();
     }
 
-    /**
-     * 扫一扫
-     *
-     * @param s
-     */
-    @Subscribe
-    public void onEventMainThread(ScanFind s) {
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA}, 8);
-            } else {
-                camera();
-            }
-        } else {
-            camera();
-        }
-    }
 }

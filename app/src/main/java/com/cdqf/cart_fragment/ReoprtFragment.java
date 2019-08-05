@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,10 +12,6 @@ import android.view.ViewGroup;
 
 import com.cdqf.cart.R;
 import com.cdqf.cart_adapter.ShopFragmentAdapter;
-import com.cdqf.cart_find.DailyPullFind;
-import com.cdqf.cart_find.MothPullFind;
-import com.cdqf.cart_find.ReoptrPullFind;
-import com.cdqf.cart_find.WeekPullFind;
 import com.cdqf.cart_state.CartState;
 import com.cdqf.cart_view.ViewPageSwipeRefreshLayout;
 import com.google.gson.Gson;
@@ -30,7 +25,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
-import de.greenrobot.event.Subscribe;
 
 /**
  * 报表
@@ -52,13 +46,10 @@ public class ReoprtFragment extends Fragment {
     private int position = 0;
 
     private Fragment[] orderList = new Fragment[]{
-            new DailyFragment(),
-            new WeekFragment(),
-            new MothFragment(),
+
     };
 
     private List<String> orderName = Arrays.asList("日报", "周报", "月报");
-
     //刷新
     @BindView(R.id.srl_report_pull)
     public ViewPageSwipeRefreshLayout srlReportPull = null;
@@ -92,9 +83,6 @@ public class ReoprtFragment extends Fragment {
 
     private void initAgo() {
         ButterKnife.bind(this, view);
-        if (!eventBus.isRegistered(this)) {
-            eventBus.register(this);
-        }
     }
 
     private void initListener() {
@@ -120,27 +108,6 @@ public class ReoprtFragment extends Fragment {
             @Override
             public void onPageScrollStateChanged(int i) {
 
-            }
-        });
-
-        srlReportPull.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                srlReportPull.setRefreshing(false);
-                switch (position) {
-                    case 0:
-                        //日报
-                        eventBus.post(new DailyPullFind());
-                        break;
-                    case 1:
-                        //周报
-                        eventBus.post(new WeekPullFind());
-                        break;
-                    case 2:
-                        //月报
-                        eventBus.post(new MothPullFind());
-                        break;
-                }
             }
         });
     }
@@ -195,17 +162,5 @@ public class ReoprtFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         Log.e(TAG, "---销毁---");
-        eventBus.unregister(this);
-    }
-
-    /**
-     * 刷新和禁用
-     *
-     * @param s
-     */
-    @Subscribe
-    public void onEventMainThread(ReoptrPullFind s) {
-        srlReportPull.setRefreshing(s.isRefreshing);
-        srlReportPull.setEnabled(s.isEnabled);
     }
 }

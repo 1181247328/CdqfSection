@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -15,8 +16,14 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.os.Handler;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -29,47 +36,22 @@ import android.widget.Toast;
 import com.apkfuns.xprogressdialog.XProgressDialog;
 import com.cdqf.cart.R;
 import com.cdqf.cart_ble.Ble;
-import com.cdqf.cart_class.AllEmployees;
-import com.cdqf.cart_class.Audit;
-import com.cdqf.cart_class.Audits;
-import com.cdqf.cart_class.AuditsJudge;
-import com.cdqf.cart_class.Clock;
-import com.cdqf.cart_class.Clockin;
-import com.cdqf.cart_class.Complete;
-import com.cdqf.cart_class.Daily;
-import com.cdqf.cart_class.Datils;
-import com.cdqf.cart_class.Employees;
-import com.cdqf.cart_class.Entry;
-import com.cdqf.cart_class.Home;
-import com.cdqf.cart_class.LossMan;
-import com.cdqf.cart_class.LossNews;
-import com.cdqf.cart_class.LossStaff;
-import com.cdqf.cart_class.MembersDatils;
-import com.cdqf.cart_class.Memebersship;
-import com.cdqf.cart_class.Moth;
-import com.cdqf.cart_class.MyUser;
-import com.cdqf.cart_class.Notice;
-import com.cdqf.cart_class.Number;
-import com.cdqf.cart_class.Position;
-import com.cdqf.cart_class.PositionEmployees;
-import com.cdqf.cart_class.Record;
-import com.cdqf.cart_class.Service;
-import com.cdqf.cart_class.ServiceOrder;
-import com.cdqf.cart_class.Shop;
-import com.cdqf.cart_class.Through;
-import com.cdqf.cart_class.ThroughsJudge;
-import com.cdqf.cart_class.User;
-import com.cdqf.cart_class.UserGoods;
-import com.cdqf.cart_class.Vaction;
-import com.cdqf.cart_class.Week;
-import com.cdqf.cart_class.Withdraw;
-import com.cdqf.cart_class.Work;
+import com.cdqf.cart_libfind.ImageListFind;
+import com.cdqf.cart_libfind.PhotoBitmapFind;
+import com.cdqf.cart_libfind.PhotoFileFind;
+import com.cdqf.cart_service.DownloadUpdateDilogFragment;
+import com.cdqf.cart_service.DownloadUpdateFind;
 import com.cdqf.cart_service.Province;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
+import com.luck.picture.lib.PictureSelector;
+import com.luck.picture.lib.config.PictureConfig;
+import com.luck.picture.lib.config.PictureMimeType;
+import com.luck.picture.lib.entity.LocalMedia;
+import com.mylhyl.circledialog.CircleDialog;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache;
@@ -80,8 +62,14 @@ import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
 import com.nostra13.universalimageloader.utils.StorageUtils;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.FileCallBack;
+import com.zxy.tiny.Tiny;
+import com.zxy.tiny.callback.BitmapCallback;
+import com.zxy.tiny.callback.FileCallback;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -102,12 +90,16 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
+import okhttp3.Call;
+
 /**
  * 状态层
  * Created by liu on 2017/7/14.
  */
 
-public class CartState {
+public class CartState extends BaseActivity {
 
     private String TAG = CartState.class.getSimpleName();
 
@@ -117,6 +109,8 @@ public class CartState {
     public static CartState getCartState() {
         return cartState;
     }
+
+    private EventBus eventBus = EventBus.getDefault();
 
     private ImageLoader imageLoader = ImageLoader.getInstance();
 
@@ -150,123 +144,35 @@ public class CartState {
     //判断登录
     private boolean isLogin = false;
 
-    //用户
-    private User user = new User();
+    private Uri photoUri = null;
 
-    //店总服务数量
-    private List<Shop> shopList = new CopyOnWriteArrayList<>();
+    //相机
+    private static final int REQUEST_CODE_TAKE_PICTURE = 1;
 
-    //店长通知
-    private List<Notice> noticeList = new CopyOnWriteArrayList<>();
+    //多张图片集合
+    private List<LocalMedia> selectList = new CopyOnWriteArrayList<>();
 
-    private MyUser myUser = new MyUser();
-
-    //耗材(店长)
-    private List<LossMan> lossManList = new CopyOnWriteArrayList<>();
-
-    //耗材(员工)
-    private List<LossStaff> lossStaffList = new CopyOnWriteArrayList<>();
-
-    //审核列表
-    private List<Audit> auditList = new CopyOnWriteArrayList<>();
-
-    //审核记录
-    private List<Record> recordList = new CopyOnWriteArrayList<>();
-
-    //追加商品
-    private List<UserGoods> userGoodsList = new CopyOnWriteArrayList<>();
-
-    //新损耗品
-    private List<LossNews> lossNewsList = new CopyOnWriteArrayList<>();
-
-    //员工职位
-    private List<Position> positionList = new CopyOnWriteArrayList<>();
-
-    //订单详情
-    private Datils datils = new Datils();
-
-    //员工列表
-    private List<Employees> employeesList = new CopyOnWriteArrayList<>();
-
-    //图片选择
-    private List<String> imagePathsList = new CopyOnWriteArrayList<>();
-
-    private Clock clock = new Clock();
-
-
-    /*************************************/
-    //店名
-    private List<Home> homeList = new CopyOnWriteArrayList<>();
-
-    //待服务
-    private List<Service> serviceLis = new CopyOnWriteArrayList<>();
-
-    //已完成
-    private List<Complete> completeList = new CopyOnWriteArrayList<>();
-
-    //待付款
-    private List<Entry> entryList = new CopyOnWriteArrayList<>();
-
-    //车辆颜色
-    private List<com.cdqf.cart_class.Color> colorList = new CopyOnWriteArrayList<>();
-
-    //服务选项
-    private List<ServiceOrder> serviceOrderList = new CopyOnWriteArrayList<>();
-
-    //小轿车1,SUV = 2;
-    private int model = 0;
-
-    //待审批
-    private List<Audits> auditsList = new CopyOnWriteArrayList<>();
-
-    //已同意
-    private List<Through> throughList = new CopyOnWriteArrayList<>();
-
-    //已撤回
-    private List<Withdraw> withdrawList = new CopyOnWriteArrayList<>();
-
-    //待审批(审核)
-    private List<AuditsJudge> auditsJudgeList = new CopyOnWriteArrayList<>();
-
-    //已通过(审核)
-    private List<ThroughsJudge> throughsJudgeList = new CopyOnWriteArrayList<>();
-
-    //会员下单总数
-    private List<Memebersship> memebersshipList = new CopyOnWriteArrayList<>();
-
-    //日报
-    private List<Daily> dailyList = new CopyOnWriteArrayList<>();
-
-    //周报
-    private List<Week> weekList = new CopyOnWriteArrayList<>();
-
-    //月报
-    private List<Moth> mothList = new CopyOnWriteArrayList<>();
-
-    //车牌
-    private List<Number> numberList = new CopyOnWriteArrayList<>();
-
-    //打卡记录
-    private List<Clockin> clockinList = new CopyOnWriteArrayList<>();
-
-    //会员详情
-    private MembersDatils membersDatils = new MembersDatils();
-
-    //全部
-    private List<AllEmployees> allEmployeesList = new CopyOnWriteArrayList<>();
-
-    //上班中
-    private List<Work> workList = new CopyOnWriteArrayList<>();
-
-    //休假
-    private List<Vaction> vactionList = new CopyOnWriteArrayList<>();
-
-    //职位
-    private List<PositionEmployees> positionEmployeesList = new CopyOnWriteArrayList<>();
-
-    //报销详情图片
+    //多张图片
     private List<String> imageList = new CopyOnWriteArrayList<>();
 
+
+    private String fileApkName = "";
+
+    private File fileApk = null;
+
+    private boolean isAPk = false;
+
+    private CircleDialog.Builder builder = null;
+
+    private String downLoadrul = "";
+
+    private String authority = "";
+
+    public void register() {
+        if (!eventBus.isRegistered(this)) {
+            eventBus.register(this);
+        }
+    }
 
     /**
      * 提示信息
@@ -561,30 +467,6 @@ public class CartState {
 
     }
 
-    public boolean passwordJudge(Context context, String password, String passwordTwo) {
-        if (password.length() <= 0) {
-            initToast(context, "请输入新密码", true, 0);
-            return false;
-        }
-        if (password.length() >= 17) {
-            initToast(context, "密码长度不大于16", true, 0);
-            return false;
-        }
-        if (passwordTwo.length() <= 0) {
-            initToast(context, "请确认密码", true, 0);
-            return false;
-        }
-        if (passwordTwo.length() >= 17) {
-            initToast(context, "确认密码长度不大于16", true, 0);
-            return false;
-        }
-        if (!TextUtils.equals(password, passwordTwo)) {
-            initToast(context, "两次密码不一致", true, 0);
-            return false;
-        }
-        return true;
-    }
-
     /**
      * 将Bitmap保存在本地
      *
@@ -617,6 +499,10 @@ public class CartState {
             context.sendBroadcast(intent);
             file.delete();
         }
+    }
+
+    public void setHeadBitmap(Bitmap headBitmap) {
+        this.headBitmap = headBitmap;
     }
 
     /**
@@ -668,30 +554,6 @@ public class CartState {
 
         }
         return flag;
-    }
-
-    public void dialogProgress(final Context context, String Toast) {
-        xProgressDialog = new XProgressDialog(context, Toast);
-        xProgressDialog.show();
-        isPrssor = true;
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (xProgressDialog != null) {
-                    if (isPrssor) {
-                        initToast(context, "加载失败,请检查网络", true, 0);
-                    }
-                    xProgressDialog.dismiss();
-                }
-            }
-        }, 6000);
-    }
-
-    public void dialogProgressClose() {
-        if (xProgressDialog != null) {
-            isPrssor = false;
-            xProgressDialog.dismiss();
-        }
     }
 
     /**
@@ -858,6 +720,12 @@ public class CartState {
         return bmp;
     }
 
+    /**
+     * 将一个字符串转化为UTF-8格式
+     *
+     * @param str
+     * @return
+     */
     public String urlEnodeUTF8(String str) {
         String result = str;
         try {
@@ -869,24 +737,11 @@ public class CartState {
     }
 
     /**
-     * 转换时间戳
+     * 高德地图中获得SHA1
      *
-     * @param expire
+     * @param context
      * @return
      */
-    public String getFetureDate(long expire) {
-        if (String.valueOf(expire).length() == 10) {
-            expire = expire * 1000;
-        }
-        Date date = new Date(expire);
-        SimpleDateFormat format = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
-        String result = format.format(date);
-        if (result.startsWith("0")) {
-            result = result.substring(1);
-        }
-        return result;
-    }
-
     public static String sHA1(Context context) {
         try {
             PackageInfo info = null;
@@ -942,395 +797,301 @@ public class CartState {
         }
     }
 
-    public List<AllEmployees> getAllEmployeesList() {
-        return allEmployeesList;
-    }
-
-    public void setAllEmployeesList(List<AllEmployees> allEmployeesList) {
-        this.allEmployeesList = allEmployeesList;
-    }
-
-    public Bitmap getHeadBitmap() {
-        return headBitmap;
-    }
-
-    public void setHeadBitmap(Bitmap headBitmap) {
-        this.headBitmap = headBitmap;
-    }
-
-    public BluetoothAdapter getmBluetoothAdapter() {
-        return mBluetoothAdapter;
-    }
-
-    public void setmBluetoothAdapter(BluetoothAdapter mBluetoothAdapter) {
-        this.mBluetoothAdapter = mBluetoothAdapter;
-    }
-
-    public Map<Integer, Ble> getBleMapList() {
-        return bleMapList;
-    }
-
-    public void setBleMapList(Map<Integer, Ble> bleMapList) {
-        this.bleMapList = bleMapList;
-    }
-
-    public Map<Integer, Boolean> getTitleList() {
-        return titleList;
-    }
-
-    public void setTitleList(Map<Integer, Boolean> titleList) {
-        this.titleList = titleList;
-    }
-
-    public List<String> getBleList() {
-        return bleList;
-    }
-
-    public void setBleList(List<String> bleList) {
-        this.bleList = bleList;
-    }
-
-    public List<String> getOptions1Items() {
-        return options1Items;
-    }
-
-    public void setOptions1Items(List<String> options1Items) {
-        this.options1Items = options1Items;
-    }
-
-    public List<List<String>> getOptions2Items() {
-        return options2Items;
-    }
-
-    public void setOptions2Items(List<List<String>> options2Items) {
-        this.options2Items = options2Items;
-    }
-
-    public List<List<List<String>>> getOptions3Items() {
-        return options3Items;
-    }
-
-    public void setOptions3Items(List<List<List<String>>> options3Items) {
-        this.options3Items = options3Items;
-    }
-
-    public List<Province> getProvinceList() {
-        return provinceList;
-    }
-
-    public void setProvinceList(List<Province> provinceList) {
-        this.provinceList = provinceList;
-    }
-
-    public boolean isLogin() {
-        return isLogin;
-    }
-
-    public void setLogin(boolean login) {
-        isLogin = login;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public List<Shop> getShopList() {
-        return shopList;
-    }
-
-    public void setShopList(List<Shop> shopList) {
-        this.shopList = shopList;
-    }
-
-    public List<Notice> getNoticeList() {
-        return noticeList;
-    }
-
-    public void setNoticeList(List<Notice> noticeList) {
-        this.noticeList = noticeList;
-    }
-
-    public MyUser getMyUser() {
-        return myUser;
-    }
-
-    public void setMyUser(MyUser myUser) {
-        this.myUser = myUser;
-    }
-
-    public List<LossMan> getLossManList() {
-        return lossManList;
-    }
-
-    public void setLossManList(List<LossMan> lossManList) {
-        this.lossManList = lossManList;
-    }
-
-    public List<LossStaff> getLossStaffList() {
-        return lossStaffList;
-    }
-
-    public void setLossStaffList(List<LossStaff> lossStaffList) {
-        this.lossStaffList = lossStaffList;
-    }
-
-    public List<Audit> getAuditList() {
-        return auditList;
-    }
-
-    public void setAuditList(List<Audit> auditList) {
-        this.auditList = auditList;
-    }
-
-    public List<Record> getRecordList() {
-        return recordList;
-    }
-
-    public void setRecordList(List<Record> recordList) {
-        this.recordList = recordList;
-    }
-
-    public List<UserGoods> getUserGoodsList() {
-        return userGoodsList;
-    }
-
-    public void setUserGoodsList(List<UserGoods> userGoodsList) {
-        this.userGoodsList = userGoodsList;
-    }
-
-    public List<LossNews> getLossNewsList() {
-        return lossNewsList;
-    }
-
-    public void setLossNewsList(List<LossNews> lossNewsList) {
-        this.lossNewsList = lossNewsList;
-    }
-
-    public List<Position> getPositionList() {
-        return positionList;
-    }
-
-    public void setPositionList(List<Position> positionList) {
-        this.positionList = positionList;
-    }
-
-    public Datils getDatils() {
-        return datils;
-    }
-
-    public void setDatils(Datils datils) {
-        this.datils = datils;
-    }
-
-    public List<Employees> getEmployeesList() {
-        return employeesList;
-    }
-
-    public void setEmployeesList(List<Employees> employeesList) {
-        this.employeesList = employeesList;
-    }
-
-    public List<String> getImagePathsList() {
-        return imagePathsList;
-    }
-
-    public void setImagePathsList(List<String> imagePathsList) {
-        this.imagePathsList = imagePathsList;
-    }
-
-    public List<Home> getHomeList() {
-        return homeList;
-    }
-
-    public void setHomeList(List<Home> homeList) {
-        this.homeList = homeList;
-    }
-
-    public List<Service> getServiceLis() {
-        return serviceLis;
-    }
-
-    public void setServiceLis(List<Service> serviceLis) {
-        this.serviceLis = serviceLis;
-    }
-
-    public List<Complete> getCompleteList() {
-        return completeList;
-    }
-
-    public void setCompleteList(List<Complete> completeList) {
-        this.completeList = completeList;
-    }
-
-    public List<Entry> getEntryList() {
-        return entryList;
-    }
-
-    public void setEntryList(List<Entry> entryList) {
-        this.entryList = entryList;
-    }
-
-    public List<com.cdqf.cart_class.Color> getColorList() {
-        return colorList;
-    }
-
-    public void setColorList(List<com.cdqf.cart_class.Color> colorList) {
-        this.colorList = colorList;
-    }
-
-    public List<ServiceOrder> getServiceOrderList() {
-        return serviceOrderList;
-    }
-
-    public void setServiceOrderList(List<ServiceOrder> serviceOrderList) {
-        this.serviceOrderList = serviceOrderList;
-    }
-
-    public int getModel() {
-        return model;
-    }
-
-    public void setModel(int model) {
-        this.model = model;
-    }
-
-    public List<Audits> getAuditsList() {
-        return auditsList;
-    }
-
-    public void setAuditsList(List<Audits> auditsList) {
-        this.auditsList = auditsList;
-    }
-
-    public List<Through> getThroughList() {
-        return throughList;
-    }
-
-    public void setThroughList(List<Through> throughList) {
-        this.throughList = throughList;
-    }
-
-    public List<Withdraw> getWithdrawList() {
-        return withdrawList;
-    }
-
-    public void setWithdrawList(List<Withdraw> withdrawList) {
-        this.withdrawList = withdrawList;
-    }
-
-    public List<AuditsJudge> getAuditsJudgeList() {
-        return auditsJudgeList;
-    }
-
-    public void setAuditsJudgeList(List<AuditsJudge> auditsJudgeList) {
-        this.auditsJudgeList = auditsJudgeList;
-    }
-
-    public List<ThroughsJudge> getThroughsJudgeList() {
-        return throughsJudgeList;
-    }
-
-    public void setThroughsJudgeList(List<ThroughsJudge> throughsJudgeList) {
-        this.throughsJudgeList = throughsJudgeList;
-    }
-
-    public List<Memebersship> getMemebersshipList() {
-        return memebersshipList;
-    }
-
-    public void setMemebersshipList(List<Memebersship> memebersshipList) {
-        this.memebersshipList = memebersshipList;
-    }
-
-    public List<Daily> getDailyList() {
-        return dailyList;
-    }
-
-    public void setDailyList(List<Daily> dailyList) {
-        this.dailyList = dailyList;
-    }
-
-    public List<Week> getWeekList() {
-        return weekList;
-    }
-
-    public void setWeekList(List<Week> weekList) {
-        this.weekList = weekList;
-    }
-
-    public List<Moth> getMothList() {
-        return mothList;
-    }
-
-    public void setMothList(List<Moth> mothList) {
-        this.mothList = mothList;
-    }
-
-    public List<Number> getNumberList() {
-        return numberList;
-    }
-
-    public void setNumberList(List<Number> numberList) {
-        this.numberList = numberList;
-    }
-
-    public Clock getClock() {
-        return clock;
-    }
-
-    public void setClock(Clock clock) {
-        this.clock = clock;
-    }
-
-    public List<Clockin> getClockinList() {
-        return clockinList;
-    }
-
-    public void setClockinList(List<Clockin> clockinList) {
-        this.clockinList = clockinList;
-    }
-
-    public MembersDatils getMembersDatils() {
-        return membersDatils;
-    }
-
-    public void setMembersDatils(MembersDatils membersDatils) {
-        this.membersDatils = membersDatils;
-    }
-
-    public List<Work> getWorkList() {
-        return workList;
-    }
-
-    public void setWorkList(List<Work> workList) {
-        this.workList = workList;
-    }
-
-    public List<Vaction> getVactionList() {
-        return vactionList;
-    }
-
-    public void setVactionList(List<Vaction> vactionList) {
-        this.vactionList = vactionList;
-    }
-
-    public List<PositionEmployees> getPositionEmployeesList() {
-        return positionEmployeesList;
-    }
-
-    public void setPositionEmployeesList(List<PositionEmployees> positionEmployeesList) {
-        this.positionEmployeesList = positionEmployeesList;
-    }
-
-    public List<String> getImageList() {
-        return imageList;
-    }
+    /**
+     * @param activity 拍摄一张照片
+     * @param value    1 = 前置，2 = 后置
+     */
+    public void photo(Activity activity, int value) {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA}, 1);
+            } else {
+                camera(activity, value);
+            }
+        } else {
+            camera(activity, value);
+        }
+    }
+
+    /**
+     * @param activity
+     * @param value    1 = 前置，2 = 后置
+     */
+    private void camera(Activity activity, int value) {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        SimpleDateFormat timeStampFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+        String filename = timeStampFormat.format(new Date());
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.TITLE, filename);
+        photoUri = activity.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+        intent.putExtra("android.intent.extras.CAMERA_FACING", value);
+        activity.startActivityForResult(intent, REQUEST_CODE_TAKE_PICTURE);
+    }
+
+    /**
+     * 多图效果
+     *
+     * @param activity
+     */
+    private void create(Activity activity) {
+        PictureSelector.create(activity)
+                .openGallery(PictureMimeType.ofImage())
+                .maxSelectNum(4)
+                .minSelectNum(1)
+                .imageSpanCount(4)
+                .compress(true)
+                .minimumCompressSize(100)
+                .imageFormat(PictureMimeType.PNG)
+                .selectionMedia(selectList)
+                .isCamera(true)
+                .forResult(PictureConfig.CHOOSE_REQUEST);
+    }
+
+    /**
+     * 将一张图片转换为Base64位
+     *
+     * @param bitmap
+     * @return
+     */
+
+    public static String bitmapToBase64(Bitmap bitmap) {
+        return bitmapToBase64(bitmap, true, "png");
+    }
+
+    public static String bitmapToBase64(Bitmap bitmap, boolean isData, String suffix) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 40, bos);//参数100表示不压缩
+        byte[] bytes = bos.toByteArray();
+        //转换来的base64码需要加前缀，必须是NO_WRAP参数，表示没有空格。
+        if (isData) {
+            return "data:image/" + suffix + ";base64," + Base64.encodeToString(bytes, Base64.NO_WRAP);
+        } else {
+            //转换来的base64码不需要需要加前缀，必须是NO_WRAP参数，表示没有空格。
+            return Base64.encodeToString(bytes, Base64.NO_WRAP);
+        }
+        //转换来的base64码不需要需要加前缀，必须是NO_WRAP参数，表示没有空格。
+        //return "data:image/jpeg;base64," + Base64.encodeToString(bytes, Base64.NO_WRAP);
+    }
+
+    /**
+     * 判断权限状态
+     *
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            //打开相机，获取一张图片时使用
+            case 1:
+                if (permissions[0] == Manifest.permission.CAMERA) {
+                    if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        //TODO 相机权限同意
+                    } else {
+                        initToast(this, "请打开相机权限,否则无法使用此功能", true, 0);
+                    }
+                }
+                break;
+        }
+    }
 
-    public void setImageList(List<String> imageList) {
-        this.imageList = imageList;
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                //相机
+                case REQUEST_CODE_TAKE_PICTURE:
+                    Uri uri = null;
+                    if (data != null && data.getData() != null) {
+                        Log.e(TAG, "---Uri不为空---");
+                        uri = data.getData();
+                    } else {
+                        Log.e(TAG, "---Uri为空---");
+                        uri = photoUri;
+                    }
+                    Tiny.FileCompressOptions optionsFile = new Tiny.FileCompressOptions();
+                    Tiny.getInstance().source(uri).asFile().withOptions(optionsFile).compress(new FileCallback() {
+                        @Override
+                        public void callback(boolean isSuccess, String outfile, Throwable t) {
+                            Log.e(TAG, "---获取的文件名---" + outfile);
+                            eventBus.post(new PhotoFileFind(outfile));
+                        }
+                    });
+
+                    Tiny.FileCompressOptions optionsBitmap = new Tiny.FileCompressOptions();
+                    Tiny.getInstance().source(uri).asBitmap().withOptions(optionsBitmap).compress(new BitmapCallback() {
+                        @Override
+                        public void callback(boolean isSuccess, Bitmap bitmap, Throwable t) {
+                            Log.e(TAG, "---已获取bitmap---");
+                            eventBus.post(new PhotoBitmapFind(bitmap));
+                        }
+                    });
+                    break;
+                case PictureConfig.CHOOSE_REQUEST:
+                    // 图片、视频、音频选择结果回调
+                    imageList.clear();
+                    selectList = PictureSelector.obtainMultipleResult(data);
+                    // 例如 LocalMedia 里面返回三种path
+                    // 1.media.getPath(); 为原图path
+                    // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true  注意：音视频除外
+                    // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true  注意：音视频除外
+                    // 如果裁剪并压缩了，以取压缩路径为准，因为是先裁剪后压缩的
+                    for (LocalMedia media : selectList) {
+                        Log.e(TAG, "---1---" + media.getPath() + "---2---" + media.getCutPath() + "---3---" + media.getCompressPath());
+                        if (media.isCompressed()) {
+                            imageList.add(media.getCompressPath());
+                        } else if (media.isCut()) {
+                            imageList.add(media.getCutPath());
+                        } else {
+                            imageList.add(media.getPath());
+                        }
+                    }
+                    eventBus.post(new ImageListFind(imageList));
+                    break;
+            }
+        } else {
+
+        }
+    }
+
+    /**
+     * 提示更新
+     *
+     * @param isUpdate 是否强制更新
+     */
+    public void downDilog(boolean isUpdate, String downLoadrul, String authority) {
+        this.downLoadrul = downLoadrul;
+        this.authority = authority;
+        DownloadUpdateDilogFragment downloadUpdateDilogFragment = new DownloadUpdateDilogFragment();
+        downloadUpdateDilogFragment.setInit(isUpdate, "提示", "检测到当前有新版本,是否更新", "否", "是");
+        downloadUpdateDilogFragment.show(getSupportFragmentManager(), "是否更新");
+    }
+
+    /**
+     * @param context
+     * @param downLoadrul
+     * @param authority   com.cdqf.dire.fileprovider_cart
+     */
+    public void downLoadur(final Context context, String downLoadrul, final String authority) {
+        builder = new CircleDialog.Builder();
+        builder.setCancelable(false)
+                .setCanceledOnTouchOutside(false)
+                .setTitle("下载")
+                .setProgressText("下载了")
+                .show(getSupportFragmentManager());
+        OkHttpUtils.get()
+                .url(downLoadrul)
+                .build()
+                .execute(new FileCallBack(Environment.getExternalStorageDirectory().getAbsolutePath(), fileApkName) {
+                    @Override
+                    public void inProgress(float progress, long total, int id) {
+                        builder.setProgress(100, (int) (progress * 100)).refresh();
+                    }
+
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        Log.e(TAG, "---onError---");
+
+                    }
+
+                    @RequiresApi(api = Build.VERSION_CODES.O)
+                    @Override
+                    public void onResponse(File response, int id) {
+                        Log.e(TAG, "---下载成功---");
+                        fileApk = response;
+                        isAPk = true;
+                        //版本在7.0以上是不能直接通过uri访问的
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            //参数1 上下文, 参数2 Provider主机地址 和配置文件中保持一致   参数3  共享的文件
+                            Uri apkUri = FileProvider.getUriForFile(context, authority, fileApk);
+                            //添加这一句表示对目标应用临时授权该Uri所代表的文件
+                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
+                            startActivity(intent);
+                        } else {
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.setDataAndType(Uri.fromFile(fileApk), "application/vnd.android.package-archive");
+                            startActivity(intent);
+                        }
+                    }
+                });
+    }
+
+    /**
+     * 更新
+     *
+     * @param r
+     */
+    @Subscribe
+    public void onEventMainThread(DownloadUpdateFind r) {
+        downLoadur(this, downLoadrul, authority);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        eventBus.unregister(this);
+    }
+
+    /**
+     * 打印数据过长时使用
+     *
+     * @param log
+     * @param showCount 1024
+     */
+    public void showLogCompletion(String TAG, String log, int showCount) {
+        if (log.length() > showCount) {
+            String show = log.substring(0, showCount);
+            Log.e(TAG, show + "");
+            if ((log.length() - showCount) > showCount) {//剩下的文本还是大于规定长度
+                String partLog = log.substring(showCount, log.length());
+                showLogCompletion(TAG, partLog, showCount);
+            } else {
+                String surplusLog = log.substring(showCount, log.length());
+                Log.e(TAG, surplusLog + "");
+            }
+        } else {
+            Log.e(TAG, log + "");
+        }
+    }
+
+    /**
+     * 获取当前月有多少天
+     */
+    public int getMonthNumber(int year, int month) {
+        int day = 0;
+        if (year % 4 == 0 && year % 100 != 0 || year % 400 == 0) {
+            day = 29;
+        } else {
+            day = 28;
+        }
+        switch (month) {
+            case 1:
+            case 3:
+            case 5:
+            case 7:
+            case 8:
+            case 10:
+            case 12:
+                return 31;
+            case 4:
+            case 6:
+            case 9:
+            case 11:
+                return 30;
+            case 2:
+                return day;
+
+        }
+
+        return 0;
     }
 }

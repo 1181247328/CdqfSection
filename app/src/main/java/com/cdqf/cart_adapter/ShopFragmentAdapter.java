@@ -31,19 +31,4 @@ public class ShopFragmentAdapter extends FragmentPagerAdapter {
         return myOrderList.length;
     }
 
-//    @Override
-//    public Object instantiateItem(ViewGroup container, int position) {
-//        Fragment fragment = (Fragment) super.instantiateItem(container, position);
-//        String fragmentTag = fragment.getTag();
-//        if (seabedState.getFramentsMap().get(position)) {
-//            FragmentTransaction ft = fm.beginTransaction();
-//            ft.remove(fragment);
-//            fragment = seabedState.getFragments().get(position);
-//            ft.add(container.getId(), fragment, fragmentTag);
-//            ft.attach(fragment);
-//            ft.commitAllowingStateLoss();
-//            seabedState.getFramentsMap().put(position, false);
-//        }
-//        return fragment;
-//    }
 }
